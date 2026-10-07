@@ -1,0 +1,14 @@
+{"references": [
+{"name": "Google", "kind": "brand", "disambiguation": null, "quotes": ["Google"], "role": "the modern default tool the students take for granted, set up as a contrast with an older one", "weight": "setup", "checkable": true},
+{"name": "Ask Jeeves", "kind": "brand", "disambiguation": "search engine", "quotes": ["Ask Jeeves", "Jeeves"], "role": "a defunct, laughably unreliable early-internet service that dates the speaker", "weight": "punchline", "checkable": true},
+{"name": "TRL", "kind": "tv_show", "disambiguation": "MTV Total Request Live", "quotes": ["TRL"], "role": "a bygone appointment music TV show that dates the speaker's youth", "weight": "color", "checkable": true},
+{"name": "Who Wants to Be a Millionaire", "kind": "tv_show", "disambiguation": "US game show", "quotes": ["Who Wants to Be a Millionaire", "50:50 lifeline"], "role": "a widely known quiz game whose multiple-choice format makes a simple probability example", "weight": "setup", "checkable": true},
+{"name": "Regis Philbin", "kind": "person", "disambiguation": null, "quotes": ["Regis Philbin"], "role": "the familiar host who makes the game-show scenario vivid", "weight": "color", "checkable": true},
+{"name": "Deal or No Deal", "kind": "tv_show", "disambiguation": "US game show", "quotes": ["Deal or No Deal"], "role": "a widely known game show built on a take-it-or-gamble choice, used to introduce expected value", "weight": "setup", "checkable": true},
+{"name": "Howie Mandel", "kind": "person", "disambiguation": null, "quotes": ["Howie Mandel"], "role": "the familiar host who makes the game-show scenario vivid", "weight": "color", "checkable": true},
+{"name": "Las Vegas", "kind": "destination", "disambiguation": null, "quotes": ["Las Vegas"], "role": "a gambling capital that stands for the house always winning on expected value", "weight": "punchline", "checkable": true},
+{"name": "Bellagio", "kind": "place", "disambiguation": "Las Vegas casino resort", "quotes": ["Bellagio"], "role": "a famously lavish casino landmark that shows how much money the house makes", "weight": "punchline", "checkable": true},
+{"name": "Canvas", "kind": "brand", "disambiguation": "learning management software", "quotes": ["Canvas"], "role": "the everyday school platform where coursework lives", "weight": "color", "checkable": true},
+{"name": "ChatGPT", "kind": "brand", "disambiguation": null, "quotes": ["ChatGPT"], "role": "a popular AI tool students might use to cheat, known for sounding sure while being wrong", "weight": "setup", "checkable": true},
+{"name": "fantasy football", "kind": "other", "disambiguation": null, "quotes": ["fantasy football"], "role": "a hobby of confident predictions that routinely go wrong, used for self-deprecation", "weight": "punchline", "checkable": false}
+]}

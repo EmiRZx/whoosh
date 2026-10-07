@@ -1,9 +1,10 @@
-// Scores reference extractions against evals/extraction/gold.json.
+// Scores reference extractions of src/content/samples.ts against evals/extraction/gold.json.
 // Usage: npx tsx evals/extraction/score.ts <run-dir>
 // <run-dir> holds one <sample-id>.json per sample, each matching ExtractionSchema.
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { ExtractionSchema, locateQuotes, type ExtractedReference } from "../../src/lib/analysis/extract";
+import { sampleById } from "../../src/content/samples";
 
 interface GoldItem {
   name: string;
@@ -33,7 +34,8 @@ function matches(ref: ExtractedReference, g: GoldItem) {
 }
 
 async function scoreSample(id: string, gold: GoldSample, runDir: string) {
-  const text = await readFile(path.join(import.meta.dirname, "samples", `${id}.txt`), "utf8");
+  const text = sampleById(id)?.text;
+  if (!text) return { id, error: "no sample script with this id" };
   const raw = JSON.parse(await readFile(path.join(runDir, `${id}.json`), "utf8"));
   const parsed = ExtractionSchema.safeParse(raw);
   if (!parsed.success) return { id, error: parsed.error.message };

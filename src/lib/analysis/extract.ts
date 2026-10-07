@@ -88,10 +88,15 @@ export interface QuoteSpan {
 // Finds where each quote sits in the text so the UI can highlight it. Models
 // sometimes normalize whitespace or curly quotes, so fall back to a looser
 // match before giving up.
-export function locateQuotes(text: string, quotes: string[]): { spans: QuoteSpan[]; missing: string[] } {
+// Pass a shared `taken` set across references so two references never claim
+// the same occurrence.
+export function locateQuotes(
+  text: string,
+  quotes: string[],
+  taken = new Set<number>(),
+): { spans: QuoteSpan[]; missing: string[] } {
   const spans: QuoteSpan[] = [];
   const missing: string[] = [];
-  const taken = new Set<number>();
   const fold = (s: string) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').toLowerCase();
   const folded = fold(text);
 
