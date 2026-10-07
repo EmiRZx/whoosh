@@ -1,4 +1,7 @@
+import type Anthropic from "@anthropic-ai/sdk";
+import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
+import { AGENT_MODEL, FALLBACK_BETA, LlmError } from "../llm/config";
 
 export const REFERENCE_KINDS = [
   "movie",
@@ -54,9 +57,27 @@ Fields:
 - name: the canonical name you would type into a search box. For a song, the artist's name, not the song title.
 - kind: movie, tv_show, artist (musicians and bands), person (any other public figure), brand (companies, products, apps, chains, franchises), book (books and authors), video_game, podcast, place (a specific venue, restaurant location or landmark), destination (a city, neighborhood, region or country), other.
 - disambiguation: when the name alone is ambiguous, a few words that pick the right entity ("US sitcom 2005-2013", "learning management software"); otherwise null.
-- quotes: each span copied from the text exactly, character for character, so it can be highlighted. Keep spans tight: the words that carry the reference, not the whole sentence.
+- quotes: each span copied from the text exactly, character for character, so it can be highlighted. Use the shortest span that carries the reference, usually just the name: "Clippy", not "Clippy was the future of artificial intelligence"; "Ross", not "Ross was a discount store". A song title, catchphrase or slogan that carries the reference is its own quote.
 - role: the job the reference does in this line, phrased so someone could choose a substitute that does the same job. Describe the job, not the entity: "a shorthand for 90s TV romance", "a cheap chain restaurant that signals comfort over sophistication", "a dated device that dates the speaker".
 - weight: punchline if the joke or point depends on the audience getting it, setup if it frames a punchline, color if it is decoration.`;
+
+export async function extractReferences(client: Anthropic, text: string): Promise<Extraction> {
+  const response = await client.beta.messages.parse({
+    model: AGENT_MODEL,
+    max_tokens: 16000,
+    betas: [FALLBACK_BETA],
+    fallbacks: "default",
+    thinking: { type: "adaptive" },
+    // Missing a reference or mapping it to the wrong entity spoils every later
+    // step, so this call gets more effort than the model's default.
+    output_config: { effort: "high", format: betaZodOutputFormat(ExtractionSchema) },
+    system: EXTRACT_SYSTEM_PROMPT,
+    messages: [{ role: "user", content: `<text>\n${text}\n</text>` }],
+  });
+  if (response.stop_reason === "refusal") throw new LlmError("The model declined to analyze this text.");
+  if (!response.parsed_output) throw new LlmError(`Extraction did not return valid output (${response.stop_reason}).`);
+  return response.parsed_output;
+}
 
 export interface QuoteSpan {
   quote: string;

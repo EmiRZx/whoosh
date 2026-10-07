@@ -11,7 +11,7 @@
       { "name": "Bad Bunny", "kinds": ["artist"] },
       { "name": "Luis Fonsi", "aliases": ["Despacito", "Daddy Yankee", "Luis Fonsi & Daddy Yankee"], "kinds": ["artist"] },
       { "name": "Taylor Swift", "aliases": ["Taylor Swift: The Eras Tour", "The Eras Tour", "Eras Tour"], "kinds": ["artist", "movie"] },
-      { "name": "One Direction", "kinds": ["artist"] },
+      { "name": "Harry Styles", "aliases": ["One Direction"], "kinds": ["artist", "person"] },
       { "name": "Thanos", "aliases": ["Avengers: Infinity War", "Avengers: Endgame", "Marvel Cinematic Universe", "Marvel", "The Avengers"], "kinds": ["movie", "brand", "other"] },
       { "name": "Blockbuster", "aliases": ["Blockbuster Video"], "kinds": ["brand"] },
       { "name": "Tower Records", "kinds": ["brand"] },
@@ -20,7 +20,7 @@
       { "name": "Costco", "kinds": ["brand"] }
     ],
     "optional": [
-      { "name": "Harry Styles", "kinds": ["artist", "person"] },
+      { "name": "One Direction", "kinds": ["artist"] },
       { "name": "Ross Dress for Less", "aliases": ["Ross Stores", "Ross"], "kinds": ["brand"] },
       { "name": "Taylor Swift: The Eras Tour", "aliases": ["The Eras Tour", "Eras Tour"], "kinds": ["movie"] },
       { "name": "Be kind, rewind", "aliases": ["VHS", "Be Kind Rewind"], "kinds": ["other"] }
