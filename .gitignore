@@ -44,3 +44,6 @@ next-env.d.ts
 # Live responses are cached here locally and on the server only.
 /.cache/
 !.env.example
+
+# eval run outputs
+/evals/**/runs/

@@ -1,0 +1,9 @@
+Alright everyone, settle in. Today we're talking about probability, and I want to start with a story.
+
+Back when I was your age, we didn't have Google. We had Ask Jeeves, and Jeeves did not know the answer. If you wanted to settle an argument about who sang a song, you called the radio station or you waited for the next episode of TRL.
+
+Think about Who Wants to Be a Millionaire. Regis Philbin asks a contestant a question with four options. She has no idea. She uses her 50:50 lifeline. What's the probability she guesses right now? One half. That's the whole lecture. You can go home.
+
+No? Okay, let's make it harder. Remember Deal or No Deal? Howie Mandel, twenty-six briefcases, and a mysterious banker on the phone. Should you take the deal? That depends on expected value, which is the most important idea in this course, and also the reason Las Vegas can afford the fountains at the Bellagio.
+
+Your homework is on Canvas. And no, ChatGPT can't do it for you. Well, it can, but it'll be confidently wrong, like my fantasy football picks every season.

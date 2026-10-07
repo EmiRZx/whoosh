@@ -1,0 +1,87 @@
+{
+  "01-dating-set": {
+    "required": [
+      { "name": "Hinge", "kinds": ["brand"] },
+      { "name": "Bumble", "kinds": ["brand"] },
+      { "name": "Friends", "kinds": ["tv_show"] },
+      { "name": "Williamsburg", "aliases": ["Williamsburg, Brooklyn"], "kinds": ["destination"] },
+      { "name": "Peloton", "kinds": ["brand"] },
+      { "name": "Olive Garden", "kinds": ["brand", "place"] },
+      { "name": "The Sopranos", "aliases": ["Sopranos"], "kinds": ["tv_show"] },
+      { "name": "Bad Bunny", "kinds": ["artist"] },
+      { "name": "Luis Fonsi", "aliases": ["Despacito", "Daddy Yankee", "Luis Fonsi & Daddy Yankee"], "kinds": ["artist"] },
+      { "name": "Taylor Swift", "aliases": ["Taylor Swift: The Eras Tour", "The Eras Tour", "Eras Tour"], "kinds": ["artist", "movie"] },
+      { "name": "One Direction", "kinds": ["artist"] },
+      { "name": "Thanos", "aliases": ["Avengers: Infinity War", "Avengers: Endgame", "Marvel Cinematic Universe", "Marvel", "The Avengers"], "kinds": ["movie", "brand", "other"] },
+      { "name": "Blockbuster", "aliases": ["Blockbuster Video"], "kinds": ["brand"] },
+      { "name": "Tower Records", "kinds": ["brand"] },
+      { "name": "Cracker Barrel", "kinds": ["brand", "place"] },
+      { "name": "Tupperware", "kinds": ["brand"] },
+      { "name": "Costco", "kinds": ["brand"] }
+    ],
+    "optional": [
+      { "name": "Harry Styles", "kinds": ["artist", "person"] },
+      { "name": "Ross Dress for Less", "aliases": ["Ross Stores", "Ross"], "kinds": ["brand"] },
+      { "name": "Taylor Swift: The Eras Tour", "aliases": ["The Eras Tour", "Eras Tour"], "kinds": ["movie"] },
+      { "name": "Be kind, rewind", "aliases": ["VHS", "Be Kind Rewind"], "kinds": ["other"] }
+    ],
+    "forbidden": ["QR code", "podcast", "dating apps"]
+  },
+  "02-keynote": {
+    "required": [
+      { "name": "BlackBerry", "kinds": ["brand"] },
+      { "name": "Clippy", "aliases": ["Microsoft Office", "Microsoft", "Office Assistant", "Microsoft Office Assistant"], "kinds": ["brand", "other"] },
+      { "name": "Spotify", "kinds": ["brand"] },
+      { "name": "The Killers", "aliases": ["Mr. Brightside", "Killers"], "kinds": ["artist"] },
+      { "name": "Duolingo", "kinds": ["brand"] },
+      { "name": "Netflix", "kinds": ["brand"] },
+      { "name": "iPod", "aliases": ["Apple", "Apple iPod"], "kinds": ["brand"] },
+      { "name": "Breaking Bad", "kinds": ["tv_show"] },
+      { "name": "Pret A Manger", "aliases": ["Pret", "Pret a Manger"], "kinds": ["brand", "place"] },
+      { "name": "Steve Jobs", "kinds": ["person"] },
+      { "name": "Jony Ive", "aliases": ["Jonathan Ive"], "kinds": ["person"] }
+    ],
+    "optional": [
+      { "name": "Stay hungry, stay foolish", "aliases": ["Whole Earth Catalog", "Stanford commencement speech"], "kinds": ["other", "book"] }
+    ],
+    "forbidden": ["artificial intelligence", "hotel bar", "Spanish", "airport"]
+  },
+  "03-best-man": {
+    "required": [
+      { "name": "Pokémon", "aliases": ["Pokemon", "Pokémon Trading Card Game", "Pokemon Trading Card Game"], "kinds": ["brand", "video_game"] },
+      { "name": "Spotify", "kinds": ["brand"] },
+      { "name": "Ed Sheeran", "aliases": ["Perfect"], "kinds": ["artist"] },
+      { "name": "Chipotle", "aliases": ["Chipotle Mexican Grill"], "kinds": ["brand", "place"] },
+      { "name": "Paris", "kinds": ["destination"] },
+      { "name": "Eiffel Tower", "kinds": ["place", "destination"] },
+      { "name": "Hallmark Channel", "aliases": ["Hallmark", "Hallmark movie", "Hallmark Movies", "Hallmark Movies & Mysteries"], "kinds": ["brand", "tv_show", "other"] },
+      { "name": "The Office", "aliases": ["The Office (US)", "The Office US"], "kinds": ["tv_show"] },
+      { "name": "Fortnite", "kinds": ["video_game"] },
+      { "name": "Coldplay", "aliases": ["Fix You"], "kinds": ["artist"] },
+      { "name": "LeBron James", "aliases": ["LeBron"], "kinds": ["person"] },
+      { "name": "YMCA", "aliases": ["the Y", "Y"], "kinds": ["brand", "place"] },
+      { "name": "Taco Bell", "kinds": ["brand", "place"] }
+    ],
+    "optional": [],
+    "forbidden": ["Danny", "Mike", "Jess", "Mrs. Patterson", "Patterson", "guac"]
+  },
+  "04-lecture": {
+    "required": [
+      { "name": "Google", "kinds": ["brand"] },
+      { "name": "Ask Jeeves", "aliases": ["Ask.com", "Jeeves"], "kinds": ["brand"] },
+      { "name": "TRL", "aliases": ["Total Request Live"], "kinds": ["tv_show"] },
+      { "name": "Who Wants to Be a Millionaire", "aliases": ["Who Wants to Be a Millionaire?"], "kinds": ["tv_show"] },
+      { "name": "Regis Philbin", "kinds": ["person"] },
+      { "name": "Deal or No Deal", "kinds": ["tv_show"] },
+      { "name": "Howie Mandel", "kinds": ["person"] },
+      { "name": "Las Vegas", "kinds": ["destination"] },
+      { "name": "Bellagio", "aliases": ["Bellagio Hotel and Casino", "Fountains of Bellagio", "Bellagio Las Vegas"], "kinds": ["place"] },
+      { "name": "Canvas", "aliases": ["Canvas LMS", "Instructure Canvas", "Instructure"], "kinds": ["brand"] },
+      { "name": "ChatGPT", "kinds": ["brand"] }
+    ],
+    "optional": [
+      { "name": "fantasy football", "aliases": ["Fantasy Football", "NFL Fantasy Football", "ESPN Fantasy Football"], "kinds": ["other", "brand"] }
+    ],
+    "forbidden": ["radio station", "probability", "casinos", "expected value"]
+  }
+}
