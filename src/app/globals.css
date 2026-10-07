@@ -1,26 +1,123 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f6f1e7;
+  --paper-raised: #fbf8f1;
+  --paper-sunk: #ede5d5;
+  --rule: #ddd3bf;
+  --ink: #1e1b16;
+  --ink-soft: #5c554a;
+  --ink-faint: #8d8576;
+
+  --stage: #15120d;
+  --stage-raised: #221d16;
+  --stage-ink: #f4ecdc;
+  --stage-ink-soft: #b3a892;
+  --spot: #f2b134;
+
+  /* Highlighter colors, one per verdict. */
+  --lands: #b8ec9f;
+  --lands-ink: #1d5410;
+  --risky: #ffe066;
+  --risky-ink: #6a5000;
+  --dead: #ffb3c1;
+  --dead-ink: #8a1630;
+  --unchecked: #dfe3ec;
+  --unchecked-ink: #3c4863;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-rule: var(--rule);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-stage: var(--stage);
+  --color-stage-raised: var(--stage-raised);
+  --color-stage-ink: var(--stage-ink);
+  --color-stage-ink-soft: var(--stage-ink-soft);
+  --color-spot: var(--spot);
+  --color-lands: var(--lands);
+  --color-lands-ink: var(--lands-ink);
+  --color-risky: var(--risky);
+  --color-risky-ink: var(--risky-ink);
+  --color-dead: var(--dead);
+  --color-dead-ink: var(--dead-ink);
+  --color-unchecked: var(--unchecked);
+  --color-unchecked-ink: var(--unchecked-ink);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-instrument-serif);
+  --font-script: var(--font-courier-prime);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* A highlighter stroke rather than a solid box: a band through the middle
+   of the line, slightly uneven at the ends. */
+.hl {
+  --hl: var(--unchecked);
+  /* <mark> defaults to a yellow background; the stroke comes from the image. */
+  background-color: transparent;
+  color: inherit;
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.2em,
+    var(--hl) 0.25em,
+    var(--hl) calc(100% - 0.25em),
+    transparent calc(100% - 0.2em)
+  );
+  background-size: 100% 72%;
+  background-position: 0 62%;
+  background-repeat: no-repeat;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.2em;
+  margin: 0 -0.05em;
+  border-radius: 0.15em;
+  cursor: pointer;
+  transition: filter 120ms ease;
+}
+.hl:hover {
+  filter: saturate(1.4) brightness(0.97);
+}
+.hl[data-verdict="lands"] { --hl: var(--lands); }
+.hl[data-verdict="risky"] { --hl: var(--risky); }
+.hl[data-verdict="dead"] { --hl: var(--dead); }
+.hl[data-verdict="unchecked"] {
+  --hl: var(--unchecked);
+  text-decoration: underline dotted var(--unchecked-ink);
+  text-underline-offset: 0.25em;
+}
+.hl[data-selected="true"] {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+.hl:focus-visible {
+  outline: 2px solid var(--spot);
+  outline-offset: 2px;
+}
+
+/* Faint ruled lines behind the script, like a legal pad. */
+.ruled {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(2rem - 1px),
+    color-mix(in srgb, var(--rule) 70%, transparent) calc(2rem - 1px),
+    color-mix(in srgb, var(--rule) 70%, transparent) 2rem
+  );
+  background-position: 0 0.6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

@@ -1,0 +1,31 @@
+import type { ExtractedReference } from "@/lib/analysis/extract";
+import type { Verdict } from "@/lib/analysis/types";
+
+export const VERDICT_LABEL: Record<Verdict, string> = {
+  lands: "Lands",
+  risky: "Risky",
+  dead: "Won't land",
+  unchecked: "Not checked yet",
+};
+
+export const KIND_LABEL: Record<ExtractedReference["kind"], string> = {
+  movie: "Movie",
+  tv_show: "TV show",
+  artist: "Music",
+  person: "Public figure",
+  brand: "Brand",
+  book: "Book",
+  video_game: "Video game",
+  podcast: "Podcast",
+  place: "Place",
+  destination: "Destination",
+  other: "Event or trend",
+};
+
+export const WEIGHT_LABEL: Record<ExtractedReference["weight"], string> = {
+  punchline: "Punchline",
+  setup: "Setup",
+  color: "Color",
+};
+
+export const AGE_LABELS = ["24 and under", "25–29", "30–34", "35–44", "45–54", "55+"];
