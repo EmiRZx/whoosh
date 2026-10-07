@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { RECORDED_EXTRACTIONS } from "@/content/extractions";
 import { SAMPLES } from "@/content/samples";
 import { AUDIENCE_PRESETS, presetById } from "../audience/audience";
+import { findCity } from "../geo/cities";
 import { extractReferences, type Extraction } from "./extract";
 import { buildReferences } from "./references";
 import type { AnalysisEvent, AudienceSpec } from "./types";
@@ -20,11 +21,16 @@ const normalize = (text: string) => text.replace(/\r\n/g, "\n").trim();
 export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEvent) => void) {
   const text = normalize(input.text);
   const preset = presetById(input.presetId) ?? AUDIENCE_PRESETS[0];
+  const cities = input.cities.map((name) => ({ name, match: findCity(name) }));
+  const unknown = cities.filter((c) => !c.match).map((c) => c.name);
+  if (unknown.length) {
+    send({ type: "status", message: `Couldn't place ${unknown.join(", ")} on the map; city checks will skip ${unknown.length > 1 ? "them" : "it"}` });
+  }
   const audience: AudienceSpec = {
     presetId: preset.id,
     label: preset.label,
     ageMix: preset.ageMix,
-    cities: input.cities.map((name) => ({ name })),
+    cities: cities.map(({ name, match }) => (match ? { name: match.label, lat: match.lat, lon: match.lon } : { name })),
   };
 
   const sample = SAMPLES.find((s) => normalize(s.text) === text);

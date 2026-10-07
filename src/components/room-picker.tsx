@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AUDIENCE_PRESETS, type AgeMix } from "@/lib/audience/audience";
 import { AGE_BUCKETS } from "@/lib/qloo/api";
 import { AGE_LABELS } from "./labels";
@@ -33,6 +33,23 @@ interface Props {
 
 export function RoomPicker({ presetId, onPresetChange, cities, onCitiesChange }: Props) {
   const [draft, setDraft] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const q = draft.trim();
+    if (q.length < 2) return;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => {
+      fetch(`/api/cities?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
+        .then((res) => res.json())
+        .then((body: { cities: { label: string }[] }) => setSuggestions(body.cities.map((c) => c.label)))
+        .catch(() => {});
+    }, 150);
+    return () => {
+      clearTimeout(timer);
+      ctrl.abort();
+    };
+  }, [draft]);
 
   const addCity = () => {
     const name = draft.trim();
@@ -96,10 +113,17 @@ export function RoomPicker({ presetId, onPresetChange, cities, onCitiesChange }:
               }
             }}
             placeholder="e.g. Austin, TX"
+            list="city-suggestions"
+            autoComplete="off"
             maxLength={80}
             disabled={cities.length >= MAX_CITIES}
             className="min-w-0 flex-1 rounded-md border border-rule bg-paper-raised px-3 py-2 text-sm outline-none placeholder:text-ink-faint focus:border-ink disabled:opacity-50"
           />
+          <datalist id="city-suggestions">
+            {suggestions.map((s) => (
+              <option key={s} value={s} />
+            ))}
+          </datalist>
           <button
             type="button"
             onClick={addCity}
