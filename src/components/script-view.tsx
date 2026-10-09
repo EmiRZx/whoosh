@@ -1,45 +1,71 @@
 "use client";
 
-import { useMemo } from "react";
-import { segmentText } from "@/lib/analysis/references";
 import type { AnalyzedReference } from "@/lib/analysis/types";
+import type { Piece } from "@/lib/ui/document";
 import { VERDICT_LABEL } from "./labels";
 
 interface Props {
-  text: string;
-  references: AnalyzedReference[];
+  pieces: Piece[];
+  references: Map<string, AnalyzedReference>;
   selectedKey?: string;
   onSelect: (key: string) => void;
+  showChanges: boolean;
 }
 
-export function ScriptView({ text, references, selectedKey, onSelect }: Props) {
-  const segments = useMemo(() => segmentText(text, references), [text, references]);
-  const byKey = useMemo(() => new Map(references.map((r) => [r.key, r])), [references]);
+const activate = (onSelect: () => void) => ({
+  role: "button" as const,
+  tabIndex: 0,
+  onClick: onSelect,
+  onKeyDown: (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect();
+    }
+  },
+});
 
+// The script set like a page, with each reference highlighted by verdict and
+// accepted swaps shown as tracked changes.
+export function ScriptView({ pieces, references, selectedKey, onSelect, showChanges }: Props) {
   return (
-    <div className="ruled whitespace-pre-wrap font-script text-[15px] leading-8 text-ink sm:text-base">
-      {segments.map((segment, i) => {
-        const ref = segment.refKey ? byKey.get(segment.refKey) : undefined;
-        if (!ref) return <span key={i}>{segment.text}</span>;
+    <div className="whitespace-pre-wrap font-serif text-[17px] leading-[1.85] text-ink sm:text-[18.5px]">
+      {pieces.map((piece, i) => {
+        if (piece.kind === "del") {
+          return showChanges ? (
+            <del key={i} className="swap-del">
+              {piece.text}
+            </del>
+          ) : null;
+        }
+        if (piece.kind === "ins") {
+          const owner = references.get(piece.editKey);
+          return (
+            <ins
+              key={i}
+              className="swap-ins"
+              data-selected={piece.editKey === selectedKey}
+              aria-label={`${piece.text}: your swap for ${owner?.extracted.name ?? "a reference"}`}
+              {...activate(() => onSelect(piece.editKey))}
+            >
+              {piece.text}
+            </ins>
+          );
+        }
+        const ref = piece.refKey ? references.get(piece.refKey) : undefined;
+        if (!ref) return <span key={i}>{piece.text}</span>;
+        const pending = ref.resolution.status === "pending";
         return (
           <mark
             key={i}
-            role="button"
-            tabIndex={0}
-            className="hl text-inherit"
+            className="ref"
             data-verdict={ref.verdict}
+            data-pending={pending}
             data-selected={ref.key === selectedKey}
             aria-pressed={ref.key === selectedKey}
-            aria-label={`${segment.text}: ${ref.extracted.name}, ${VERDICT_LABEL[ref.verdict]}`}
-            onClick={() => onSelect(ref.key)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onSelect(ref.key);
-              }
-            }}
+            aria-label={`${piece.text}: ${ref.extracted.name}, ${pending ? "checking" : VERDICT_LABEL[ref.verdict]}`}
+            {...activate(() => onSelect(ref.key))}
           >
-            {segment.text}
+            {piece.text}
           </mark>
         );
       })}

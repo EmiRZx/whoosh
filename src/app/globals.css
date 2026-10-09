@@ -1,118 +1,317 @@
 @import "tailwindcss";
 
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+/* Light is the default; dark follows the OS unless the toggle says light, and
+   the toggle's choice wins both ways. */
 :root {
-  --paper: #f6f1e7;
-  --paper-raised: #fbf8f1;
-  --paper-sunk: #ede5d5;
-  --rule: #ddd3bf;
-  --ink: #1e1b16;
-  --ink-soft: #5c554a;
-  --ink-faint: #8d8576;
+  color-scheme: light;
+  --bg: #f5f5f3;
+  --glow: rgba(245, 158, 11, 0.13);
+  --card: #ffffff;
+  --card-border: rgba(11, 11, 11, 0.07);
+  --card-shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 12px 32px -18px rgba(11, 11, 11, 0.16);
+  --sunk: #f3f3f1;
+  --line: rgba(11, 11, 11, 0.08);
+  --ink: #0b0b0b;
+  --ink-soft: #52514e;
+  --ink-faint: #898781;
+  --accent: #b45309;
+  --accent-glow: #f59e0b;
+  --cta: #0b0b0b;
+  --cta-ink: #ffffff;
+  --focus: #2a78d6;
 
-  --stage: #15120d;
-  --stage-raised: #221d16;
-  --stage-ink: #f4ecdc;
-  --stage-ink-soft: #b3a892;
-  --spot: #f2b134;
+  /* Verdicts: fixed status hues, with a tint and a readable ink per mode. */
+  --lands: #0ca30c;
+  --lands-tint: rgba(12, 163, 12, 0.08);
+  --lands-ink: #0a6a0a;
+  --risky: #fab219;
+  --risky-tint: rgba(250, 178, 25, 0.2);
+  --risky-ink: #8a5a00;
+  --dead: #d03b3b;
+  --dead-tint: rgba(208, 59, 59, 0.12);
+  --dead-ink: #a32020;
+  --quiet: #a1a09a;
+  --quiet-tint: transparent;
+  --quiet-ink: #52514e;
 
-  /* Highlighter colors, one per verdict. */
-  --lands: #b8ec9f;
-  --lands-ink: #1d5410;
-  --risky: #ffe066;
-  --risky-ink: #6a5000;
-  --dead: #ffb3c1;
-  --dead-ink: #8a1630;
-  --unchecked: #dfe3ec;
-  --unchecked-ink: #3c4863;
+  /* Diverging pair for "likes it more / less than the average adult". */
+  --more: #2a78d6;
+  --less: #eb6834;
+  --mid: #e6e5e1;
+
+  /* Sequential blue for the tour matrix, light to dark. */
+  --seq-1: #e6effa;
+  --seq-2: #cde2fb;
+  --seq-3: #9ec5f4;
+  --seq-4: #5598e7;
+  --seq-5: #256abf;
+  --seq-6: #184f95;
+  /* Label color on each step. */
+  --seq-ink-1: #0b0b0b;
+  --seq-ink-2: #0b0b0b;
+  --seq-ink-3: #0b0b0b;
+  --seq-ink-4: #ffffff;
+  --seq-ink-5: #ffffff;
+  --seq-ink-6: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #09090b;
+    --glow: rgba(251, 191, 36, 0.15);
+    --card: rgba(255, 255, 255, 0.035);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.8);
+    --sunk: rgba(255, 255, 255, 0.045);
+    --line: rgba(255, 255, 255, 0.08);
+    --ink: #ededed;
+    --ink-soft: #a1a1aa;
+    --ink-faint: #71717a;
+    --accent: #fbbf24;
+    --accent-glow: #fbbf24;
+    --cta: #fbbf24;
+    --cta-ink: #111111;
+    --focus: #6da7ec;
+    --lands-tint: rgba(34, 197, 94, 0.13);
+    --lands-ink: #86efac;
+    --risky-tint: rgba(250, 178, 25, 0.15);
+    --risky-ink: #fcd34d;
+    --dead-tint: rgba(239, 68, 68, 0.17);
+    --dead-ink: #fca5a5;
+    --quiet: #71717a;
+    --quiet-ink: #a1a1aa;
+    --more: #3987e5;
+    --less: #d95926;
+    --mid: #2a2a2c;
+    --seq-1: #16202e;
+    --seq-2: #18304f;
+    --seq-3: #1d4475;
+    --seq-4: #255d9f;
+    --seq-5: #3a7fd0;
+    --seq-6: #7db0f0;
+    --seq-ink-1: #ededed;
+    --seq-ink-2: #ededed;
+    --seq-ink-3: #ededed;
+    --seq-ink-4: #ededed;
+    --seq-ink-5: #ededed;
+    --seq-ink-6: #0b0b0b;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #09090b;
+  --glow: rgba(251, 191, 36, 0.15);
+  --card: rgba(255, 255, 255, 0.035);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.8);
+  --sunk: rgba(255, 255, 255, 0.045);
+  --line: rgba(255, 255, 255, 0.08);
+  --ink: #ededed;
+  --ink-soft: #a1a1aa;
+  --ink-faint: #71717a;
+  --accent: #fbbf24;
+  --accent-glow: #fbbf24;
+  --cta: #fbbf24;
+  --cta-ink: #111111;
+  --focus: #6da7ec;
+  --lands-tint: rgba(34, 197, 94, 0.13);
+  --lands-ink: #86efac;
+  --risky-tint: rgba(250, 178, 25, 0.15);
+  --risky-ink: #fcd34d;
+  --dead-tint: rgba(239, 68, 68, 0.17);
+  --dead-ink: #fca5a5;
+  --quiet: #71717a;
+  --quiet-ink: #a1a1aa;
+  --more: #3987e5;
+  --less: #d95926;
+  --mid: #2a2a2c;
+  --seq-1: #16202e;
+  --seq-2: #18304f;
+  --seq-3: #1d4475;
+  --seq-4: #255d9f;
+  --seq-5: #3a7fd0;
+  --seq-6: #7db0f0;
+  --seq-ink-1: #ededed;
+  --seq-ink-2: #ededed;
+  --seq-ink-3: #ededed;
+  --seq-ink-4: #ededed;
+  --seq-ink-5: #ededed;
+  --seq-ink-6: #0b0b0b;
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-paper-raised: var(--paper-raised);
-  --color-paper-sunk: var(--paper-sunk);
-  --color-rule: var(--rule);
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-sunk: var(--sunk);
+  --color-line: var(--line);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
-  --color-stage: var(--stage);
-  --color-stage-raised: var(--stage-raised);
-  --color-stage-ink: var(--stage-ink);
-  --color-stage-ink-soft: var(--stage-ink-soft);
-  --color-spot: var(--spot);
+  --color-accent: var(--accent);
+  --color-accent-glow: var(--accent-glow);
+  --color-cta: var(--cta);
+  --color-cta-ink: var(--cta-ink);
+  --color-focus: var(--focus);
   --color-lands: var(--lands);
+  --color-lands-tint: var(--lands-tint);
   --color-lands-ink: var(--lands-ink);
   --color-risky: var(--risky);
+  --color-risky-tint: var(--risky-tint);
   --color-risky-ink: var(--risky-ink);
   --color-dead: var(--dead);
+  --color-dead-tint: var(--dead-tint);
   --color-dead-ink: var(--dead-ink);
-  --color-unchecked: var(--unchecked);
-  --color-unchecked-ink: var(--unchecked-ink);
+  --color-quiet: var(--quiet);
+  --color-quiet-ink: var(--quiet-ink);
+  --color-more: var(--more);
+  --color-less: var(--less);
+  --color-mid: var(--mid);
 
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-instrument-serif);
-  --font-script: var(--font-courier-prime);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-source-serif);
+
+  --animate-rise: rise 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes shimmer {
+  50% {
+    opacity: 0.45;
+  }
 }
 
 body {
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
 }
 
-/* A highlighter stroke rather than a solid box: a band through the middle
-   of the line, slightly uneven at the ends. */
-.hl {
-  --hl: var(--unchecked);
-  /* <mark> defaults to a yellow background; the stroke comes from the image. */
-  background-color: transparent;
-  color: inherit;
-  background-image: linear-gradient(
-    100deg,
-    transparent 0.2em,
-    var(--hl) 0.25em,
-    var(--hl) calc(100% - 0.25em),
-    transparent calc(100% - 0.2em)
-  );
-  background-size: 100% 72%;
-  background-position: 0 62%;
-  background-repeat: no-repeat;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  padding: 0 0.2em;
-  margin: 0 -0.05em;
-  border-radius: 0.15em;
-  cursor: pointer;
-  transition: filter 120ms ease;
+::selection {
+  background: color-mix(in srgb, var(--accent-glow) 35%, transparent);
 }
-.hl:hover {
-  filter: saturate(1.4) brightness(0.97);
-}
-.hl[data-verdict="lands"] { --hl: var(--lands); }
-.hl[data-verdict="risky"] { --hl: var(--risky); }
-.hl[data-verdict="dead"] { --hl: var(--dead); }
-.hl[data-verdict="unchecked"] {
-  --hl: var(--unchecked);
-  text-decoration: underline dotted var(--unchecked-ink);
-  text-underline-offset: 0.25em;
-}
-.hl[data-selected="true"] {
-  outline: 2px solid var(--ink);
-  outline-offset: 1px;
-}
-.hl:focus-visible {
-  outline: 2px solid var(--spot);
+
+:focus-visible {
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
-/* Faint ruled lines behind the script, like a legal pad. */
-.ruled {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(2rem - 1px),
-    color-mix(in srgb, var(--rule) 70%, transparent) calc(2rem - 1px),
-    color-mix(in srgb, var(--rule) 70%, transparent) 2rem
-  );
-  background-position: 0 0.6rem;
+/* A soft stage light behind the top of the page. */
+.spotlight {
+  background: radial-gradient(60% 55% at 50% 0%, var(--glow), transparent 72%);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(12px);
+}
+
+/* A reference in the script. Lands is quiet (underline only); the ones that
+   need attention get a tint. */
+.ref {
+  --mark: var(--quiet);
+  --tint: transparent;
+  color: inherit;
+  background-color: var(--tint);
+  box-shadow: inset 0 -2px 0 var(--mark);
+  border-radius: 4px;
+  padding: 0 2px;
+  margin: 0 -1px;
+  cursor: pointer;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition:
+    background-color 300ms ease,
+    box-shadow 300ms ease;
+}
+.ref:hover {
+  background-color: color-mix(in srgb, var(--mark) 22%, transparent);
+}
+.ref[data-verdict="lands"] {
+  --mark: var(--lands);
+  --tint: var(--lands-tint);
+}
+.ref[data-verdict="risky"] {
+  --mark: var(--risky);
+  --tint: var(--risky-tint);
+}
+.ref[data-verdict="dead"] {
+  --mark: var(--dead);
+  --tint: var(--dead-tint);
+}
+.ref[data-verdict="unchecked"] {
+  box-shadow: none;
+  text-decoration: underline dotted var(--quiet);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+}
+.ref[data-pending="true"] {
+  --mark: var(--ink-faint);
+  --tint: var(--sunk);
+  text-decoration: none;
+  box-shadow: inset 0 -2px 0 var(--mark);
+  animation: var(--animate-shimmer);
+}
+.ref[data-selected="true"] {
+  outline: 2px solid var(--mark);
+  outline-offset: 1px;
+  background-color: color-mix(in srgb, var(--mark) 20%, transparent);
+}
+
+/* Tracked changes from accepted swaps. */
+.swap-ins {
+  background-color: color-mix(in srgb, var(--lands) 20%, transparent);
+  box-shadow: inset 0 -2px 0 var(--lands);
+  border-radius: 4px;
+  padding: 0 2px;
+  margin: 0 -1px;
+  text-decoration: none;
+  cursor: pointer;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.swap-del {
+  margin-right: 0.2em;
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--dead);
+  text-decoration-thickness: 1.5px;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+  body {
+    background: #ffffff;
+    color: #0b0b0b;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

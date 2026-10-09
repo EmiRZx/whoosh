@@ -1,130 +1,222 @@
 "use client";
 
-import type { AnalyzedReference, Signals, Verdict } from "@/lib/analysis/types";
-import { AGE_BUCKETS } from "@/lib/qloo/api";
-import { AGE_LABELS, KIND_LABEL, VERDICT_LABEL, WEIGHT_LABEL } from "./labels";
+import { ArrowDown, ArrowUp, Check, ChevronLeft, ChevronRight, MapPin, MousePointerClick, Undo2 } from "lucide-react";
+import type { AgeMix } from "@/lib/audience/audience";
+import type { AnalyzedReference, Signals, Swap } from "@/lib/analysis/types";
+import { planEdit } from "@/lib/ui/document";
+import { AgeChart } from "./age-chart";
+import { EntityThumb } from "./entity-thumb";
+import { KIND_LABEL, shortCity, signed, WEIGHT_LABEL } from "./labels";
+import { VerdictChip } from "./verdict";
 
-const VERDICT_CHIP: Record<Verdict, string> = {
-  lands: "bg-lands text-lands-ink",
-  risky: "bg-risky text-risky-ink",
-  dead: "bg-dead text-dead-ink",
-  unchecked: "bg-unchecked text-unchecked-ink",
-};
-
-export function VerdictChip({ verdict }: { verdict: Verdict }) {
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${VERDICT_CHIP[verdict]}`}>
-      {VERDICT_LABEL[verdict]}
-    </span>
-  );
+export interface InspectorProps {
+  reference?: AnalyzedReference;
+  index: number;
+  total: number;
+  onStep: (delta: number) => void;
+  mix?: AgeMix;
+  text: string;
+  accepted?: number;
+  onAccept: (swapIndex: number) => void;
+  onUndo: () => void;
+  // Name of the reference whose accepted swap rewrote this one away.
+  rewrittenBy?: string;
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="border-t border-rule pt-4">
-      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-faint">{title}</h3>
+    <section className="flex flex-col gap-2.5">
+      <h3 className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">{title}</h3>
       {children}
     </section>
   );
 }
 
-const signed = (x: number) => `${x >= 0 ? "+" : "−"}${Math.round(Math.abs(x) * 100)}%`;
-
-function AgeChart({ age }: { age: NonNullable<Signals["age"]> }) {
-  const max = Math.max(0.25, ...AGE_BUCKETS.map((b) => Math.abs(age[b] ?? 0)));
+function Stat({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
-    <div className="flex flex-col gap-1">
-      {AGE_BUCKETS.map((bucket, i) => {
-        const v = age[bucket];
-        const width = v === undefined ? 0 : (Math.abs(v) / max) * 50;
-        return (
-          <div key={bucket} className="grid grid-cols-[5.5rem_1fr_3rem] items-center gap-2 text-xs">
-            <span className="text-ink-soft">{AGE_LABELS[i]}</span>
-            <span className="relative h-2.5 rounded-sm bg-paper-sunk">
-              <span className="absolute inset-y-0 left-1/2 w-px bg-rule" aria-hidden />
-              {v !== undefined && (
-                <span
-                  className={`absolute inset-y-0 rounded-sm ${v >= 0 ? "bg-lands-ink/70" : "bg-dead-ink/60"}`}
-                  style={v >= 0 ? { left: "50%", width: `${width}%` } : { right: "50%", width: `${width}%` }}
-                />
-              )}
-            </span>
-            <span className="text-right tabular-nums">{v === undefined ? "–" : signed(v)}</span>
-          </div>
-        );
-      })}
+    <div className="rounded-xl bg-sunk px-3.5 py-3" title={hint}>
+      <p className="text-[11px] text-ink-faint">{label}</p>
+      <p className="mt-0.5 flex items-baseline gap-1 text-3xl font-semibold tracking-tight">{children}</p>
     </div>
   );
 }
 
-function SignalsView({ signals }: { signals: Signals }) {
+function RoomIndex({ value }: { value?: number }) {
+  if (value === undefined) return <span className="text-ink-faint">–</span>;
+  const Arrow = value >= 0 ? ArrowUp : ArrowDown;
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-lg bg-paper-sunk px-3 py-2">
-          <p className="text-[11px] uppercase tracking-wider text-ink-faint">This room vs. average</p>
-          <p className="font-display text-3xl leading-tight">{signals.roomIndex === undefined ? "–" : signed(signals.roomIndex)}</p>
-        </div>
-        <div className="rounded-lg bg-paper-sunk px-3 py-2">
-          <p className="text-[11px] uppercase tracking-wider text-ink-faint">Presence today</p>
-          <p className="font-display text-3xl leading-tight">
-            {signals.recognition === undefined ? "–" : `${Math.round(signals.recognition * 100)}`}
-            {signals.recognition !== undefined && <span className="text-base text-ink-soft">/100</span>}
+    <>
+      {signed(value)}
+      <Arrow className={`size-4 self-center ${value >= 0 ? "text-more" : "text-less"}`} strokeWidth={2.75} aria-hidden />
+    </>
+  );
+}
+
+function CityRanks({ cities }: { cities: NonNullable<Signals["cities"]> }) {
+  return (
+    <ul className="flex flex-wrap gap-1.5">
+      {cities.map((c) => (
+        <li
+          key={c.name}
+          className="flex items-center gap-1 rounded-full bg-sunk px-2.5 py-1 text-xs"
+          title={`Ranks #${c.rank} of ${c.of} big cities for this`}
+        >
+          <MapPin className="size-3 text-ink-faint" aria-hidden />
+          {shortCity(c.name)}
+          <span className="font-semibold tabular-nums">#{c.rank}</span>
+          <span className="text-ink-faint">/{c.of}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function SwapCard({
+  swap,
+  text,
+  reference,
+  accepted,
+  onAccept,
+  onUndo,
+}: {
+  swap: Swap;
+  text: string;
+  reference: AnalyzedReference;
+  accepted: boolean;
+  onAccept: () => void;
+  onUndo: () => void;
+}) {
+  const edit = planEdit(text, reference, swap);
+  const best = swap.signals.cities?.length ? [...swap.signals.cities].sort((a, b) => a.rank - b.rank)[0] : undefined;
+  return (
+    <li
+      className={`rounded-xl border p-3.5 transition-colors ${
+        accepted ? "border-lands/50 bg-lands-tint" : "border-card-border bg-card"
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <EntityThumb src={swap.entity.imageUrl} name={swap.entity.name} className="size-9" />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+            <span className="font-semibold">{swap.entity.name}</span>
+            <VerdictChip verdict={swap.verdict} />
+          </div>
+          <p className="mt-0.5 text-xs text-ink-faint">
+            {swap.signals.roomIndex !== undefined && <>This room {signed(swap.signals.roomIndex)}</>}
+            {best && (
+              <>
+                {swap.signals.roomIndex !== undefined && " · "}#{best.rank} in {shortCity(best.name)}
+              </>
+            )}
           </p>
         </div>
       </div>
-      {signals.age && Object.keys(signals.age).length > 0 && (
-        <div>
-          <p className="mb-2 text-xs text-ink-soft">How each age group likes it, vs. the average adult</p>
-          <AgeChart age={signals.age} />
-        </div>
-      )}
-      {signals.cities && signals.cities.length > 0 && (
-        <div>
-          <p className="mb-2 text-xs text-ink-soft">Rank among {signals.cities[0].of} big cities</p>
-          <ul className="flex flex-wrap gap-2">
-            {signals.cities.map((c) => (
-              <li key={c.name} className="rounded-full bg-paper-sunk px-3 py-1 text-sm">
-                {c.name.split(",")[0]} <span className="font-semibold tabular-nums">#{c.rank}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+      {swap.why && <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{swap.why}</p>}
+      <p className="mt-2.5 rounded-lg bg-sunk px-3 py-2 font-serif text-[15px] leading-relaxed">
+        {edit
+          ? edit.parts.map((part, i) =>
+              part.kind === "same" ? (
+                <span key={i}>{part.text}</span>
+              ) : part.kind === "del" ? (
+                <del key={i} className="swap-del">
+                  {part.text}
+                </del>
+              ) : (
+                <ins key={i} className="swap-ins cursor-auto">
+                  {part.text}
+                </ins>
+              ),
+            )
+          : swap.rewrite}
+      </p>
+      <div className="mt-3 flex items-center gap-2">
+        {accepted ? (
+          <>
+            <span className="flex items-center gap-1 text-sm font-medium text-lands-ink">
+              <Check className="size-4" strokeWidth={2.75} aria-hidden />
+              In your script
+            </span>
+            <button
+              type="button"
+              onClick={onUndo}
+              className="ml-auto flex items-center gap-1 rounded-full border border-line px-3 py-1.5 text-xs font-medium text-ink-soft hover:text-ink"
+            >
+              <Undo2 className="size-3.5" aria-hidden />
+              Undo
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={onAccept}
+            disabled={!edit}
+            className="rounded-full bg-cta px-3.5 py-1.5 text-xs font-semibold text-cta-ink transition-transform hover:-translate-y-px disabled:opacity-40"
+          >
+            Use this swap
+          </button>
+        )}
+      </div>
+    </li>
   );
 }
 
-export function Inspector({ reference }: { reference?: AnalyzedReference }) {
+export function Inspector(props: InspectorProps) {
+  const { reference, index, total, onStep, mix, text, accepted, onAccept, onUndo, rewrittenBy } = props;
+
   if (!reference) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 px-6 py-12 text-center">
-        <p className="font-display text-2xl">Pick a reference</p>
-        <p className="max-w-xs text-sm text-ink-soft">Click any highlighted name in your script to see how this room reads it.</p>
+      <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+        <MousePointerClick className="size-6 text-ink-faint" aria-hidden />
+        <p className="text-lg font-semibold">Pick a reference</p>
+        <p className="max-w-xs text-sm text-ink-soft">Click any highlighted name in the script to see how this room reads it.</p>
       </div>
     );
   }
 
   const { extracted, resolution } = reference;
   const status = resolution.status;
+  const entity = resolution.entity;
 
   return (
-    <div className="flex flex-col gap-4">
-      <header className="flex flex-col gap-2">
+    <div key={reference.key} className="flex animate-rise flex-col gap-5">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <VerdictChip verdict={reference.verdict} />
-          <span className="text-xs text-ink-soft">
+          <VerdictChip verdict={reference.verdict} pending={status === "pending"} />
+          <span className="text-xs text-ink-faint">
             {KIND_LABEL[extracted.kind]} · {WEIGHT_LABEL[extracted.weight]}
           </span>
         </div>
-        <h2 className="font-display text-3xl leading-tight">{extracted.name}</h2>
-        {extracted.disambiguation && <p className="text-sm text-ink-soft">{extracted.disambiguation}</p>}
-        {resolution.standIn && (
-          <p className="rounded-md bg-paper-sunk px-2.5 py-1.5 text-xs text-ink-soft">Measured through a stand-in: {resolution.standIn}.</p>
-        )}
+        <div className="flex items-center gap-0.5 text-xs text-ink-faint">
+          <button type="button" onClick={() => onStep(-1)} aria-label="Previous reference" className="grid size-7 place-items-center rounded-full hover:bg-sunk hover:text-ink">
+            <ChevronLeft className="size-4" aria-hidden />
+          </button>
+          <span className="tabular-nums">
+            {index + 1} of {total}
+          </span>
+          <button type="button" onClick={() => onStep(1)} aria-label="Next reference" className="grid size-7 place-items-center rounded-full hover:bg-sunk hover:text-ink">
+            <ChevronRight className="size-4" aria-hidden />
+          </button>
+        </div>
+      </div>
+
+      <header className="flex items-start gap-3.5">
+        <EntityThumb src={entity?.imageUrl} name={extracted.name} />
+        <div className="min-w-0">
+          <h2 className="text-2xl font-semibold leading-tight tracking-tight">{extracted.name}</h2>
+          {(extracted.disambiguation ?? entity?.description) && (
+            <p className="mt-1 line-clamp-2 text-sm text-ink-soft">{extracted.disambiguation ?? entity?.description}</p>
+          )}
+        </div>
       </header>
 
-      <Section title="What it does in the line">
+      {resolution.standIn && (
+        <p className="rounded-lg bg-sunk px-3 py-2 text-xs text-ink-soft">Measured through a stand-in: {resolution.standIn}.</p>
+      )}
+      {rewrittenBy && (
+        <p className="rounded-lg bg-lands-tint px-3 py-2 text-xs text-lands-ink">Your swap for {rewrittenBy} rewrote this line.</p>
+      )}
+
+      <Section title="Its job in the line">
         <p className="text-[15px] leading-relaxed">{extracted.role}</p>
       </Section>
 
@@ -134,23 +226,58 @@ export function Inspector({ reference }: { reference?: AnalyzedReference }) {
             Events, memes and trends aren&apos;t in a taste graph, and political figures aren&apos;t measured, so this one is your call.
           </p>
         ) : status === "pending" ? (
-          <p className="text-sm leading-relaxed text-ink-soft">Checking with Qloo…</p>
+          <div className="flex flex-col gap-2" aria-busy>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="h-[74px] animate-shimmer rounded-xl bg-sunk" />
+              <div className="h-[74px] animate-shimmer rounded-xl bg-sunk" />
+            </div>
+            <p className="text-sm text-ink-soft">Checking with Qloo…</p>
+          </div>
         ) : status === "not_found" ? (
           <p className="text-sm leading-relaxed text-ink-soft">Qloo doesn&apos;t have this one, so it&apos;s your call.</p>
         ) : status === "ambiguous" ? (
           <p className="text-sm leading-relaxed text-ink-soft">
-            Qloo has several things by this name and none was a clear match:{" "}
-            {resolution.candidates?.map((c) => c.name).join(", ")}.
+            Qloo has several things by this name and none was a clear match: {resolution.candidates?.map((c) => c.name).join(", ")}.
           </p>
         ) : (
           <div className="flex flex-col gap-4">
+            {reference.signals && (
+              <div className="grid grid-cols-2 gap-2.5">
+                <Stat label="This room vs. average" hint="How much more or less this room likes it than the average adult, from Qloo">
+                  <RoomIndex value={reference.signals.roomIndex} />
+                </Stat>
+                <Stat label="Presence today" hint="Popularity percentile among things of its kind, from Qloo">
+                  {reference.signals.recognition === undefined ? (
+                    <span className="text-ink-faint">–</span>
+                  ) : (
+                    <>
+                      {Math.round(reference.signals.recognition * 100)}
+                      <span className="text-sm font-normal text-ink-faint">/100</span>
+                    </>
+                  )}
+                </Stat>
+              </div>
+            )}
             <ul className="flex flex-col gap-1.5 text-sm leading-relaxed">
               {reference.reasons.map((reason, i) => (
-                <li key={i}>{reason}</li>
+                <li key={i} className="flex gap-2">
+                  <span className="mt-2 size-1 shrink-0 rounded-full bg-ink-faint" aria-hidden />
+                  {reason}
+                </li>
               ))}
             </ul>
-            {reference.signals && <SignalsView signals={reference.signals} />}
-            <p className="text-[11px] text-ink-faint">All numbers from Qloo&apos;s taste graph, describing audiences in aggregate.</p>
+            {reference.signals?.age && Object.keys(reference.signals.age).length > 0 && (
+              <div className="flex flex-col gap-2">
+                <p className="text-xs text-ink-soft">Each age group vs. the average adult</p>
+                <AgeChart age={reference.signals.age} mix={mix} />
+              </div>
+            )}
+            {reference.signals?.cities && reference.signals.cities.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <p className="text-xs text-ink-soft">Where it ranks among {reference.signals.cities[0].of} big cities</p>
+                <CityRanks cities={reference.signals.cities} />
+              </div>
+            )}
           </div>
         )}
       </Section>
@@ -158,27 +285,27 @@ export function Inspector({ reference }: { reference?: AnalyzedReference }) {
       {(reference.swaps.length > 0 || reference.swapNote) && (
         <Section title="Swaps that do the same job">
           {reference.swaps.length > 0 && (
-            <ul className="flex flex-col gap-3">
-              {reference.swaps.map((swap) => (
-                <li key={swap.entity.id} className="rounded-lg border border-rule bg-paper-raised p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium">{swap.entity.name}</span>
-                    <span className="flex items-center gap-2">
-                      {swap.signals.roomIndex !== undefined && (
-                        <span className="text-xs tabular-nums text-ink-soft">room {signed(swap.signals.roomIndex)}</span>
-                      )}
-                      <VerdictChip verdict={swap.verdict} />
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-ink-soft">{swap.why}</p>
-                  <p className="mt-2 rounded bg-paper-sunk px-2 py-1.5 font-script text-sm leading-relaxed">{swap.rewrite}</p>
-                </li>
+            <ul className="flex flex-col gap-2.5">
+              {reference.swaps.map((swap, i) => (
+                <SwapCard
+                  key={swap.entity.id}
+                  swap={swap}
+                  text={text}
+                  reference={reference}
+                  accepted={accepted === i}
+                  onAccept={() => onAccept(i)}
+                  onUndo={onUndo}
+                />
               ))}
             </ul>
           )}
-          {reference.swapNote && <p className="mt-2 text-xs leading-relaxed text-ink-soft">{reference.swapNote}</p>}
+          {reference.swapNote && <p className="text-xs leading-relaxed text-ink-soft">{reference.swapNote}</p>}
         </Section>
       )}
+
+      <p className="border-t border-line pt-3 text-[11px] text-ink-faint">
+        Numbers from Qloo&apos;s taste graph, describing audiences in aggregate.
+      </p>
     </div>
   );
 }

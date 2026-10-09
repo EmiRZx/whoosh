@@ -47,7 +47,10 @@ export function buildReferences(text: string, extraction: Extraction): AnalyzedR
 // rewrites.
 export function sentenceAround(text: string, start: number, end: number): string {
   const before = text.slice(0, start);
-  const from = Math.max(before.lastIndexOf(". "), before.lastIndexOf("? "), before.lastIndexOf("! "), before.lastIndexOf("\n"));
+  // The last sentence end before the span, counting one inside a closing
+  // quote ('..."CBS This Morning." Jake Tapper').
+  let from = before.lastIndexOf("\n");
+  for (const m of before.matchAll(/[.?!]["”'’)]*\s/g)) from = Math.max(from, m.index + m[0].length - 1);
   const after = text.slice(end).search(/[.?!](\s|["”'’)]|$)/);
   let to = after < 0 ? text.length : end + after + 1;
   // Keep a closing quote or bracket that ends the sentence.

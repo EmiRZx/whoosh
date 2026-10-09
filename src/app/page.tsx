@@ -1,15 +1,22 @@
-import { Workbench } from "@/components/workbench";
+import { Bot, ScanSearch, Shuffle } from "lucide-react";
+import Link from "next/link";
+import { Origin } from "@/components/origin";
+import { Studio } from "@/components/studio";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const STEPS = [
   {
+    icon: ScanSearch,
     title: "Find every reference",
     body: "An agent reads your script and pulls out each movie, show, song, brand, place and public figure, along with the job it does in the line.",
   },
   {
+    icon: Bot,
     title: "Ask the taste graph",
     body: "Qloo says how present each one is in culture today, how each age group in your room feels about it compared with the average adult, and how it plays city by city.",
   },
   {
+    icon: Shuffle,
     title: "Fix what won't land",
     body: "For references the room won't get, the agent finds substitutes that do the same job for this audience, checks them against Qloo, and rewrites the line.",
   },
@@ -18,45 +25,76 @@ const STEPS = [
 export default function Home() {
   return (
     <>
-      <header className="bg-stage pb-32 text-stage-ink">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-          <span className="flex items-center gap-2 font-display text-2xl">
-            <span className="size-2.5 rounded-full bg-spot shadow-[0_0_18px_4px_rgba(242,177,52,0.55)]" aria-hidden />
+      <div className="spotlight pointer-events-none absolute inset-x-0 top-0 h-[560px] print:hidden" aria-hidden />
+
+      <header className="relative print:hidden">
+        <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-5 sm:px-6">
+          <Link href="/" className="flex items-center gap-2.5 text-[17px] font-semibold tracking-tight">
+            <span className="size-2.5 rounded-full bg-accent-glow shadow-[0_0_18px_5px_color-mix(in_srgb,var(--accent-glow)_55%,transparent)]" aria-hidden />
             Whoosh
-          </span>
-          <a href="#how" className="text-sm text-stage-ink-soft hover:text-stage-ink">
-            How it works
-          </a>
+          </Link>
+          <div className="flex items-center gap-1 text-sm text-ink-soft sm:gap-5">
+            <a href="#how" className="hidden hover:text-ink sm:inline">
+              How it works
+            </a>
+            <a href="#agents" className="hidden hover:text-ink sm:inline">
+              For agents (MCP)
+            </a>
+            <ThemeToggle />
+          </div>
         </nav>
-        <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6 sm:pt-16">
-          <h1 className="max-w-3xl font-display text-5xl leading-[1.02] sm:text-7xl">
-            Will they get the <em className="text-spot">reference</em>?
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-stage-ink-soft">
-            Bring a tight five, a toast, a lecture or a keynote, and say who's listening. Whoosh checks every cultural reference against what
-            that audience actually loves, using Qloo&apos;s taste graph, and helps you swap the ones that won&apos;t land.
-          </p>
-        </div>
       </header>
 
-      <main className="mx-auto -mt-20 w-full max-w-6xl flex-1 px-4 pb-16 sm:px-6">
-        <Workbench />
+      <main className="relative mx-auto w-full max-w-[1400px] flex-1 px-4 pb-20 sm:px-6">
+        <Studio />
 
-        <section id="how" className="mt-24 grid gap-10 border-t border-rule pt-12 md:grid-cols-3">
-          {STEPS.map((step, i) => (
-            <div key={step.title}>
-              <span className="font-display text-4xl text-spot">{i + 1}</span>
-              <h2 className="mt-2 font-display text-2xl">{step.title}</h2>
-              <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{step.body}</p>
+        <section id="how" className="mt-28 scroll-mt-8 print:hidden">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">How it works</p>
+          <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+            {STEPS.map((step, i) => (
+              <div key={step.title} className="card rounded-2xl p-6">
+                <div className="flex items-center justify-between">
+                  <step.icon className="size-5 text-accent" aria-hidden />
+                  <span className="font-mono text-xs text-ink-faint">0{i + 1}</span>
+                </div>
+                <h2 className="mt-4 text-lg font-semibold tracking-tight">{step.title}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="agents" className="mt-6 scroll-mt-8 print:hidden">
+          <div className="card grid grid-cols-1 gap-6 rounded-2xl p-6 md:grid-cols-[1fr_1.2fr] md:items-center">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">For agents</p>
+              <h2 className="mt-2 text-lg font-semibold tracking-tight">Let your own agent check a script before it ships</h2>
+              <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+                Whoosh can be called over MCP too. Any agent that writes speeches, ads or talks can call{" "}
+                <code className="rounded bg-sunk px-1 py-0.5 font-mono text-[12px]">check_script</code> with a script and a room, and
+                get the same verdicts and swaps.
+              </p>
             </div>
-          ))}
+            <pre className="overflow-x-auto rounded-xl bg-sunk p-4 font-mono text-[12.5px] leading-relaxed text-ink-soft">
+              <span className="text-ink-faint"># Claude Code</span>
+              {"\n"}claude mcp add --transport http whoosh <Origin fallback="https://…" />
+              /api/mcp
+            </pre>
+          </div>
         </section>
       </main>
 
-      <footer className="border-t border-rule">
-        <p className="mx-auto max-w-6xl px-4 py-6 text-xs text-ink-faint sm:px-6">
-          Built for the Qloo Agentic Hackathon. Taste data from Qloo describes aggregate audiences, never individuals.
-        </p>
+      <footer className="border-t border-line print:hidden">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-1 px-4 py-6 text-xs text-ink-faint sm:flex-row sm:justify-between sm:px-6">
+          <p>Built for the Qloo Agentic Hackathon. Taste data from Qloo describes aggregate audiences, never individuals.</p>
+          <p>
+            City list from{" "}
+            <a href="https://www.geonames.org/" className="underline hover:text-ink">
+              GeoNames
+            </a>{" "}
+            (CC BY 4.0).
+          </p>
+        </div>
       </footer>
     </>
   );

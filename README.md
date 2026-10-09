@@ -4,7 +4,7 @@
 
 Bring a stand-up set, a speech, a wedding toast or a lecture, choose the room (a college crowd in Birmingham, a corporate offsite in San Francisco), and Whoosh tells you which of your references that audience will actually get. It's built on [Qloo](https://qloo.com)'s taste graph for the Qloo Agentic Hackathon.
 
-> Status: in active development. Reference extraction, Qloo matching, the room and city signals, verdicts, the UI and the MCP server work today; the swap agent is being built now.
+> Status: in active development. Reference extraction, Qloo matching, the room and city signals, verdicts, the swap agent, local hooks, the UI and the MCP server work today. Next: a hosted demo.
 
 ## Why
 
@@ -18,6 +18,17 @@ Every comedian, speaker and teacher has watched a reference die in front of a ro
 4. **Fix what won't land.** For weak references, an agent searches Qloo for substitutes that do the same job for this audience, checks them with the same signals, and rewrites the line.
 
 The language model handles language: reading the script, choosing between candidates, judging whether a swap keeps the joke. Every number comes from Qloo through deterministic code. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## What you get
+
+- **The script, marked up.** Every reference is highlighted by verdict (lands, risky, won't land, not measured), each with an icon and a label. Click one for the details.
+- **Why, in numbers.** How much this room likes it compared with the average adult, how present it is in culture today, how each age group feels about it, and where it ranks in each tour city.
+- **Swaps you can use.** Substitutes that do the same job and beat the original for this room. Accept one and the line is rewritten in place as a tracked change, and the room score updates.
+- **A tour view.** Every reference against every city, and the city where the set plays best.
+- **Local hooks.** Places and artists that this crowd likes in each city.
+- **Notes to take away.** Copy the revised script, copy the notes as Markdown, or print them to PDF.
+
+Light and dark themes; it works on a phone.
 
 ## Use it from an agent (MCP)
 
@@ -61,6 +72,7 @@ npx tsx evals/extraction/score.ts <run-dir>   # score reference extraction again
 src/app/            UI and route handlers (/api/analyze, /api/cities, /api/mcp)
 src/components/     UI components
 src/lib/analysis/   extraction, reference spans, the analysis pipeline
+src/lib/ui/         applying swaps to the script, the room score, exported notes
 src/lib/audience/   room presets and the age-mix math
 src/lib/qloo/       Qloo client: rate limiting, retries, caching, response normalization
 src/lib/geo/        city lookup
@@ -74,7 +86,7 @@ scripts/            data build scripts
 - Qloo results describe aggregate audiences. Whoosh never sends anything about an individual to Qloo, and presents results as audience-level affinity, not predictions about a person.
 - Qloo responses are cached on the server only and never committed (`.cache/` is git-ignored).
 - City data comes from [GeoNames](https://www.geonames.org), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), via `scripts/build_cities.py`.
-- The example scripts are original writing for this project.
+- Examples 01–04 are original writing for this project. Example 05 is an excerpt of a President's public remarks (a U.S. Government work, in the public domain). Example 06 is a set of anonymous one-liners that circulate freely online.
 
 ## License
 
