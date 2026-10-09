@@ -4,7 +4,7 @@
 // Usage: npx tsx --env-file=.env.local scripts/swap-context.ts <sample-id> <room> <reference name> <out.json>
 import { writeFile } from "node:fs/promises";
 import { SAMPLES } from "../src/content/samples";
-import { sentenceAround } from "../src/lib/analysis/references";
+import { passageAround } from "../src/lib/analysis/references";
 import { runAnalysis } from "../src/lib/analysis/run";
 import { describeSwapTask } from "../src/lib/analysis/swap-agent";
 import type { SwapContext } from "../src/lib/analysis/swap-tools";
@@ -21,20 +21,21 @@ async function main() {
   });
   const ref = analysis?.references.find((r) => r.extracted.name === refName);
   if (!analysis || !ref?.resolution.entity) throw new Error(`No measured reference called ${refName}`);
-  const span = ref.spans[0];
-
   const ctx: SwapContext = {
     original: {
       id: ref.resolution.entity.id,
-      name: ref.resolution.entity.name,
+      name: ref.extracted.name,
+      entity_name: ref.resolution.entity.name,
+      stand_in: ref.resolution.standIn,
       type: ref.resolution.entity.type,
       kind: ref.extracted.kind,
       role: ref.extracted.role,
       weight: ref.extracted.weight,
       quotes: ref.extracted.quotes,
-      line: sentenceAround(analysis.text, span.start, span.end),
+      line: passageAround(analysis.text, ref.spans),
       verdict: ref.verdict,
       reasons: ref.reasons,
+      room_index: ref.signals?.roomIndex,
     },
     audience: { label: analysis.audience.label, ageMix: analysis.audience.ageMix, cities: analysis.audience.cities },
     checked: {},

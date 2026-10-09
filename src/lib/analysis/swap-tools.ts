@@ -13,7 +13,10 @@ import { AGE_LABEL, judge } from "./verdict";
 export interface SwapContext {
   original: {
     id: string;
+    // The name the writer used, and the Qloo entity it was measured as.
     name: string;
+    entity_name: string;
+    stand_in?: string;
     type: string;
     kind: string;
     role: string;
@@ -22,6 +25,7 @@ export interface SwapContext {
     line: string;
     verdict: Verdict;
     reasons: string[];
+    room_index?: number;
   };
   audience: { label: string; ageMix: AgeMix; cities: City[] };
   // Everything check() has measured in this session, by entity id.
@@ -37,6 +41,24 @@ export interface Checked {
   room_index?: number;
   biggest_fans?: string;
   cities?: string[];
+  // Whether it's clearly a better fit for this room than the original.
+  beats_original?: boolean;
+}
+
+// A swap has to land and also be clearly better for this room: warmer than
+// the original by a margin, or, when the original has no age data, not
+// noticeably cold. "Lands" alone lets through household names the room is
+// lukewarm on (a host whose fans are mostly over 55, for a college crowd).
+export const SWAP_RULES = {
+  margin: 0.05, // warmer than the original by at least this much
+  coldest: -0.25, // and never colder than this, however cold the original was
+  floorWithoutData: -0.1, // when the original has no age data
+};
+
+export function beatsOriginal(candidate: { verdict: Verdict; room_index?: number }, original: { room_index?: number }): boolean {
+  if (candidate.verdict !== "lands" || candidate.room_index === undefined) return false;
+  if (original.room_index === undefined) return candidate.room_index >= SWAP_RULES.floorWithoutData;
+  return candidate.room_index >= Math.max(original.room_index + SWAP_RULES.margin, SWAP_RULES.coldest);
 }
 
 const compact = (e: QlooEntity) => ({
@@ -130,6 +152,7 @@ export async function check(client: QlooClient, ctx: SwapContext, input: z.infer
       biggest_fans: fans ? `${AGE_LABEL[fans]} (${Math.round(m.profile!.age[fans]! * 100)}%)` : undefined,
       cities: m.cities?.map((c) => `${c.name} #${c.rank} of ${c.of}`),
     };
+    result.beats_original = beatsOriginal(result, ctx.original);
     ctx.checked[e.id] = result;
     return result;
   });
@@ -139,7 +162,7 @@ export const SubmitInput = z.object({
   swaps: z
     .array(
       z.object({
-        id: z.string().describe("Entity id of a substitute that check() called 'lands'"),
+        id: z.string().describe("Entity id of a substitute whose check() result has beats_original: true"),
         rewrite: z.string().describe("The line rewritten with the substitute, changing as little as possible"),
         why: z.string().describe("One sentence on why it does the same job for this room"),
       }),
@@ -155,7 +178,9 @@ export function validateSubmission(ctx: SwapContext, input: z.infer<typeof Submi
     const c = ctx.checked[swap.id];
     if (!c) problems.push(`${swap.id} was never checked; run check on it first.`);
     else if (c.verdict !== "lands") problems.push(`${c.name} checks as "${c.verdict}" for this room; only substitutes that land can be submitted.`);
-    else if (!swap.rewrite.toLowerCase().includes(c.name.toLowerCase().split(/[:(]/)[0].trim().split(" ")[0])) {
+    else if (!beatsOriginal(c, ctx.original)) {
+      problems.push(`${c.name} lands but isn't clearly a better fit for this room than the original (room index ${c.room_index ?? "unknown"}); drop it.`);
+    } else if (!swap.rewrite.toLowerCase().includes(c.name.toLowerCase().split(/[:(]/)[0].trim().split(" ")[0])) {
       problems.push(`The rewrite for ${c.name} doesn't seem to mention it.`);
     }
     if (swap.rewrite.trim() === ctx.original.line.trim()) problems.push(`The rewrite for ${swap.id} is identical to the original line.`);

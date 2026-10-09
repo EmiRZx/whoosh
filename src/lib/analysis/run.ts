@@ -11,7 +11,7 @@ import { getQlooClient } from "../qloo/server";
 import { chooseCandidates } from "./choose";
 import { extractReferences, type Extraction } from "./extract";
 import { measure } from "./measure";
-import { buildReferences, sentenceAround } from "./references";
+import { buildReferences, passageAround } from "./references";
 import { findCandidates, pickCandidate, toSummary, type Pick } from "./resolve";
 import { runSwapAgent, type SwapResult } from "./swap-agent";
 import { check, type SwapContext } from "./swap-tools";
@@ -201,15 +201,18 @@ function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpe
   return {
     original: {
       id: entity.id,
-      name: entity.name,
+      name: ref.extracted.name,
+      entity_name: entity.name,
+      stand_in: ref.resolution.standIn,
       type: entity.type,
       kind: ref.extracted.kind,
       role: ref.extracted.role,
       weight: ref.extracted.weight,
       quotes: ref.extracted.quotes,
-      line: sentenceAround(text, ref.spans[0].start, ref.spans[0].end),
+      line: passageAround(text, ref.spans),
       verdict: ref.verdict,
       reasons: ref.reasons,
+      room_index: ref.signals?.roomIndex,
     },
     audience: { label: audience.label, ageMix: audience.ageMix, cities: audience.cities },
     checked: {},

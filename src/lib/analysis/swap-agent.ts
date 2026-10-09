@@ -23,7 +23,7 @@ export const SWAP_SYSTEM_PROMPT = `You help a performer fix one cultural referen
 
 How to work:
 - find_candidates searches Qloo's taste graph for things similar to the original that this room's main age group likes. Narrow it when the job calls for it: tags from find_tags (a sitcom for a sitcom, fast food for fast food), another type, or a release year. lookup finds a specific substitute you already have in mind.
-- Check every substitute with check before proposing it; it measures the substitute exactly the way the original was measured. Only substitutes that check as "lands" can be submitted.
+- Check every substitute with check before proposing it; it measures the substitute exactly the way the original was measured. Only substitutes whose check says beats_original: true can be submitted: they land and are clearly a better fit for this room than the original. When the room has cities, prefer substitutes that rank well there.
 - Judge the fit yourself. A substitute has to do the same job in the line: same role, tone and status (a dated gadget for a dated gadget, a cheesy boy band for a cheesy boy band, a cheap comfort chain for a cheap comfort chain). A popular substitute that does a different job is worse than none.
 - Change only the words that carry the reference. Keep the performer's voice, rhythm and punchline, and adjust nearby words only when grammar or sense requires it. Don't write new jokes.
 - Finish by calling submit_swaps. If nothing both fits the job and lands, submit an empty list with a one-sentence note; that is a useful answer.
@@ -40,7 +40,7 @@ export function describeSwapTask(ctx: SwapContext): string {
   const cities = ctx.audience.cities.map((c) => c.name).join(", ");
   return [
     `<line>${o.line}</line>`,
-    `<reference>\nname: ${o.name}\nmeasured as: ${o.name} (${o.type.replace("urn:entity:", "")}, id ${o.id})\nwords in the line: ${o.quotes.map((q) => `"${q}"`).join(", ")}\njob in the line: ${o.role}\nweight: ${o.weight}\nQloo verdict for this room: ${o.verdict}\n${o.reasons.map((r) => `- ${r}`).join("\n")}\n</reference>`,
+    `<reference>\nname: ${o.name}\nmeasured as: ${o.entity_name} (${o.type.replace("urn:entity:", "")}, id ${o.id})${o.stand_in ? `, a stand-in: ${o.stand_in}` : ""}\nwords in the line: ${o.quotes.map((q) => `"${q}"`).join(", ")}\njob in the line: ${o.role}\nweight: ${o.weight}\nQloo verdict for this room: ${o.verdict}${o.room_index === undefined ? "" : ` (room index ${o.room_index.toFixed(2)})`}\n${o.reasons.map((r) => `- ${r}`).join("\n")}\n</reference>`,
     `<room>\n${ctx.audience.label}: ${ages}${cities ? `\ncities: ${cities}` : ""}\n</room>`,
   ].join("\n\n");
 }
@@ -83,13 +83,14 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
     }),
     betaZodTool({
       name: "check",
-      description: "Measure substitutes against this room exactly as the original was measured: presence today, room index, biggest fans, city ranks and a verdict.",
+      description:
+        "Measure substitutes against this room exactly as the original was measured: presence today, room index, biggest fans, city ranks, a verdict, and whether it beats the original for this room.",
       inputSchema: CheckInput,
       run: (input) => safely(() => check(qloo, ctx, input)),
     }),
     betaZodTool({
       name: "submit_swaps",
-      description: "Submit up to three substitutes that checked as 'lands', each with the rewritten line. Submit an empty list if none fit.",
+      description: "Submit up to three substitutes whose check says beats_original: true, each with the rewritten line. Submit an empty list if none fit.",
       inputSchema: SubmitInput,
       run: async (input) => {
         const problems = validateSubmission(ctx, input);

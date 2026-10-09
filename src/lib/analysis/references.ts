@@ -56,6 +56,20 @@ export function sentenceAround(text: string, start: number, end: number): string
     .trim();
 }
 
+// Every sentence that mentions the reference, joined, so a rewrite can reach
+// all of its mentions ("Who Wants to Be a Millionaire" ... "50:50 lifeline").
+// Falls back to the first sentence when the mentions are far apart.
+export function passageAround(text: string, spans: { start: number; end: number }[], maxLength = 500): string {
+  const sorted = [...spans].sort((a, b) => a.start - b.start);
+  const first = sentenceAround(text, sorted[0].start, sorted[0].end);
+  const last = sorted.at(-1)!;
+  const from = text.indexOf(first);
+  const lastSentence = sentenceAround(text, last.start, last.end);
+  const to = text.indexOf(lastSentence, from) + lastSentence.length;
+  const passage = from >= 0 && to > from ? text.slice(from, to).trim() : first;
+  return passage.length <= maxLength ? passage : first;
+}
+
 export interface Segment {
   text: string;
   refKey?: string;
