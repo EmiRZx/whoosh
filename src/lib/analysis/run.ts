@@ -9,6 +9,7 @@ import { RECORDED_SWAPS, type RecordedSwap } from "@/content/extractions/swaps";
 import { search, type EntityType, type QlooEntity } from "../qloo/api";
 import type { QlooClient } from "../qloo/client";
 import { getQlooClient } from "../qloo/server";
+import { UsageMeter, type LlmOptions } from "../llm/config";
 import { chooseCandidates } from "./choose";
 import { extractReferences, type Extraction } from "./extract";
 import { gutCalls, toGutCall } from "./gut";
@@ -34,7 +35,24 @@ const normalize = (text: string) => text.replace(/\r\n/g, "\n").trim();
 
 type Resolution = { entity: QlooEntity; standIn?: string } | { candidates: QlooEntity[] } | null;
 
-export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEvent) => void) {
+// True when the text is one of the built-in examples, which replay recorded
+// model output and never call Claude.
+export function isExample(text: string) {
+  const t = normalize(text);
+  return SAMPLES.some((s) => normalize(s.text) === t && !!RECORDED_EXTRACTIONS[s.id]);
+}
+
+export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEvent) => void, options: { signal?: AbortSignal } = {}) {
+  const meter = new UsageMeter();
+  const llm: LlmOptions = { signal: options.signal, onUsage: meter.record };
+  try {
+    await analyze(input, send, llm);
+  } finally {
+    if (!meter.empty) console.info("llm usage", JSON.stringify(meter.summary()));
+  }
+}
+
+async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => void, llm: LlmOptions) {
   const text = normalize(input.text);
   const preset = presetById(input.presetId) ?? AUDIENCE_PRESETS[0];
   const cities = input.cities.map((name) => ({ name, match: findCity(name) }));
@@ -60,7 +78,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
     mode = "replay";
   } else if (anthropic) {
     send({ type: "status", message: "Reading the script" });
-    extraction = await extractReferences(anthropic, text);
+    extraction = await extractReferences(anthropic, text, llm);
     mode = "live";
   } else {
     throw new UserFacingError("Live analysis isn't switched on yet. Try one of the examples.");
@@ -94,13 +112,14 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
           audience,
           preset.description,
           targets.map((r) => ({ id: r.key, reference: r.extracted })),
+          llm,
         );
         for (const call of calls) {
           if (targets.some((r) => r.key === call.id)) update(call.id, { gut: toGutCall(call) });
         }
       }
     } catch (err) {
-      console.error("gut calls failed", err);
+      if (!llm.signal?.aborted) console.error("gut calls failed", err);
     }
   })();
 
@@ -148,6 +167,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
         const { picks } = await chooseCandidates(
           anthropic,
           ambiguous.map(({ ref, candidates }) => ({ id: ref.key, reference: ref.extracted, candidates })),
+          llm,
         );
         for (const p of picks) {
           const entry = ambiguous.find((a) => a.ref.key === p.id);
@@ -156,6 +176,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
           resolutions.set(p.id, entity ? { entity, standIn: p.stand_in ? p.note : undefined } : null);
         }
       } catch (err) {
+        if (llm.signal?.aborted) throw err;
         console.error("candidate matching failed", err);
       }
     }
@@ -220,7 +241,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
         weak.map(async (ref) => {
           const ctx = swapContext(text, ref, audience, references);
           try {
-            const result = recorded ? await replaySwaps(qloo, ctx, recorded[ref.extracted.name]) : await runSwapAgent(anthropic!, qloo, ctx);
+            const result = recorded ? await replaySwaps(qloo, ctx, recorded[ref.extracted.name]) : await runSwapAgent(anthropic!, qloo, ctx, llm);
             update(ref.key, {
               swaps: result.swaps.map(({ checked, rewrite, why }) => ({
                 entity: { id: checked.id, name: checked.name, type: checked.type },
@@ -232,7 +253,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
               swapNote: result.note,
             });
           } catch (err) {
-            console.error(`swap agent failed for ${ref.extracted.name}`, err);
+            if (!llm.signal?.aborted) console.error(`swap agent failed for ${ref.extracted.name}`, err);
           }
         }),
       );

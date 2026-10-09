@@ -1,7 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
-import { AGENT_MODEL, FALLBACK_BETA, LlmError } from "../llm/config";
+import { AGENT_MODEL, FALLBACK_BETA, LlmError, type LlmOptions } from "../llm/config";
 
 export const REFERENCE_KINDS = [
   "movie",
@@ -61,8 +61,9 @@ Fields:
 - role: the job the reference does in this line, phrased so someone could choose a substitute that does the same job. Describe the job, not the entity: "a shorthand for 90s TV romance", "a cheap chain restaurant that signals comfort over sophistication", "a dated device that dates the speaker".
 - weight: punchline if the joke or point depends on the audience getting it, setup if it frames a punchline, color if it is decoration.`;
 
-export async function extractReferences(client: Anthropic, text: string): Promise<Extraction> {
-  const response = await client.beta.messages.parse({
+export async function extractReferences(client: Anthropic, text: string, opts: LlmOptions = {}): Promise<Extraction> {
+  const response = await client.beta.messages.parse(
+    {
     model: AGENT_MODEL,
     max_tokens: 16000,
     betas: [FALLBACK_BETA],
@@ -73,7 +74,10 @@ export async function extractReferences(client: Anthropic, text: string): Promis
     output_config: { effort: "high", format: betaZodOutputFormat(ExtractionSchema) },
     system: EXTRACT_SYSTEM_PROMPT,
     messages: [{ role: "user", content: `<text>\n${text}\n</text>` }],
-  });
+    },
+    { signal: opts.signal },
+  );
+  opts.onUsage?.("extract", response.usage);
   if (response.stop_reason === "refusal") throw new LlmError("The model declined to analyze this text.");
   if (!response.parsed_output) throw new LlmError(`Extraction did not return valid output (${response.stop_reason}).`);
   return response.parsed_output;

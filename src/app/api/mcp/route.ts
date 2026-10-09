@@ -1,8 +1,10 @@
 // MCP endpoint (Streamable HTTP) an agent can test a script on its crowd before it
 // writes or delivers it. It runs the same pipeline as the web app.
+import { AsyncLocalStorage } from "node:async_hooks";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
-import { runAnalysis, UserFacingError } from "@/lib/analysis/run";
+import { isExample, runAnalysis, UserFacingError } from "@/lib/analysis/run";
+import { clientIp, takeLiveSlot } from "@/lib/limits";
 import type { Analysis, AnalysisEvent } from "@/lib/analysis/types";
 import { AUDIENCE_PRESETS } from "@/lib/audience/audience";
 import { AGE_BUCKETS } from "@/lib/qloo/api";
@@ -10,6 +12,9 @@ import { AGE_BUCKETS } from "@/lib/qloo/api";
 export const maxDuration = 300;
 
 const ROOM_IDS = AUDIENCE_PRESETS.map((p) => p.id) as [string, ...string[]];
+
+// The caller's address, for the same live-run limits as the web app.
+const caller = new AsyncLocalStorage<string>();
 
 function summarize(analysis: Analysis) {
   return {
@@ -42,10 +47,14 @@ const handler = createMcpHandler(
           cities: z.array(z.string().max(80)).max(6).optional().describe('Cities where it will be performed, e.g. "Austin, TX"'),
         }),
       },
-      async ({ text, room, cities }) => {
+      async ({ text, room, cities }, extra) => {
+        if (!isExample(text) && process.env.ANTHROPIC_API_KEY) {
+          const slot = await takeLiveSlot(`mcp:${caller.getStore() ?? "unknown"}`);
+          if (!slot.ok) return { isError: true, content: [{ type: "text", text: slot.message }] };
+        }
         const events: AnalysisEvent[] = [];
         try {
-          await runAnalysis({ text, presetId: room, cities: cities ?? [] }, (e) => events.push(e));
+          await runAnalysis({ text, presetId: room, cities: cities ?? [] }, (e) => events.push(e), { signal: extra.mcpReq.signal });
         } catch (err) {
           const message = err instanceof UserFacingError ? err.message : "The analysis failed. Please try again.";
           return { isError: true, content: [{ type: "text", text: message }] };
@@ -88,4 +97,6 @@ const handler = createMcpHandler(
   { serverInfo: { name: "whoosh", version: "0.1.0" } },
 );
 
-export { handler as GET, handler as POST };
+const handle = (request: Request) => caller.run(clientIp(request), () => handler(request));
+
+export { handle as GET, handle as POST };

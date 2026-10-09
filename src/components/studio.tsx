@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, Copy, FileText, Printer, X } from "lucide-react";
+import { ArrowLeft, Check, Copy, FileText, Printer, RotateCw, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SAMPLES } from "@/content/samples";
 import { presetById } from "@/lib/audience/audience";
@@ -316,9 +316,17 @@ export function Studio() {
               </div>
             </div>
             {state.phase === "error" && (
-              <p role="alert" className="mx-5 mt-5 rounded-xl bg-dead-tint px-4 py-3 text-sm text-dead-ink sm:mx-8">
-                {state.error}
-              </p>
+              <div role="alert" className="mx-5 mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-dead-tint px-4 py-3 text-sm text-dead-ink sm:mx-8">
+                <p>{state.error}</p>
+                <button
+                  type="button"
+                  onClick={start}
+                  className="flex items-center gap-1.5 rounded-full border border-dead/40 px-3 py-1 text-xs font-medium hover:bg-dead/10"
+                >
+                  <RotateCw className="size-3.5" aria-hidden />
+                  Try again
+                </button>
+              </div>
             )}
             <div className="px-5 py-6 sm:px-10 sm:py-9">
               {refs.length ? (

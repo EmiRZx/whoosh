@@ -74,3 +74,31 @@ export class TieredCache implements ResponseCache {
     await Promise.all(this.tiers.map((t) => t.set(key, value)));
   }
 }
+
+// A shared, durable tier for hosted deployments: every server instance sees
+// the same responses, and they survive restarts and redeploys.
+export class RedisCache implements ResponseCache {
+  constructor(
+    private store: { get(key: string): Promise<string | null>; set(key: string, value: string, ttlSeconds: number): Promise<void> },
+    private ttlSeconds = 90 * 86_400,
+  ) {}
+
+  private key(key: string) {
+    return `whoosh:qloo:${createHash("sha256").update(key).digest("hex")}`;
+  }
+
+  async get(key: string) {
+    try {
+      const raw = await this.store.get(this.key(key));
+      return raw === null ? undefined : JSON.parse(raw);
+    } catch {
+      return undefined;
+    }
+  }
+
+  async set(key: string, value: unknown) {
+    try {
+      await this.store.set(this.key(key), JSON.stringify(value), this.ttlSeconds);
+    } catch {}
+  }
+}

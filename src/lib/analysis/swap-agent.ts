@@ -1,6 +1,6 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AGENT_MODEL, FALLBACK_BETA } from "../llm/config";
+import { AGENT_MODEL, FALLBACK_BETA, type LlmOptions } from "../llm/config";
 import { AGE_BUCKETS } from "../qloo/api";
 import type { QlooClient } from "../qloo/client";
 import {
@@ -55,7 +55,7 @@ export interface SwapResult {
   note: string;
 }
 
-export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: SwapContext): Promise<SwapResult> {
+export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: SwapContext, opts: LlmOptions = {}): Promise<SwapResult> {
   let submitted: SwapResult | undefined;
   // Tool errors go back to the model as text so it can adjust, rather than
   // aborting the run.
@@ -109,7 +109,8 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
     }),
   ];
 
-  const runner = anthropic.beta.messages.toolRunner({
+  const runner = anthropic.beta.messages.toolRunner(
+    {
     model: AGENT_MODEL,
     max_tokens: 16000,
     max_iterations: 14,
@@ -119,9 +120,15 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
     output_config: { effort: "high" },
     system: SWAP_SYSTEM_PROMPT,
     tools,
+    // Each turn resends the conversation so far; caching its prefix makes
+    // the later turns cheap without changing what the model sees.
+    cache_control: { type: "ephemeral" },
     messages: [{ role: "user", content: describeSwapTask(ctx) }],
-  });
+    },
+    { signal: opts.signal },
+  );
   for await (const message of runner) {
+    opts.onUsage?.("swap", message.usage);
     if (submitted || message.stop_reason === "refusal") break;
   }
   return submitted ?? { swaps: [], note: "No substitute was confirmed for this room." };

@@ -5,7 +5,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 import { AGE_BUCKETS } from "../qloo/api";
-import { AGENT_MODEL, FALLBACK_BETA, LlmError } from "../llm/config";
+import { AGENT_MODEL, FALLBACK_BETA, LlmError, type LlmOptions } from "../llm/config";
 import type { ExtractedReference } from "./extract";
 import type { AudienceSpec, GutCall } from "./types";
 
@@ -79,9 +79,11 @@ export async function gutCalls(
   audience: Pick<AudienceSpec, "label" | "ageMix">,
   description: string,
   requests: GutRequest[],
+  opts: LlmOptions = {},
 ): Promise<GutCalls> {
   if (!requests.length) return { calls: [] };
-  const response = await client.beta.messages.parse({
+  const response = await client.beta.messages.parse(
+    {
     model: AGENT_MODEL,
     max_tokens: 8000,
     betas: [FALLBACK_BETA],
@@ -90,7 +92,10 @@ export async function gutCalls(
     output_config: { effort: "medium", format: betaZodOutputFormat(GutSchema) },
     system: GUT_SYSTEM_PROMPT,
     messages: [{ role: "user", content: describeGutTask(text, audience, description, requests) }],
-  });
+    },
+    { signal: opts.signal },
+  );
+  opts.onUsage?.("gut", response.usage);
   if (response.stop_reason === "refusal") throw new LlmError("The model declined to make gut calls.");
   if (!response.parsed_output) throw new LlmError(`Gut calls did not return valid output (${response.stop_reason}).`);
   return response.parsed_output;
