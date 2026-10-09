@@ -5,6 +5,7 @@ import { SAMPLES } from "@/content/samples";
 import { presetById } from "@/lib/audience/audience";
 import type { Verdict } from "@/lib/analysis/types";
 import { Inspector, VerdictChip } from "./inspector";
+import { LocalHooksPanel } from "./local-hooks";
 import { AgeBar, RoomPicker } from "./room-picker";
 import { ScriptView } from "./script-view";
 import { useAnalysis } from "./use-analysis";
@@ -134,7 +135,7 @@ export function Workbench() {
           <div className="rounded-2xl border border-rule bg-paper-raised p-5 lg:sticky lg:top-4">
             <Inspector reference={selected} />
           </div>
-          <ol className="flex flex-col gap-1 rounded-2xl bg-stage px-5 py-4 font-script text-xs text-stage-ink-soft" aria-live="polite">
+          <ol className="flex flex-col gap-1 rounded-2xl bg-stage px-5 py-4 font-script text-xs text-stage-ink-soft" aria-live="polite" aria-label="What the agent is doing">
             {state.statuses.map((s, i) => (
               <li key={i} className={i === state.statuses.length - 1 && state.phase === "running" ? "text-spot" : undefined}>
                 {s}
@@ -144,6 +145,8 @@ export function Workbench() {
           </ol>
         </aside>
       </div>
+
+      {preset && <LocalHooksPanel hooks={state.hooks} room={preset.label} />}
     </div>
   );
 }

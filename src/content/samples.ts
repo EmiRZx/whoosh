@@ -1,5 +1,8 @@
-// Original example scripts, written for this project. They double as the
-// extraction eval set (evals/extraction) and the demo's "try an example".
+// Example scripts for the demo's "try an example" and the extraction eval.
+// 01-04 are original writing for this project. 05 is an excerpt of a
+// President's remarks (a U.S. Government work, public domain), with stage
+// directions removed. 06 is a set of anonymous one-liners that circulate
+// freely online.
 export interface SampleScript {
   id: string;
   title: string;
@@ -84,6 +87,52 @@ Think about Who Wants to Be a Millionaire. Regis Philbin asks a contestant a que
 No? Okay, let's make it harder. Remember Deal or No Deal? Howie Mandel, twenty-six briefcases, and a mysterious banker on the phone. Should you take the deal? That depends on expected value, which is the most important idea in this course, and also the reason Las Vegas can afford the fountains at the Bellagio.
 
 Your homework is on Canvas. And no, ChatGPT can't do it for you. Well, it can, but it'll be confidently wrong, like my fantasy football picks every season.
+`,
+  },
+  {
+    id: "05-presidential-roast",
+    title: "The 2016 Correspondents' Dinner",
+    format: "Presidential roast",
+    presetId: "college",
+    cities: ["Washington, DC"],
+    text: `Anyway, here we are. My eighth and final appearance at this unique event. And I am excited. If this material works well, I'm going to use it at Goldman Sachs next year. Earn me some serious Tubmans. That's right.
+
+My brilliant and beautiful wife Michelle is here tonight. She looks so happy to be here. That's called practice. It's like learning to do 3-minute planks. She makes it look easy now.
+
+I won't lie: Look, this is a tough transition. It's hard. Key staff are now starting to leave the White House. Even reporters have left me. Savannah Guthrie, she's left the White House Press Corps to host the "Today" show. Norah O'Donnell left the briefing room to host "CBS This Morning." Jake Tapper left journalism to join CNN.
+
+I also would like to acknowledge some of the award-winning reporters that we have with us here tonight: Rachel McAdams, Mark Ruffalo, Liev Schreiber. Thank you all for everything that you've done. I'm just joking. As you know, "Spotlight" is a film, a movie about investigative journalists with the resources and the autonomy to chase down the truth and hold the powerful accountable. Best fantasy film since "Star Wars." Look, that was maybe a cheap shot.
+
+I understand the news business is tough these days, it keeps changing all the time. Every year at this dinner, somebody makes a joke about BuzzFeed, for example, changing the media landscape. And every year, the Washington Post laughs a little bit less hard.
+
+Kendall Jenner is also here. And we had a chance to meet her backstage. She seems like a very nice young woman. I'm not exactly sure what she does, but I am told that my Twitter mentions are about to go through the roof.
+
+Look, I've said how much I admire Hillary's toughness, her smarts and her policy chops, her experience. You've got to admit it, though, Hillary trying to appeal to young voters is a little bit like your relative who just signed up for Facebook. "Dear America, did you get my poke?" "Is it appearing on your wall?" "I'm not sure I am using this right. Love, Aunt Hillary." It's not entirely persuasive.
+`,
+  },
+  {
+    id: "06-one-liners",
+    title: "Internet one-liners, circa 2015",
+    format: "Folk jokes",
+    presetId: "college",
+    cities: [],
+    text: `Why did the Star Wars movies come out in the order 4, 5, 6, 1, 2, 3? Because in charge of scheduling, Yoda was.
+
+To whoever stole my copy of Microsoft Office: I will find you. You have my Word.
+
+What's the difference between Game of Thrones and Twitter? With Twitter you only get 140 characters.
+
+Arnold Schwarzenegger was asked if he wanted to upgrade to Windows 10. He said, "I still love Vista, baby."
+
+Rick Astley will let you borrow any movie from his Pixar collection, except one. He's never gonna give you Up.
+
+What concert costs 45 cents? 50 Cent featuring Nickelback.
+
+Walter White bought a pizza for his son. "Thanks, Dad, how much do I owe you?" "It's on the house."
+
+If you watch Jeopardy backwards, it's about rich people paying money for answers to questions.
+
+I stepped on a rusty Lego the other day. I'm worried I might have contracted Tetris.
 `,
   },
 ];

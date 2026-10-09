@@ -4,6 +4,8 @@
 export interface RecordedPick {
   name: string;
   type: string;
+  // Tells apart same-named entries (three shows called "CBS Mornings").
+  year?: number;
   standIn?: string;
 }
 
@@ -25,5 +27,22 @@ export const RECORDED_PICKS: Record<string, Record<string, RecordedPick | null>>
     TRL: { name: "Total Request Live", type: "urn:entity:tv_show" },
     Canvas: null,
     ChatGPT: null,
+  },
+  "05-presidential-roast": {
+    "CBS This Morning": { name: "CBS Mornings", type: "urn:entity:tv_show", year: 2012 },
+    "Star Wars": { name: "Star Wars: Episode IV - A New Hope", type: "urn:entity:movie" },
+    Twitter: { name: "X (Formerly Twitter)", type: "urn:entity:brand" },
+  },
+  "06-one-liners": {
+    "Star Wars": {
+      name: "Star Wars: Episode IV - A New Hope",
+      type: "urn:entity:movie",
+      standIn: "The original 1977 film, standing in for the whole saga",
+    },
+    "Microsoft Office": { name: "Microsoft365", type: "urn:entity:brand", standIn: "Microsoft 365, the renamed successor to Microsoft Office" },
+    Twitter: { name: "X (Formerly Twitter)", type: "urn:entity:brand" },
+    "Microsoft Windows": null,
+    Lego: { name: "The Lego Group", type: "urn:entity:brand" },
+    Tetris: null,
   },
 };

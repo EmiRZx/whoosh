@@ -69,10 +69,18 @@ export interface AnalyzedReference {
   swapNote?: string;
 }
 
+// What this room's age group likes in one of the audience's cities.
+export interface LocalHooks {
+  city: string;
+  places: EntitySummary[];
+  artists: EntitySummary[];
+}
+
 export interface Analysis {
   text: string;
   audience: AudienceSpec;
   references: AnalyzedReference[];
+  hooks?: LocalHooks[];
   // "replay" serves a recorded extraction for a built-in example; numbers
   // that need Qloo stay empty rather than being simulated.
   mode: "live" | "replay";
@@ -82,5 +90,6 @@ export type AnalysisEvent =
   | { type: "status"; message: string }
   | { type: "references"; references: AnalyzedReference[] }
   | { type: "update"; key: string; patch: Partial<AnalyzedReference> }
+  | { type: "hooks"; hooks: LocalHooks[] }
   | { type: "done"; analysis: Analysis }
   | { type: "error"; message: string };

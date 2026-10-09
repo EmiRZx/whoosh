@@ -100,8 +100,14 @@ describe("sentenceAround", () => {
     expect(sentenceAround(text, start, start + 13)).toBe("Regis Philbin asks a contestant a question with four options.");
   });
 
+  it("keeps the closing quote of a sentence that ends inside quotes", () => {
+    const t = `She left to host "CBS This Morning." Jake left too.`;
+    const start = t.indexOf("CBS");
+    expect(sentenceAround(t, start, start + 3)).toBe(`She left to host "CBS This Morning."`);
+  });
+
   it("stops at a paragraph break and strips a leading quote", () => {
     const start = text.indexOf("Pret");
-    expect(sentenceAround(text, start, start + 4)).toBe('New paragraph, "with Pret.');
+    expect(sentenceAround(text, start, start + 4)).toBe('New paragraph, "with Pret."');
   });
 });

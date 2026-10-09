@@ -15,7 +15,8 @@ import { buildReferences, passageAround } from "./references";
 import { findCandidates, pickCandidate, toSummary, type Pick } from "./resolve";
 import { runSwapAgent, type SwapResult } from "./swap-agent";
 import { check, type SwapContext } from "./swap-tools";
-import type { AnalysisEvent, AnalyzedReference, AudienceSpec } from "./types";
+import { localHooks } from "./hooks";
+import type { AnalysisEvent, AnalyzedReference, AudienceSpec, LocalHooks } from "./types";
 import { judge } from "./verdict";
 
 export interface AnalysisInput {
@@ -69,7 +70,8 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
     references = references.map((r) => (r.key === key ? { ...r, ...patch } : r));
     send({ type: "update", key, patch });
   };
-  const finish = () => send({ type: "done", analysis: { text, audience, references, mode } });
+  let hooks: LocalHooks[] = [];
+  const finish = () => send({ type: "done", analysis: { text, audience, references, mode, hooks } });
 
   const qloo = getQlooClient();
   const checkable = references.filter((r) => r.resolution.status === "pending");
@@ -99,7 +101,9 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
       for (const { ref, candidates } of ambiguous) {
         const pick = recorded[ref.extracted.name];
         if (pick === undefined) continue;
-        const entity = pick && candidates.find((c) => c.name === pick.name && c.types.includes(pick.type));
+        const entity =
+          pick &&
+          candidates.find((c) => c.name === pick.name && c.types.includes(pick.type) && (pick.year === undefined || c.releaseYear === pick.year));
         resolutions.set(ref.key, entity ? { entity, standIn: pick.standIn } : null);
       }
     } else if (anthropic) {
@@ -157,6 +161,15 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
     message: `${counts.lands ?? 0} land, ${counts.risky ?? 0} risky, ${counts.dead ?? 0} won't land`,
   });
 
+  // Local hooks run alongside the swap search.
+  const placed = audience.cities.filter((c) => c.lat !== undefined);
+  const hooksDone = placed.length
+    ? Promise.all(placed.map((c) => localHooks(qloo, c, audience.ageMix).catch(() => undefined))).then((found) => {
+        hooks = found.filter((h): h is LocalHooks => !!h);
+        if (hooks.length) send({ type: "hooks", hooks });
+      })
+    : Promise.resolve();
+
   // 4. Look for substitutes for the weak references the line depends on.
   const weak = references
     .filter((r) => (r.verdict === "dead" || r.verdict === "risky") && r.resolution.entity && r.spans.length)
@@ -189,6 +202,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
       );
     }
   }
+  await hooksDone;
   finish();
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import type { Analysis, AnalysisEvent, AnalyzedReference } from "@/lib/analysis/types";
+import type { Analysis, AnalysisEvent, AnalyzedReference, LocalHooks } from "@/lib/analysis/types";
 
 export interface AnalysisRequest {
   text: string;
@@ -13,11 +13,12 @@ export interface AnalysisState {
   phase: "idle" | "running" | "done" | "error";
   statuses: string[];
   references: AnalyzedReference[];
+  hooks: LocalHooks[];
   analysis?: Analysis;
   error?: string;
 }
 
-const IDLE: AnalysisState = { phase: "idle", statuses: [], references: [] };
+const IDLE: AnalysisState = { phase: "idle", statuses: [], references: [], hooks: [] };
 
 function reduce(state: AnalysisState, event: AnalysisEvent): AnalysisState {
   switch (event.type) {
@@ -30,8 +31,16 @@ function reduce(state: AnalysisState, event: AnalysisEvent): AnalysisState {
         ...state,
         references: state.references.map((r) => (r.key === event.key ? { ...r, ...event.patch } : r)),
       };
+    case "hooks":
+      return { ...state, hooks: event.hooks };
     case "done":
-      return { ...state, phase: "done", analysis: event.analysis, references: event.analysis.references };
+      return {
+        ...state,
+        phase: "done",
+        analysis: event.analysis,
+        references: event.analysis.references,
+        hooks: event.analysis.hooks ?? state.hooks,
+      };
     case "error":
       return { ...state, phase: "error", error: event.message };
   }
