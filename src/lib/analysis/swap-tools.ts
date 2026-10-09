@@ -26,6 +26,7 @@ export interface SwapContext {
     verdict: Verdict;
     reasons: string[];
     room_index?: number;
+    presence?: number;
   };
   audience: { label: string; ageMix: AgeMix; cities: City[] };
   // Other references in the script, so a swap doesn't repeat one.
@@ -55,10 +56,21 @@ export const SWAP_RULES = {
   margin: 0.05, // warmer than the original by at least this much
   coldest: -0.25, // and never colder than this, however cold the original was
   floorWithoutData: -0.1, // when the original has no age data
+  householdName: 0.95, // presence that stands in for missing age data...
+  faded: 0.5, // ...when it replaces a reference below this presence
 };
 
-export function beatsOriginal(candidate: { verdict: Verdict; room_index?: number }, original: { room_index?: number }): boolean {
-  if (candidate.verdict !== "lands" || candidate.room_index === undefined) return false;
+export function beatsOriginal(
+  candidate: { verdict: Verdict; room_index?: number; presence?: number },
+  original: { room_index?: number; presence?: number },
+): boolean {
+  if (candidate.verdict !== "lands") return false;
+  // Some household names have no age breakdown in Qloo (Steve Harvey). Trading
+  // a faded reference for one of them is still a clear improvement.
+  if (candidate.room_index === undefined) {
+    const fadedOriginal = original.presence === undefined || original.presence < SWAP_RULES.faded;
+    return fadedOriginal && (candidate.presence ?? 0) >= SWAP_RULES.householdName;
+  }
   if (original.room_index === undefined) return candidate.room_index >= SWAP_RULES.floorWithoutData;
   return candidate.room_index >= Math.max(original.room_index + SWAP_RULES.margin, SWAP_RULES.coldest);
 }

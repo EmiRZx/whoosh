@@ -44,6 +44,12 @@ describe("beatsOriginal", () => {
     expect(beatsOriginal({ verdict: "lands", room_index: -0.3 }, { room_index: -0.62 })).toBe(false);
     expect(beatsOriginal({ verdict: "lands", room_index: -0.2 }, { room_index: -0.62 })).toBe(true);
   });
+  it("accepts a household name without age data only in place of a faded reference", () => {
+    expect(beatsOriginal({ verdict: "lands", presence: 0.99 }, { presence: 0.35 })).toBe(true);
+    expect(beatsOriginal({ verdict: "lands", presence: 0.99 }, { presence: 0.9, room_index: -0.2 })).toBe(false);
+    expect(beatsOriginal({ verdict: "lands", presence: 0.8 }, { presence: 0.35 })).toBe(false);
+  });
+
   it("uses a floor when the original has no age data", () => {
     expect(beatsOriginal({ verdict: "lands", room_index: -0.08 }, {})).toBe(true);
     expect(beatsOriginal({ verdict: "lands", room_index: -0.12 }, {})).toBe(false);

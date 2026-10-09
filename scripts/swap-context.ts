@@ -36,6 +36,7 @@ async function main() {
       verdict: ref.verdict,
       reasons: ref.reasons,
       room_index: ref.signals?.roomIndex,
+      presence: ref.signals?.recognition,
     },
     audience: { label: analysis.audience.label, ageMix: analysis.audience.ageMix, cities: analysis.audience.cities },
     others: analysis.references.filter((r) => r.key !== ref.key).map((r) => r.extracted.name),

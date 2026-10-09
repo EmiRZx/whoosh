@@ -213,6 +213,7 @@ function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpe
       verdict: ref.verdict,
       reasons: ref.reasons,
       room_index: ref.signals?.roomIndex,
+      presence: ref.signals?.recognition,
     },
     audience: { label: audience.label, ageMix: audience.ageMix, cities: audience.cities },
     others: all.filter((r) => r.key !== ref.key).map((r) => r.extracted.name),
@@ -235,7 +236,7 @@ async function replaySwaps(qloo: QlooClient, ctx: SwapContext, recorded: { swaps
   return {
     swaps: present.flatMap(({ hit, s }) => {
       const c = checked.find((x) => x.id === hit.id);
-      return c && c.verdict === "lands" ? [{ checked: c, rewrite: s.rewrite, why: s.why }] : [];
+      return c?.beats_original ? [{ checked: c, rewrite: s.rewrite, why: s.why }] : [];
     }),
     note: recorded.note,
   };
