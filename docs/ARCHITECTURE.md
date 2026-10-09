@@ -9,15 +9,18 @@ text + audience
    │
    ▼
 1. Extract      LLM finds each reference (span, likely type, the job it does in the line)
-2. Resolve      Qloo /search per reference; the LLM picks the right candidate from context,
-                low-confidence matches are surfaced to the user instead of guessed
+2. Resolve      Qloo /search per reference in the expected type, with fallback types;
+                an exact name match in the expected type is accepted, anything else
+                goes to the LLM, which picks a candidate, accepts a stand-in, or
+                declines (an unchecked reference beats measuring the wrong thing)
 3. Measure      Qloo signals per resolved entity (deterministic code, no LLM):
-                  recognition  ← popularity percentile
-                  generational ← urn:demographics (age/gender index vs. baseline)
-                  local        ← urn:heatmap at each audience city
-                  momentum     ← /v2/trending
-4. Verdict      code combines the signals with the audience's age mix into
-                LANDS / RISKY / DEAD, with the reasons
+                  presence today ← popularity percentile within its type
+                  room index     ← urn:demographics age index, weighted by the room's age mix
+                  cities         ← one urn:heatmap call per entity over boxes on the tour
+                                   cities plus a panel of big metros; heatmap values are
+                                   relative within a response, so cities are ranked
+4. Verdict      code turns presence and room index into LANDS / RISKY / DEAD with
+                reasons; thresholds were calibrated on the example scripts
 5. Repair       agent loop (LLM + Qloo tools) for RISKY/DEAD references: find candidates
                 that do the same job for this audience, score them with step 3,
                 check the role fit, rewrite the line

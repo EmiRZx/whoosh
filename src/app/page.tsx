@@ -7,7 +7,7 @@ const STEPS = [
   },
   {
     title: "Ask the taste graph",
-    body: "Qloo says how widely each one is known, how each age group in your room feels about it, how it plays city by city, and whether it's rising or fading.",
+    body: "Qloo says how present each one is in culture today, how each age group in your room feels about it compared with the average adult, and how it plays city by city.",
   },
   {
     title: "Fix what won't land",

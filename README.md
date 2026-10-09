@@ -4,7 +4,7 @@
 
 Bring a stand-up set, a speech, a wedding toast or a lecture, choose the room (a college crowd in Birmingham, a corporate offsite in San Francisco), and Whoosh tells you which of your references that audience will actually get. It's built on [Qloo](https://qloo.com)'s taste graph for the Qloo Agentic Hackathon.
 
-> Status: in active development. Reference extraction, the UI, city lookup and the MCP server work today; the Qloo-backed verdicts and the swap agent are being built now.
+> Status: in active development. Reference extraction, Qloo matching, the room and city signals, verdicts, the UI and the MCP server work today; the swap agent is being built now.
 
 ## Why
 
@@ -13,8 +13,9 @@ Every comedian, speaker and teacher has watched a reference die in front of a ro
 ## How it works
 
 1. **Find every reference.** An agent reads the script and returns each movie, show, artist, public figure, brand, place and game it mentions, mapped to the entity a taste graph holds (a song becomes its artist, a character becomes its show), with the exact words to highlight and the job the reference does in its line.
-2. **Ask the taste graph.** For each reference, Qloo signals describe the room: how widely it's known, how each age group in the room over- or under-indexes on it, how it plays in each city on the tour, and whether it's rising or fading.
-3. **Fix what won't land.** For weak references, an agent searches Qloo for substitutes that do the same job for this audience, checks them with the same signals, and rewrites the line.
+2. **Ask the taste graph.** Each reference is matched to its Qloo entity (exact matches automatically; look-alikes such as a restaurant called "Canvas" go to the model, which may decline rather than measure the wrong thing). Then Qloo describes the room: how present the reference is in culture today, how each age group in the room over- or under-indexes on it, and where each city on the tour ranks among two dozen big metros.
+3. **Call it.** Deterministic rules turn those signals into a verdict. Qloo's age index measures how much a group *likes* something, not whether it has heard of it, so a household name the room is cool on is "risky" (they'll get it, it isn't theirs) and "won't land" is kept for faded or niche references the room doesn't care about.
+4. **Fix what won't land.** For weak references, an agent searches Qloo for substitutes that do the same job for this audience, checks them with the same signals, and rewrites the line.
 
 The language model handles language: reading the script, choosing between candidates, judging whether a swap keeps the joke. Every number comes from Qloo through deterministic code. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

@@ -29,11 +29,14 @@ export interface EntitySummary {
 
 // Every number here comes from Qloo; none is model-generated.
 export interface Signals {
+  // Popularity percentile within the entity's type (current engagement).
   recognition?: number;
+  // How much more (or less) this room likes it than the average adult.
   roomIndex?: number;
+  // The same index for each age group.
   age?: Partial<Record<AgeBucket, number>>;
-  cities?: { name: string; affinity: number }[];
-  momentum?: "rising" | "steady" | "fading";
+  // Each audience city ranked against a panel of major metros.
+  cities?: { name: string; rank: number; of: number }[];
 }
 
 export interface Swap {
@@ -50,7 +53,14 @@ export interface AnalyzedReference {
   key: string;
   extracted: ExtractedReference;
   spans: QuoteSpan[];
-  resolution: { status: ResolutionStatus; entity?: EntitySummary; candidates?: EntitySummary[] };
+  resolution: {
+    status: ResolutionStatus;
+    entity?: EntitySummary;
+    candidates?: EntitySummary[];
+    // Set when the measured entity stands in for the reference (the last
+    // Blockbuster store for Blockbuster): what it is.
+    standIn?: string;
+  };
   signals?: Signals;
   verdict: Verdict;
   reasons: string[];

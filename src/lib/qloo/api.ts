@@ -3,17 +3,24 @@
 // parameters, and some fields move between endpoints.
 import type { QlooClient, QueryParams } from "./client";
 
+// Types /search accepts (from the API's own validation message). Note
+// "videogame": the hackathon guide's "video_game" is rejected with a 400.
 export const ENTITY_TYPES = [
+  "urn:entity:actor",
+  "urn:entity:album",
   "urn:entity:artist",
+  "urn:entity:author",
   "urn:entity:book",
   "urn:entity:brand",
   "urn:entity:destination",
+  "urn:entity:director",
+  "urn:entity:locality",
   "urn:entity:movie",
   "urn:entity:person",
   "urn:entity:place",
   "urn:entity:podcast",
   "urn:entity:tv_show",
-  "urn:entity:video_game",
+  "urn:entity:videogame",
 ] as const;
 export type EntityType = (typeof ENTITY_TYPES)[number];
 

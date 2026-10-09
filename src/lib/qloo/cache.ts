@@ -47,8 +47,11 @@ export class FileCache implements ResponseCache {
   }
 
   async set(key: string, value: unknown) {
-    await mkdir(this.dir, { recursive: true });
-    await writeFile(this.file(key), JSON.stringify(value));
+    // A read-only filesystem (some hosts) just means no disk cache.
+    try {
+      await mkdir(this.dir, { recursive: true });
+      await writeFile(this.file(key), JSON.stringify(value));
+    } catch {}
   }
 }
 
