@@ -9,6 +9,7 @@ import { composeDocument, overlaps, planEdit, type Edit } from "@/lib/ui/documen
 import { setNotes } from "@/lib/ui/notes";
 import { roomScore } from "@/lib/ui/score";
 import { Composer } from "./composer";
+import { GutVsData } from "./gut-vs-data";
 import { Inspector } from "./inspector";
 import { VERDICT_LABEL } from "./labels";
 import { LocalHooksPanel } from "./local-hooks";
@@ -340,6 +341,7 @@ export function Studio() {
           </aside>
         </div>
 
+        <GutVsData references={refs} room={preset.label} selectedKey={activeKey} onSelect={select} />
         <TourMatrix references={refs} selectedKey={activeKey} onSelect={select} />
         <LocalHooksPanel hooks={state.hooks} room={preset.label} />
 

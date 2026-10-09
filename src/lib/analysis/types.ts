@@ -39,6 +39,16 @@ export interface Signals {
   cities?: { name: string; rank: number; of: number }[];
 }
 
+// The model's guess about a reference for this room, made before it saw any
+// Qloo data, so the two can be shown side by side.
+export interface GutCall {
+  verdict: Exclude<Verdict, "unchecked">;
+  // Same scale as Signals.roomIndex: 0.3 = likes it 30% more than average.
+  roomIndex: number;
+  fans: AgeBucket;
+  reason: string;
+}
+
 export interface Swap {
   entity: EntitySummary;
   signals: Signals;
@@ -62,6 +72,7 @@ export interface AnalyzedReference {
     standIn?: string;
   };
   signals?: Signals;
+  gut?: GutCall;
   verdict: Verdict;
   reasons: string[];
   swaps: Swap[];

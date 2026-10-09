@@ -1,4 +1,5 @@
 import type { AnalyzedReference, LocalHooks } from "@/lib/analysis/types";
+import { gutRows } from "@/lib/ui/gut";
 import { signed, VERDICT_LABEL } from "./labels";
 
 // Fixed light colors: the printout ignores the screen theme.
@@ -25,6 +26,7 @@ interface Props {
 // The printable "set notes": shown only when printing (or saving as PDF).
 export function Report({ title, room, cities, references, accepted, score, projected, hooks, revised, changed }: Props) {
   const pct = (x?: number) => (x === undefined ? "–" : `${Math.round(x * 100)}%`);
+  const gut = gutRows(references);
   return (
     <article className="hidden bg-white font-sans text-[11pt] text-[#0b0b0b] print:block">
       <header className="border-b-2 border-black pb-3">
@@ -57,6 +59,12 @@ export function Report({ title, room, cities, references, accepted, score, proje
         </div>
       </section>
 
+      {gut.length > 0 && (
+        <p className="mt-3 text-[10pt] text-[#52514e]">
+          Gut vs. data: Claude&apos;s blind guess matched Qloo on {gut.filter((g) => g.same).length} of {gut.length} calls.
+        </p>
+      )}
+
       <h2 className="mt-6 text-[12pt] font-semibold">References</h2>
       <table className="mt-2 w-full border-collapse text-[9.5pt]">
         <thead>
@@ -64,6 +72,7 @@ export function Report({ title, room, cities, references, accepted, score, proje
             <th className="py-1 pr-2 font-medium">Reference</th>
             <th className="py-1 pr-2 font-medium">Verdict</th>
             <th className="py-1 pr-2 font-medium">Room vs. avg</th>
+            <th className="py-1 pr-2 font-medium">Gut guess</th>
             <th className="py-1 font-medium">Why</th>
           </tr>
         </thead>
@@ -75,6 +84,9 @@ export function Report({ title, room, cities, references, accepted, score, proje
                 {MARK[r.verdict].glyph} {VERDICT_LABEL[r.verdict]}
               </td>
               <td className="py-1 pr-2 tabular-nums">{r.signals?.roomIndex === undefined ? "–" : signed(r.signals.roomIndex)}</td>
+              <td className="whitespace-nowrap py-1 pr-2 tabular-nums text-[#52514e]">
+                {r.gut ? `${MARK[r.gut.verdict].glyph} ${signed(r.gut.roomIndex)}` : "–"}
+              </td>
               <td className="py-1 text-[#52514e]">{r.reasons[0] ?? ""}</td>
             </tr>
           ))}

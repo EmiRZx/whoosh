@@ -4,9 +4,11 @@ import { ArrowDown, ArrowUp, Check, ChevronLeft, ChevronRight, MapPin, MousePoin
 import type { AgeMix } from "@/lib/audience/audience";
 import type { AnalyzedReference, Signals, Swap } from "@/lib/analysis/types";
 import { planEdit } from "@/lib/ui/document";
+import { topBucket } from "@/lib/ui/gut";
+import { AGE_BUCKETS } from "@/lib/qloo/api";
 import { AgeChart } from "./age-chart";
 import { EntityThumb } from "./entity-thumb";
-import { KIND_LABEL, shortCity, signed, WEIGHT_LABEL } from "./labels";
+import { AGE_LABELS, KIND_LABEL, shortCity, signed, WEIGHT_LABEL } from "./labels";
 import { VerdictChip } from "./verdict";
 
 export interface InspectorProps {
@@ -68,6 +70,55 @@ function CityRanks({ cities }: { cities: NonNullable<Signals["cities"]> }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+const ageLabel = (b?: string) => (b ? AGE_LABELS[AGE_BUCKETS.indexOf(b as (typeof AGE_BUCKETS)[number])] : "–");
+
+// The model's blind guess next to what Qloo measured.
+function GutCheck({ reference }: { reference: AnalyzedReference }) {
+  const gut = reference.gut!;
+  const same = gut.verdict === reference.verdict;
+  const rows: [string, React.ReactNode, React.ReactNode][] = [
+    ["Call", <VerdictChip key="g" verdict={gut.verdict} />, <VerdictChip key="d" verdict={reference.verdict} />],
+    [
+      "This room vs. average",
+      signed(gut.roomIndex),
+      reference.signals?.roomIndex === undefined ? "–" : signed(reference.signals.roomIndex),
+    ],
+    ["Biggest fans", ageLabel(gut.fans), ageLabel(topBucket(reference.signals?.age))],
+  ];
+  return (
+    <div className="flex flex-col gap-3">
+      <p className={`text-sm font-medium ${same ? "text-ink-soft" : "text-accent"}`}>
+        {same ? "The data backs the gut call." : "The data overturned the gut call."}
+      </p>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-left text-[11px] text-ink-faint">
+            <th className="pb-1.5 font-normal">
+              <span className="sr-only">Signal</span>
+            </th>
+            <th className="pb-1.5 font-medium">Claude&apos;s gut</th>
+            <th className="pb-1.5 font-medium">Qloo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([label, g, d]) => (
+            <tr key={label} className="border-t border-line">
+              <th scope="row" className="py-1.5 pr-2 text-left text-xs font-normal text-ink-soft">
+                {label}
+              </th>
+              <td className="py-1.5 pr-2 tabular-nums">{g}</td>
+              <td className="py-1.5 font-medium tabular-nums">{d}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-xs leading-relaxed text-ink-soft">
+        <span className="italic">&ldquo;{gut.reason}&rdquo;</span> Claude, before seeing any data.
+      </p>
+    </div>
   );
 }
 
@@ -281,6 +332,12 @@ export function Inspector(props: InspectorProps) {
           </div>
         )}
       </Section>
+
+      {reference.gut && status === "resolved" && reference.verdict !== "unchecked" && (
+        <Section title="Gut vs. data">
+          <GutCheck reference={reference} />
+        </Section>
+      )}
 
       {(reference.swaps.length > 0 || reference.swapNote) && (
         <Section title="Swaps that do the same job">

@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { RECORDED_EXTRACTIONS } from "@/content/extractions";
+import { RECORDED_GUT } from "@/content/extractions/gut";
 import { RECORDED_PICKS } from "@/content/extractions/picks";
 import { SAMPLES } from "@/content/samples";
 import { AUDIENCE_PRESETS, presetById } from "../audience/audience";
@@ -10,6 +11,7 @@ import type { QlooClient } from "../qloo/client";
 import { getQlooClient } from "../qloo/server";
 import { chooseCandidates } from "./choose";
 import { extractReferences, type Extraction } from "./extract";
+import { gutCalls, toGutCall } from "./gut";
 import { measure } from "./measure";
 import { buildReferences, paragraphAround, passageAround } from "./references";
 import { findCandidates, pickCandidate, toSummary, type Pick } from "./resolve";
@@ -71,7 +73,41 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
     send({ type: "update", key, patch });
   };
   let hooks: LocalHooks[] = [];
-  const finish = () => send({ type: "done", analysis: { text, audience, references, mode, hooks } });
+
+  // The model's gut call on each reference, made blind to Qloo, runs
+  // alongside the measurement so the two can be compared.
+  const gutDone = (async () => {
+    const targets = references.filter((r) => r.resolution.status === "pending");
+    if (!targets.length) return;
+    const recorded = mode === "replay" && sample ? RECORDED_GUT[sample.id]?.[preset.id] : undefined;
+    try {
+      if (recorded) {
+        for (const ref of targets) {
+          const call = recorded[ref.extracted.name];
+          if (call) update(ref.key, { gut: toGutCall({ id: ref.key, ...call }) });
+        }
+      } else if (anthropic) {
+        send({ type: "status", message: "Asking the model for its gut call on each reference, before it sees any data" });
+        const { calls } = await gutCalls(
+          anthropic,
+          text,
+          audience,
+          preset.description,
+          targets.map((r) => ({ id: r.key, reference: r.extracted })),
+        );
+        for (const call of calls) {
+          if (targets.some((r) => r.key === call.id)) update(call.id, { gut: toGutCall(call) });
+        }
+      }
+    } catch (err) {
+      console.error("gut calls failed", err);
+    }
+  })();
+
+  const finish = async () => {
+    await gutDone;
+    send({ type: "done", analysis: { text, audience, references, mode, hooks } });
+  };
 
   const qloo = getQlooClient();
   const checkable = references.filter((r) => r.resolution.status === "pending");
@@ -203,7 +239,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
     }
   }
   await hooksDone;
-  finish();
+  await finish();
 }
 
 const MAX_SWAP_REFERENCES = 4;

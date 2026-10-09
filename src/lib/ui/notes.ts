@@ -1,6 +1,7 @@
 // "Set notes": the analysis as Markdown, to paste into a doc or a message.
 
 import type { AnalyzedReference, LocalHooks, Swap } from "@/lib/analysis/types";
+import { gutRows } from "./gut";
 
 const VERDICT: Record<AnalyzedReference["verdict"], string> = {
   lands: "✓ Lands",
@@ -39,15 +40,20 @@ export function setNotes(input: NotesInput): string {
     input.projected !== undefined && input.changed
       ? `${pct(input.score)} as written, ${pct(input.projected)} with the swaps below`
       : pct(input.score);
-  lines.push(`**Room read:** ${scoreLine}`, "");
+  lines.push(`**Room read:** ${scoreLine}  `);
+  const gut = gutRows(references);
+  if (gut.length) lines.push(`**Gut vs. data:** Claude's blind guess matched Qloo on ${gut.filter((g) => g.same).length} of ${gut.length} calls`);
+  lines.push("");
 
   lines.push("## References", "");
-  lines.push("| Reference | Verdict | This room vs. average | Presence | Why |");
-  lines.push("|---|---|---|---|---|");
+  lines.push("| Reference | Verdict | This room vs. average | Presence | Claude's gut | Why |");
+  lines.push("|---|---|---|---|---|---|");
   for (const r of references) {
     const presence = r.signals?.recognition === undefined ? "–" : `${Math.round(r.signals.recognition * 100)}/100`;
     lines.push(
-      `| ${cell(r.extracted.name)} | ${VERDICT[r.verdict]} | ${signed(r.signals?.roomIndex)} | ${presence} | ${cell(r.reasons[0] ?? "")} |`,
+      `| ${cell(r.extracted.name)} | ${VERDICT[r.verdict]} | ${signed(r.signals?.roomIndex)} | ${presence} | ${
+        r.gut ? `${VERDICT[r.gut.verdict]}, ${signed(r.gut.roomIndex)}` : "–"
+      } | ${cell(r.reasons[0] ?? "")} |`,
     );
   }
 
