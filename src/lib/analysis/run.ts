@@ -4,13 +4,17 @@ import { RECORDED_PICKS } from "@/content/extractions/picks";
 import { SAMPLES } from "@/content/samples";
 import { AUDIENCE_PRESETS, presetById } from "../audience/audience";
 import { findCity } from "../geo/cities";
-import type { QlooEntity } from "../qloo/api";
+import { RECORDED_SWAPS, type RecordedSwap } from "@/content/extractions/swaps";
+import { search, type EntityType, type QlooEntity } from "../qloo/api";
+import type { QlooClient } from "../qloo/client";
 import { getQlooClient } from "../qloo/server";
 import { chooseCandidates } from "./choose";
 import { extractReferences, type Extraction } from "./extract";
 import { measure } from "./measure";
-import { buildReferences } from "./references";
+import { buildReferences, sentenceAround } from "./references";
 import { findCandidates, pickCandidate, toSummary, type Pick } from "./resolve";
+import { runSwapAgent, type SwapResult } from "./swap-agent";
+import { check, type SwapContext } from "./swap-tools";
 import type { AnalysisEvent, AnalyzedReference, AudienceSpec } from "./types";
 import { judge } from "./verdict";
 
@@ -150,7 +154,85 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
   const counts = references.reduce<Record<string, number>>((c, r) => ({ ...c, [r.verdict]: (c[r.verdict] ?? 0) + 1 }), {});
   send({
     type: "status",
-    message: `Done: ${counts.lands ?? 0} land, ${counts.risky ?? 0} risky, ${counts.dead ?? 0} won't land`,
+    message: `${counts.lands ?? 0} land, ${counts.risky ?? 0} risky, ${counts.dead ?? 0} won't land`,
   });
+
+  // 4. Look for substitutes for the weak references the line depends on.
+  const weak = references
+    .filter((r) => (r.verdict === "dead" || r.verdict === "risky") && r.resolution.entity && r.spans.length)
+    .filter((r) => r.verdict === "dead" || r.extracted.weight !== "color")
+    .sort((a, b) => rank(a) - rank(b))
+    .slice(0, MAX_SWAP_REFERENCES);
+  if (weak.length) {
+    const recorded = mode === "replay" && sample ? RECORDED_SWAPS[sample.id] : undefined;
+    if (recorded || anthropic) {
+      send({ type: "status", message: `Looking for swaps that do the same job for ${weak.map((r) => r.extracted.name).join(", ")}` });
+      await Promise.all(
+        weak.map(async (ref) => {
+          const ctx = swapContext(text, ref, audience);
+          try {
+            const result = recorded ? await replaySwaps(qloo, ctx, recorded[ref.extracted.name]) : await runSwapAgent(anthropic!, qloo, ctx);
+            update(ref.key, {
+              swaps: result.swaps.map(({ checked, rewrite, why }) => ({
+                entity: { id: checked.id, name: checked.name, type: checked.type },
+                signals: { recognition: checked.presence, roomIndex: checked.room_index },
+                verdict: checked.verdict,
+                rewrite,
+                why,
+              })),
+              swapNote: result.note,
+            });
+          } catch (err) {
+            console.error(`swap agent failed for ${ref.extracted.name}`, err);
+          }
+        }),
+      );
+    }
+  }
   finish();
+}
+
+const MAX_SWAP_REFERENCES = 4;
+const rank = (r: AnalyzedReference) =>
+  (r.verdict === "dead" ? 0 : 3) + { punchline: 0, setup: 1, color: 2 }[r.extracted.weight];
+
+function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpec): SwapContext {
+  const entity = ref.resolution.entity!;
+  return {
+    original: {
+      id: entity.id,
+      name: entity.name,
+      type: entity.type,
+      kind: ref.extracted.kind,
+      role: ref.extracted.role,
+      weight: ref.extracted.weight,
+      quotes: ref.extracted.quotes,
+      line: sentenceAround(text, ref.spans[0].start, ref.spans[0].end),
+      verdict: ref.verdict,
+      reasons: ref.reasons,
+    },
+    audience: { label: audience.label, ageMix: audience.ageMix, cities: audience.cities },
+    checked: {},
+  };
+}
+
+// Re-checks recorded substitutes against live Qloo and keeps those that still land.
+async function replaySwaps(qloo: QlooClient, ctx: SwapContext, recorded: { swaps: RecordedSwap[]; note: string } | undefined): Promise<SwapResult> {
+  if (!recorded) return { swaps: [], note: "" };
+  const found = await Promise.all(
+    recorded.swaps.map(async (s) => {
+      const hit = (await search(qloo, s.name, { types: [s.type as EntityType], take: 5 })).find((e) => e.name === s.name);
+      return hit ? { hit, s } : undefined;
+    }),
+  );
+  const present = found.filter((f): f is NonNullable<typeof f> => !!f);
+  if (!present.length) return { swaps: [], note: recorded.note };
+  const checked = await check(qloo, ctx, { ids: present.map((p) => p.hit.id) });
+  return {
+    swaps: present.flatMap(({ hit, s }) => {
+      const c = checked.find((x) => x.id === hit.id);
+      return c && c.verdict === "lands" ? [{ checked: c, rewrite: s.rewrite, why: s.why }] : [];
+    }),
+    note: recorded.note,
+  };
 }

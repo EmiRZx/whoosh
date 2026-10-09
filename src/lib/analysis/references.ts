@@ -43,6 +43,19 @@ export function buildReferences(text: string, extraction: Extraction): AnalyzedR
   return built.map((b) => b.reference).sort((a, b) => firstSpan(a) - firstSpan(b));
 }
 
+// The sentence (or two, for short ones) around a span: what the swap agent
+// rewrites.
+export function sentenceAround(text: string, start: number, end: number): string {
+  const before = text.slice(0, start);
+  const from = Math.max(before.lastIndexOf(". "), before.lastIndexOf("? "), before.lastIndexOf("! "), before.lastIndexOf("\n"));
+  const after = text.slice(end).search(/[.?!](\s|"|$)/);
+  const to = after < 0 ? text.length : end + after + 1;
+  return text
+    .slice(from < 0 ? 0 : from + 1, to)
+    .replace(/^["\s]+/, "")
+    .trim();
+}
+
 export interface Segment {
   text: string;
   refKey?: string;

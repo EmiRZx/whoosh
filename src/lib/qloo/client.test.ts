@@ -67,6 +67,10 @@ describe("normalizers", () => {
       tags: [{ id: "urn:tag:genre:media:sitcom", name: "Sitcom" }],
     });
     expect(toEntity({ name: "no id" })).toBeUndefined();
+    // Insights results put the specific type in subtype.
+    expect(toEntity({ entity_id: "E2", name: "Hoda Kotb", type: "urn:entity", subtype: "urn:entity:person" })?.types).toEqual([
+      "urn:entity:person",
+    ]);
   });
 
   it("reads demographics in nested or flat form", () => {

@@ -95,8 +95,12 @@ export function toEntity(raw: unknown): QlooEntity | undefined {
   const lat = num(loc?.lat) ?? num(loc?.latitude);
   const lon = num(loc?.lon) ?? num(loc?.longitude);
   const image = isObj(props.image) ? str(props.image.url) : undefined;
+  // Search results carry `types`; insights results carry a generic
+  // type "urn:entity" and the real one in `subtype`.
   const types = arr(raw.types).filter((t): t is string => typeof t === "string");
-  if (!types.length && str(raw.type)) types.push(raw.type as string);
+  const subtype = str(raw.subtype);
+  if (!types.length && subtype?.startsWith("urn:entity:")) types.push(subtype);
+  else if (!types.length && str(raw.type)) types.push(raw.type as string);
   return {
     id,
     name,

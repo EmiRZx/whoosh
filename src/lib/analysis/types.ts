@@ -65,6 +65,8 @@ export interface AnalyzedReference {
   verdict: Verdict;
   reasons: string[];
   swaps: Swap[];
+  // The swap agent's note, e.g. why it found fewer than three substitutes.
+  swapNote?: string;
 }
 
 export interface Analysis {

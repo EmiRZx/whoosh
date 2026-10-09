@@ -153,20 +153,28 @@ export function Inspector({ reference }: { reference?: AnalyzedReference }) {
         )}
       </Section>
 
-      {reference.swaps.length > 0 && (
+      {(reference.swaps.length > 0 || reference.swapNote) && (
         <Section title="Swaps that do the same job">
-          <ul className="flex flex-col gap-3">
-            {reference.swaps.map((swap) => (
-              <li key={swap.entity.id} className="rounded-lg border border-rule bg-paper-raised p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-medium">{swap.entity.name}</span>
-                  <VerdictChip verdict={swap.verdict} />
-                </div>
-                <p className="mt-1 text-sm text-ink-soft">{swap.why}</p>
-                <p className="mt-2 font-script text-sm">{swap.rewrite}</p>
-              </li>
-            ))}
-          </ul>
+          {reference.swaps.length > 0 && (
+            <ul className="flex flex-col gap-3">
+              {reference.swaps.map((swap) => (
+                <li key={swap.entity.id} className="rounded-lg border border-rule bg-paper-raised p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-medium">{swap.entity.name}</span>
+                    <span className="flex items-center gap-2">
+                      {swap.signals.roomIndex !== undefined && (
+                        <span className="text-xs tabular-nums text-ink-soft">room {signed(swap.signals.roomIndex)}</span>
+                      )}
+                      <VerdictChip verdict={swap.verdict} />
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-ink-soft">{swap.why}</p>
+                  <p className="mt-2 rounded bg-paper-sunk px-2 py-1.5 font-script text-sm leading-relaxed">{swap.rewrite}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+          {reference.swapNote && <p className="mt-2 text-xs leading-relaxed text-ink-soft">{reference.swapNote}</p>}
         </Section>
       )}
     </div>
