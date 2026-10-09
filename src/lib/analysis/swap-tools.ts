@@ -28,6 +28,8 @@ export interface SwapContext {
     room_index?: number;
   };
   audience: { label: string; ageMix: AgeMix; cities: City[] };
+  // Other references in the script, so a swap doesn't repeat one.
+  others: string[];
   // Everything check() has measured in this session, by entity id.
   checked: Record<string, Checked>;
 }
@@ -171,6 +173,25 @@ export const SubmitInput = z.object({
   note: z.string().describe("One sentence for the performer, e.g. why there are fewer than three swaps"),
 });
 
+const squash = (s: string) =>
+  s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+// Loose on purpose: Qloo stores some names without spaces
+// ("Moe'sSouthwestGrill") and writers shorten them ("Moe's"), so the rewrite
+// only has to contain the name's first word.
+export function mentions(rewrite: string, name: string): boolean {
+  const base = name.split(/[:(]/)[0].trim();
+  const words = base.split(/\s+/);
+  let first = words[0];
+  if (words.length === 1) first = first.split(/(?<=[a-z'])(?=[A-Z])/)[0];
+  const key = squash(first).length >= 4 ? squash(first) : squash(base).slice(0, 5);
+  return key.length > 0 && squash(rewrite).includes(key);
+}
+
 // Code, not the model, enforces that every swap was measured and lands.
 export function validateSubmission(ctx: SwapContext, input: z.infer<typeof SubmitInput>): string[] {
   const problems: string[] = [];
@@ -180,7 +201,7 @@ export function validateSubmission(ctx: SwapContext, input: z.infer<typeof Submi
     else if (c.verdict !== "lands") problems.push(`${c.name} checks as "${c.verdict}" for this room; only substitutes that land can be submitted.`);
     else if (!beatsOriginal(c, ctx.original)) {
       problems.push(`${c.name} lands but isn't clearly a better fit for this room than the original (room index ${c.room_index ?? "unknown"}); drop it.`);
-    } else if (!swap.rewrite.toLowerCase().includes(c.name.toLowerCase().split(/[:(]/)[0].trim().split(" ")[0])) {
+    } else if (!mentions(swap.rewrite, c.name)) {
       problems.push(`The rewrite for ${c.name} doesn't seem to mention it.`);
     }
     if (swap.rewrite.trim() === ctx.original.line.trim()) problems.push(`The rewrite for ${swap.id} is identical to the original line.`);

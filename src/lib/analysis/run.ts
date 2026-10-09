@@ -169,7 +169,7 @@ export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEv
       send({ type: "status", message: `Looking for swaps that do the same job for ${weak.map((r) => r.extracted.name).join(", ")}` });
       await Promise.all(
         weak.map(async (ref) => {
-          const ctx = swapContext(text, ref, audience);
+          const ctx = swapContext(text, ref, audience, references);
           try {
             const result = recorded ? await replaySwaps(qloo, ctx, recorded[ref.extracted.name]) : await runSwapAgent(anthropic!, qloo, ctx);
             update(ref.key, {
@@ -196,7 +196,7 @@ const MAX_SWAP_REFERENCES = 4;
 const rank = (r: AnalyzedReference) =>
   (r.verdict === "dead" ? 0 : 3) + { punchline: 0, setup: 1, color: 2 }[r.extracted.weight];
 
-function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpec): SwapContext {
+function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpec, all: AnalyzedReference[]): SwapContext {
   const entity = ref.resolution.entity!;
   return {
     original: {
@@ -215,6 +215,7 @@ function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpe
       room_index: ref.signals?.roomIndex,
     },
     audience: { label: audience.label, ageMix: audience.ageMix, cities: audience.cities },
+    others: all.filter((r) => r.key !== ref.key).map((r) => r.extracted.name),
     checked: {},
   };
 }

@@ -51,7 +51,7 @@ If one entity is referenced several times, return it once with every quote.
 
 Not references: private people (friends, family, the couple, a teacher, anyone named only by first name or as Mr./Mrs. Somebody), generic nouns (podcast, QR code, casino, radio station), concepts and topics, and places that are only logistics rather than meaning.
 
-Events, memes, eras, holidays, sports leagues used generically and trends (Y2K, the ice bucket challenge, fantasy football) are references a listener must recognize, but a taste graph can't represent them. Include them with kind "other" and checkable false. Everything else gets checkable true.
+Events, memes, eras, holidays, sports leagues used generically and trends (Y2K, the ice bucket challenge, fantasy football) are references a listener must recognize, but a taste graph can't represent them. Include them with kind "other" and checkable false. Politicians, political parties and campaigns also get kind "other" and checkable false: this tool doesn't measure political taste. Everything else gets checkable true.
 
 Fields:
 - name: the canonical name you would type into a search box. For a song, the artist's name, not the song title.

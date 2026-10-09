@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { presetById } from "../audience/audience";
 import { sentenceAround } from "./references";
-import { beatsOriginal, validateSubmission, type SwapContext } from "./swap-tools";
+import { beatsOriginal, mentions, validateSubmission, type SwapContext } from "./swap-tools";
 
 const ctx = (): SwapContext => ({
   original: {
@@ -18,11 +18,21 @@ const ctx = (): SwapContext => ({
     reasons: [],
   },
   audience: { label: "College crowd", ageMix: presetById("college")!.ageMix, cities: [] },
+  others: ["Howie Mandel"],
   checked: {
     HARVEY: { id: "HARVEY", name: "Steve Harvey", type: "urn:entity:person", verdict: "lands", room_index: 0.05 },
     COLD: { id: "COLD", name: "Alex Trebek", type: "urn:entity:person", verdict: "risky", room_index: -0.3 },
     LUKEWARM: { id: "LUKEWARM", name: "Drew Carey", type: "urn:entity:person", verdict: "lands", room_index: -0.12 },
   },
+});
+
+describe("mentions", () => {
+  it("matches names Qloo stores without spaces, and shortened forms", () => {
+    expect(mentions("a well-made burrito from Moe's.", "Moe'sSouthwestGrill")).toBe(true);
+    expect(mentions("a burger from In-N-Out.", "In-N-Out Burger")).toBe(true);
+    expect(mentions("Ryan Seacrest asks a contestant", "Ryan Seacrest")).toBe(true);
+    expect(mentions("a sandwich from Panera.", "Jersey Mike's Subs")).toBe(false);
+  });
 });
 
 describe("beatsOriginal", () => {

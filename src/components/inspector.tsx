@@ -130,7 +130,9 @@ export function Inspector({ reference }: { reference?: AnalyzedReference }) {
 
       <Section title="How this room reads it">
         {status === "not_checkable" ? (
-          <p className="text-sm leading-relaxed text-ink-soft">Events, memes and trends aren&apos;t in a taste graph, so this one is your call.</p>
+          <p className="text-sm leading-relaxed text-ink-soft">
+            Events, memes and trends aren&apos;t in a taste graph, and political figures aren&apos;t measured, so this one is your call.
+          </p>
         ) : status === "pending" ? (
           <p className="text-sm leading-relaxed text-ink-soft">Checking with Qloo…</p>
         ) : status === "not_found" ? (
