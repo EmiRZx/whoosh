@@ -11,7 +11,7 @@ import { getQlooClient } from "../qloo/server";
 import { chooseCandidates } from "./choose";
 import { extractReferences, type Extraction } from "./extract";
 import { measure } from "./measure";
-import { buildReferences, passageAround } from "./references";
+import { buildReferences, paragraphAround, passageAround } from "./references";
 import { findCandidates, pickCandidate, toSummary, type Pick } from "./resolve";
 import { runSwapAgent, type SwapResult } from "./swap-agent";
 import { check, type SwapContext } from "./swap-tools";
@@ -224,6 +224,7 @@ function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpe
       weight: ref.extracted.weight,
       quotes: ref.extracted.quotes,
       line: passageAround(text, ref.spans),
+      context: paragraphAround(text, ref.spans[0].start),
       verdict: ref.verdict,
       reasons: ref.reasons,
       room_index: ref.signals?.roomIndex,
@@ -240,7 +241,9 @@ async function replaySwaps(qloo: QlooClient, ctx: SwapContext, recorded: { swaps
   if (!recorded) return { swaps: [], note: "" };
   const found = await Promise.all(
     recorded.swaps.map(async (s) => {
-      const hit = (await search(qloo, s.name, { types: [s.type as EntityType], take: 5 })).find((e) => e.name === s.name);
+      const hit = (await search(qloo, s.name, { types: [s.type as EntityType], take: 8 })).find(
+        (e) => e.name === s.name && (s.year === undefined || e.releaseYear === s.year),
+      );
       return hit ? { hit, s } : undefined;
     }),
   );

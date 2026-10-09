@@ -4,7 +4,7 @@
 // Usage: npx tsx --env-file=.env.local scripts/swap-context.ts <sample-id> <room> <reference name> <out.json>
 import { writeFile } from "node:fs/promises";
 import { SAMPLES } from "../src/content/samples";
-import { passageAround } from "../src/lib/analysis/references";
+import { paragraphAround, passageAround } from "../src/lib/analysis/references";
 import { runAnalysis } from "../src/lib/analysis/run";
 import { describeSwapTask } from "../src/lib/analysis/swap-agent";
 import type { SwapContext } from "../src/lib/analysis/swap-tools";
@@ -33,6 +33,7 @@ async function main() {
       weight: ref.extracted.weight,
       quotes: ref.extracted.quotes,
       line: passageAround(analysis.text, ref.spans),
+      context: paragraphAround(analysis.text, ref.spans[0].start),
       verdict: ref.verdict,
       reasons: ref.reasons,
       room_index: ref.signals?.roomIndex,

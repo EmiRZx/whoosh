@@ -22,7 +22,9 @@ export interface SwapContext {
     role: string;
     weight: "punchline" | "setup" | "color";
     quotes: string[];
+    // What the agent rewrites, and the paragraph around it for context.
     line: string;
+    context?: string;
     verdict: Verdict;
     reasons: string[];
     room_index?: number;

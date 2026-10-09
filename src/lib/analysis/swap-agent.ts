@@ -19,7 +19,7 @@ import {
 } from "./swap-tools";
 import { AGE_LABEL } from "./verdict";
 
-export const SWAP_SYSTEM_PROMPT = `You help a performer fix one cultural reference that won't land with tonight's audience. You get the line, the reference, the job it does in the line, who is in the room, and Qloo's reading of why the reference is weak there. Find up to three substitutes that do the same job for this audience, and rewrite the line for each.
+export const SWAP_SYSTEM_PROMPT = `You help a performer fix one cultural reference that won't land with tonight's audience. You get the line, the paragraph around it, the reference, the job it does in the line, who is in the room, and Qloo's reading of why the reference is weak there. Find up to three substitutes that do the same job for this audience, and rewrite the line for each. Read the paragraph: a reference often depends on something said just before or after it, and a substitute has to keep that link.
 
 How to work:
 - find_candidates searches Qloo's taste graph for things similar to the original that this room's main age group likes. Narrow it when the job calls for it: tags from find_tags (a sitcom for a sitcom, fast food for fast food), another type, or a release year. lookup finds a specific substitute you already have in mind.
@@ -40,6 +40,7 @@ export function describeSwapTask(ctx: SwapContext): string {
     .join(", ");
   const cities = ctx.audience.cities.map((c) => c.name).join(", ");
   return [
+    o.context && o.context !== o.line ? `<paragraph>${o.context}</paragraph>` : "",
     `<line>${o.line}</line>`,
     `<reference>\nname: ${o.name}\nmeasured as: ${o.entity_name} (${o.type.replace("urn:entity:", "")}, id ${o.id})${o.stand_in ? `, a stand-in: ${o.stand_in}` : ""}\nwords in the line: ${o.quotes.map((q) => `"${q}"`).join(", ")}\njob in the line: ${o.role}\nweight: ${o.weight}\nQloo verdict for this room: ${o.verdict}${o.room_index === undefined ? "" : ` (room index ${o.room_index.toFixed(2)})`}\n${o.reasons.map((r) => `- ${r}`).join("\n")}\n</reference>`,
     `<room>\n${ctx.audience.label}: ${ages}${cities ? `\ncities: ${cities}` : ""}\n</room>`,

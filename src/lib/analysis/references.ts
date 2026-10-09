@@ -72,6 +72,14 @@ export function passageAround(text: string, spans: { start: number; end: number 
   return passage.length <= maxLength ? passage : first;
 }
 
+// The paragraph around a span, for context the line itself doesn't carry
+// (the next sentence may explain the joke).
+export function paragraphAround(text: string, start: number): string {
+  const from = text.lastIndexOf("\n\n", start);
+  const to = text.indexOf("\n\n", start);
+  return text.slice(from < 0 ? 0 : from + 2, to < 0 ? text.length : to).trim();
+}
+
 export interface Segment {
   text: string;
   refKey?: string;
