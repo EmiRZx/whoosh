@@ -28,7 +28,10 @@ async function main() {
     for (const e of c.expect ?? []) if (!names.some((n) => n.includes(e.toLowerCase()))) problems.push(`missing ${e}`);
     for (const f of c.forbid ?? []) if (refs.some((r) => r.extracted.name.toLowerCase() === f.toLowerCase())) problems.push(`extracted ${f}`);
     if (c.maxReferences !== undefined && refs.length > c.maxReferences) problems.push(`${refs.length} references (max ${c.maxReferences})`);
-    const dump = JSON.stringify(analysis ?? {}).toLowerCase();
+    // What the system wrote, not the script it was given.
+    const dump = JSON.stringify(
+      refs.map((r) => ({ reasons: r.reasons, swaps: r.swaps.map((x) => [x.entity.name, x.rewrite, x.why]), note: r.swapNote })),
+    ).toLowerCase();
     for (const n of c.never ?? []) if (dump.includes(n.toLowerCase())) problems.push(`output contains "${n}"`);
     if (problems.length) failed++;
     const secs = ((Date.now() - started) / 1000).toFixed(0);
