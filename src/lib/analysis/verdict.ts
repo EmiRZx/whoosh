@@ -52,6 +52,8 @@ export const THRESHOLDS = {
   coolKnown: -0.2,
   warmMid: 0.1, // a less famous reference needs this much warmth to land
   coldMid: -0.35, // at or below: a less famous reference this room won't know
+  // Faded, but the room likes it this much more than average: it lands.
+  lovedFaded: 0.25,
 };
 
 function call(t: Tier, w: number | undefined, hasData: boolean): Verdict {
@@ -67,7 +69,9 @@ function call(t: Tier, w: number | undefined, hasData: boolean): Verdict {
     case "mid":
       return w >= THRESHOLDS.warmMid ? "lands" : w <= THRESHOLDS.coldMid ? "dead" : "risky";
     case "faded":
-      return w < 0 ? "dead" : "risky";
+      // Faded overall, but this room is its audience (the morning show for
+      // a crowd of retirees).
+      return w >= THRESHOLDS.lovedFaded ? "lands" : w < 0 ? "dead" : "risky";
   }
 }
 
@@ -83,7 +87,7 @@ export function judge(m: Measured, entityType: string, weight: ExtractedReferenc
 
   // "Top 1%", never "more than 100%".
   const top = (p: number) => `the top ${Math.max(1, Math.round((1 - p) * 100))}% of ${noun}`;
-  if (pop === undefined) reasons.push("Qloo sees almost no current audience for it, which usually means it has faded.");
+  if (pop === undefined) reasons.push("Qloo has no popularity data for it: it may have faded, or Qloo may just not track its audience.");
   else if (t === "universal") reasons.push(`A household name: in ${top(pop)} today.`);
   else if (t !== "faded") reasons.push(`Known, but not everywhere: in ${top(pop)} today.`);
   else reasons.push(`Fading: less present today than ${pct(1 - pop)} of ${noun}.`);
@@ -109,6 +113,7 @@ export function judge(m: Measured, entityType: string, weight: ExtractedReferenc
   if (verdict === "risky" && (t === "universal" || t === "known") && w !== undefined) {
     reasons.push(`They'll know it, but it isn't this room's thing${weight === "punchline" ? ", and the joke depends on it" : ""}.`);
   }
+  if (verdict === "lands" && t === "faded") reasons.push("Faded overall, but this room is its audience.");
   // A cool number next to "lands" reads like a contradiction; say why it isn't.
   if (verdict === "lands" && w !== undefined && w <= -0.05) {
     reasons.push("Cooler than average, but well enough known that most of this room will still get it.");

@@ -415,7 +415,7 @@ export function Inspector(props: InspectorProps) {
         </Section>
       )}
 
-      {status === "resolved" && !reference.swaps.length && advice(reference) && (
+      {status === "resolved" && !reference.swaps.length && !reference.swapNote && advice(reference) && (
         <Section title="What to do">
           <p className="text-sm leading-relaxed">{advice(reference)}</p>
         </Section>

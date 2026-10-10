@@ -2,6 +2,7 @@
 
 import { Star } from "lucide-react";
 import type { AnalyzedReference } from "@/lib/analysis/types";
+import { cityTable } from "@/lib/ui/cities";
 import { shortCity } from "./labels";
 import { CardTitle } from "./summary";
 import { VerdictIcon } from "./verdict";
@@ -14,12 +15,6 @@ function step(rank: number, of: number): number {
   return Math.min(STEPS, 1 + Math.floor(t * STEPS));
 }
 
-const median = (xs: number[]) => {
-  const s = [...xs].sort((a, b) => a - b);
-  const mid = Math.floor(s.length / 2);
-  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
-};
-
 interface Props {
   references: AnalyzedReference[];
   selectedKey?: string;
@@ -28,21 +23,9 @@ interface Props {
 
 // Every measured reference against every tour city: where each one plays.
 export function TourMatrix({ references, selectedKey, onSelect }: Props) {
-  const rows = references.filter((r) => r.signals?.cities?.length);
-  const cities: string[] = [];
-  for (const r of rows) for (const c of r.signals!.cities!) if (!cities.includes(c.name)) cities.push(c.name);
-  if (!rows.length || !cities.length) return null;
-
-  // A city's typical standing across the script, as a share of the panel (0 = top).
-  const standing = cities.map((city) => {
-    const shares = rows.flatMap((r) => {
-      const c = r.signals!.cities!.find((x) => x.name === city);
-      return c ? [(c.rank - 1) / Math.max(1, c.of - 1)] : [];
-    });
-    return shares.length ? median(shares) : 1;
-  });
-  const best = cities.length > 1 ? standing.indexOf(Math.min(...standing)) : -1;
-  const panel = rows[0].signals!.cities![0].of;
+  const table = cityTable(references);
+  if (!table) return null;
+  const { cities, rows, panel, best, typical } = table;
 
   return (
     <section className="card rounded-2xl p-5 sm:p-6">
@@ -59,7 +42,8 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
             )}
           </h2>
           <p className="mt-1 max-w-2xl text-sm text-ink-soft">
-            Each reference ranked among about {panel} big cities by how much people there like it. #1 is the city that likes it most.
+            Where each reference is liked most by people in general (not only this room), ranked among {panel} big US metros. #1 is
+            the city that likes it most.
           </p>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-ink-faint" aria-hidden>
@@ -145,7 +129,7 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
                 </th>
                 {cities.map((city, i) => (
                   <td key={city} className={`pt-2 text-center text-xs tabular-nums ${i === best ? "font-semibold text-ink" : "text-ink-soft"}`}>
-                    #{Math.round(standing[i] * (panel - 1)) + 1}
+                    #{typical[i]}
                   </td>
                 ))}
               </tr>

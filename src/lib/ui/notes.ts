@@ -1,6 +1,7 @@
 // "Set notes": the analysis as Markdown, to paste into a doc or a message.
 
 import type { AnalyzedReference, LocalHooks, Swap } from "@/lib/analysis/types";
+import { cityTable } from "./cities";
 import { gutRows } from "./gut";
 
 const VERDICT: Record<AnalyzedReference["verdict"], string> = {
@@ -45,16 +46,27 @@ export function setNotes(input: NotesInput): string {
   if (gut.length) lines.push(`**Gut vs. data:** Claude's blind guess matched Qloo on ${gut.filter((g) => g.same).length} of ${gut.length} calls`);
   lines.push("");
 
+  // The gut column only when there are gut calls (examples in another room have none).
+  const withGut = references.some((r) => r.gut);
   lines.push("## References", "");
-  lines.push("| Reference | Verdict | This room vs. average | Presence | Claude's gut | Why |");
-  lines.push("|---|---|---|---|---|---|");
+  lines.push(`| Reference | Verdict | This room vs. average | Presence |${withGut ? " Claude's gut |" : ""} Why |`);
+  lines.push(`|---|---|---|---|${withGut ? "---|" : ""}---|`);
   for (const r of references) {
     const presence = r.signals?.recognition === undefined ? "–" : `${Math.round(r.signals.recognition * 100)}/100`;
-    lines.push(
-      `| ${cell(r.extracted.name)} | ${VERDICT[r.verdict]} | ${signed(r.signals?.roomIndex)} | ${presence} | ${
-        r.gut ? `${VERDICT[r.gut.verdict]}, ${signed(r.gut.roomIndex)}` : "–"
-      } | ${cell(r.reasons[0] ?? "")} |`,
-    );
+    const gutCell = withGut ? ` ${r.gut ? `${VERDICT[r.gut.verdict]}, ${signed(r.gut.roomIndex)}` : "–"} |` : "";
+    lines.push(`| ${cell(r.extracted.name)} | ${VERDICT[r.verdict]} | ${signed(r.signals?.roomIndex)} | ${presence} |${gutCell} ${cell(r.reasons[0] ?? "")} |`);
+  }
+
+  const table = cityTable(references);
+  if (table) {
+    lines.push("", "## City by city", "");
+    if (table.best >= 0) lines.push(`Plays best in **${table.cities[table.best]}** (typical rank #${table.typical[table.best]} of ${table.panel}).`, "");
+    lines.push(`Where each reference is liked most by people in general, ranked among ${table.panel} big US metros (#1 = likes it most).`, "");
+    lines.push(`| Reference | ${table.cities.map(cell).join(" | ")} |`, `|---|${table.cities.map(() => "---").join("|")}|`);
+    for (const r of table.rows) {
+      lines.push(`| ${cell(r.extracted.name)} | ${table.cities.map((c) => (table.rank(r, c) ? `#${table.rank(r, c)!.rank}` : "–")).join(" | ")} |`);
+    }
+    lines.push(`| *Typical rank* | ${table.typical.map((t) => `#${t}`).join(" | ")} |`);
   }
 
   const withSwaps = references.filter((r) => r.swaps.length);
@@ -74,7 +86,7 @@ export function setNotes(input: NotesInput): string {
     lines.push("## Local hooks", "");
     for (const h of input.hooks) {
       const parts = [
-        h.places.length ? `places: ${h.places.map((p) => p.name).join(", ")}` : "",
+        h.places.length ? `places: ${h.places.slice(0, 5).map((p) => p.name).join(", ")}` : "",
         h.artists.length ? `local favorites: ${h.artists.map((a) => a.name).join(", ")}` : "",
       ].filter(Boolean);
       lines.push(`- **${h.city}**: ${parts.join("; ")}`);

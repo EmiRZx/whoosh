@@ -40,7 +40,7 @@ describe("judge", () => {
   it("is cautious, not certain, when Qloo has no data", () => {
     const r = judge({}, "urn:entity:tv_show", "setup");
     expect(r.verdict).toBe("risky");
-    expect(r.reasons[0]).toMatch(/almost no current audience/);
+    expect(r.reasons[0]).toMatch(/no popularity data/);
   });
 });
 
@@ -52,4 +52,13 @@ describe("tier", () => {
     [0.9, "known"],
     [0.99, "universal"],
   ] as const)("%s -> %s", (pop, t) => expect(tier(pop)).toBe(t));
+});
+
+describe("judge on faded references", () => {
+  it("lets a faded reference land with the room that is its audience", () => {
+    const age = { "55_and_older": 0.4 };
+    expect(judge({ recognition: 0.2, roomIndex: 0.35, profile: { age, gender: {} } }, "urn:entity:tv_show", "setup").verdict).toBe("lands");
+    expect(judge({ recognition: 0.2, roomIndex: 0.1, profile: { age, gender: {} } }, "urn:entity:tv_show", "setup").verdict).toBe("risky");
+    expect(judge({ recognition: 0.2, roomIndex: -0.1, profile: { age, gender: {} } }, "urn:entity:tv_show", "setup").verdict).toBe("dead");
+  });
 });

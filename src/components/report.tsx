@@ -1,4 +1,5 @@
 import type { AnalyzedReference, LocalHooks } from "@/lib/analysis/types";
+import { cityTable } from "@/lib/ui/cities";
 import { gutRows } from "@/lib/ui/gut";
 import { signed, VERDICT_LABEL } from "./labels";
 
@@ -27,6 +28,8 @@ interface Props {
 export function Report({ title, room, cities, references, accepted, score, projected, hooks, revised, changed }: Props) {
   const pct = (x?: number) => (x === undefined ? "–" : `${Math.round(x * 100)}%`);
   const gut = gutRows(references);
+  const withGut = references.some((r) => r.gut);
+  const table = cityTable(references);
   return (
     <article className="hidden bg-white font-sans text-[11pt] text-[#0b0b0b] print:block">
       <header className="border-b-2 border-black pb-3">
@@ -73,7 +76,7 @@ export function Report({ title, room, cities, references, accepted, score, proje
             <th className="py-1 pr-2 font-medium">Reference</th>
             <th className="py-1 pr-2 font-medium">Verdict</th>
             <th className="py-1 pr-2 font-medium">Room vs. avg</th>
-            <th className="py-1 pr-2 font-medium">Gut guess</th>
+            {withGut && <th className="py-1 pr-2 font-medium">Gut guess</th>}
             <th className="py-1 font-medium">Why</th>
           </tr>
         </thead>
@@ -85,9 +88,11 @@ export function Report({ title, room, cities, references, accepted, score, proje
                 {MARK[r.verdict].glyph} {VERDICT_LABEL[r.verdict]}
               </td>
               <td className="py-1 pr-2 tabular-nums">{r.signals?.roomIndex === undefined ? "–" : signed(r.signals.roomIndex)}</td>
-              <td className="whitespace-nowrap py-1 pr-2 tabular-nums text-[#52514e]">
-                {r.gut ? `${MARK[r.gut.verdict].glyph} ${signed(r.gut.roomIndex)}` : "–"}
-              </td>
+              {withGut && (
+                <td className="whitespace-nowrap py-1 pr-2 tabular-nums text-[#52514e]">
+                  {r.gut ? `${MARK[r.gut.verdict].glyph} ${signed(r.gut.roomIndex)}` : "–"}
+                </td>
+              )}
               <td className="py-1 text-[#52514e]">{r.reasons[0] ?? ""}</td>
             </tr>
           ))}
@@ -116,12 +121,61 @@ export function Report({ title, room, cities, references, accepted, score, proje
         </>
       )}
 
+      {table && (
+        <>
+          <h2 className="mt-6 text-[12pt] font-semibold">City by city</h2>
+          <p className="mt-1 text-[9.5pt] text-[#52514e]">
+            {table.best >= 0 && (
+              <>
+                Plays best in <b>{table.cities[table.best]}</b> (typical rank #{table.typical[table.best]} of {table.panel}).{" "}
+              </>
+            )}
+            Where each reference is liked most by people in general, ranked among {table.panel} big US metros (#1 = likes it most).
+          </p>
+          <table className="mt-2 border-collapse text-[9.5pt]">
+            <thead>
+              <tr className="border-b border-[#c3c2b7] text-left text-[#52514e]">
+                <th className="py-1 pr-4 font-medium">Reference</th>
+                {table.cities.map((c) => (
+                  <th key={c} className="py-1 pr-4 font-medium">
+                    {c.split(",")[0]}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {table.rows.map((r) => (
+                <tr key={r.key} className="border-b border-[#e1e0d9]">
+                  <td className="py-0.5 pr-4">{r.extracted.name}</td>
+                  {table.cities.map((c) => (
+                    <td key={c} className="py-0.5 pr-4 tabular-nums">
+                      {table.rank(r, c) ? `#${table.rank(r, c)!.rank}` : "–"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              <tr>
+                <td className="py-0.5 pr-4 font-medium">Typical rank</td>
+                {table.typical.map((t, i) => (
+                  <td key={i} className="py-0.5 pr-4 font-medium tabular-nums">
+                    #{t}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </>
+      )}
+
       {hooks.length > 0 && (
         <>
           <h2 className="mt-6 text-[12pt] font-semibold">Local hooks</h2>
           {hooks.map((h) => (
             <p key={h.city} className="mt-1 text-[10pt]">
-              <span className="font-medium">{h.city}:</span> {[...h.places, ...h.artists].map((e) => e.name).join(", ")}
+              <span className="font-medium">{h.city}:</span>{" "}
+              {h.places.length > 0 && <>places: {h.places.slice(0, 5).map((e) => e.name).join(", ")}</>}
+              {h.places.length > 0 && h.artists.length > 0 && "; "}
+              {h.artists.length > 0 && <>local favorites: {h.artists.map((e) => e.name).join(", ")}</>}
             </p>
           ))}
         </>

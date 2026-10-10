@@ -244,7 +244,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   if (!items.length) return finish();
   send({
     type: "status",
-    message: `Asking Qloo how ${audience.performer ? `${audience.performer.name}'s fans feel` : `${audience.label.toLowerCase()} feels`} about ${items.length} references${audience.cities.some((c) => c.lat !== undefined) ? ", city by city" : ""}`,
+    message: `Asking Qloo how ${audience.performer ? `${audience.performer.name}'s fans feel` : `${audience.label.toLowerCase()} feels`} about ${items.length} references${audience.cities.some((c) => c.lat !== undefined) ? ", and where each one is liked most" : ""}`,
   });
   const measured = await measure(qloo, items, audience);
 
@@ -286,7 +286,11 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     if (!recorded && anthropic && remaining < MIN_SWAP_MS) {
       send({ type: "status", message: "Out of time to look for swaps on this run" });
     } else if (recorded || anthropic) {
-      send({ type: "status", message: `Looking for swaps that do the same job for ${weak.map((r) => r.extracted.name).join(", ")}` });
+      // Examples only re-check the swaps recorded for them.
+      const searching = recorded ? weak.filter((r) => recorded[r.extracted.name]) : weak;
+      if (searching.length) {
+        send({ type: "status", message: `Looking for swaps that do the same job for ${searching.map((r) => r.extracted.name).join(", ")}` });
+      }
       // Stops the swap agents at the deadline, or when the visitor leaves.
       const swapAbort = new AbortController();
       const stop = () => swapAbort.abort();
@@ -372,11 +376,11 @@ async function replaySwaps(qloo: QlooClient, ctx: SwapContext, recorded: { swaps
   const present = found.filter((f): f is NonNullable<typeof f> => !!f);
   if (!present.length) return { swaps: [], note: recorded.note };
   const checked = await check(qloo, ctx, { ids: present.map((p) => p.hit.id) });
-  return {
-    swaps: present.flatMap(({ hit, s }) => {
-      const c = checked.find((x) => x.id === hit.id);
-      return c?.beats_original ? [{ checked: c, rewrite: s.rewrite, why: s.why }] : [];
-    }),
-    note: recorded.note,
-  };
+  const swaps = present.flatMap(({ hit, s }) => {
+    const c = checked.find((x) => x.id === hit.id);
+    return c?.beats_original ? [{ checked: c, rewrite: s.rewrite, why: s.why }] : [];
+  });
+  // Recorded for the example's own room; in another room they may not win.
+  const note = swaps.length || !recorded.swaps.length ? recorded.note : "The swaps recorded for this example don't beat the original for this room.";
+  return { swaps, note };
 }

@@ -57,7 +57,7 @@ export function Studio() {
   const room: RoomInfo | undefined = performer
     ? {
         label: `Fans of ${performer.performer.name}`,
-        description: "Age mix from Qloo's audience data",
+        description: "Age mix from Qloo's data on their fans; their taste also steers the swaps and local hooks",
         ageMix: performer.ageMix,
         audience: `fans of ${performer.performer.name}`,
         imageUrl: performer.performer.imageUrl,
@@ -82,7 +82,8 @@ export function Studio() {
 
   const counts = useMemo(() => {
     const c: Record<Verdict, number> = { lands: 0, risky: 0, dead: 0, unchecked: 0 };
-    for (const r of refs) c[r.verdict]++;
+    // References still being checked aren't "not measured" yet.
+    for (const r of refs) if (r.resolution.status !== "pending") c[r.verdict]++;
     return c;
   }, [refs]);
   const score = roomScore(refs.map((r) => ({ verdict: r.verdict, weight: r.extracted.weight })));
@@ -212,8 +213,10 @@ export function Studio() {
     const s = SAMPLES.find((x) => x.id === id);
     if (!s) return;
     setText(s.text);
+    // Someone who set up a performer's crowd and a tour wants to try the
+    // example on it, not lose it.
+    if (performer) return;
     setPresetId(s.presetId);
-    setPerformer(undefined);
     setCities(s.cities);
   };
 

@@ -78,7 +78,7 @@ async function cityRanks(client: QlooClient, entityId: string, cities: City[]): 
   if (!placed.length) return undefined;
   const usOnly = placed.every((c) => /, [A-Z]{2}$/.test(c.name));
   const panel = usOnly
-    ? usPanel(placed)
+    ? usPanel(placed).slice(0, Math.max(0, PANEL_SIZE - placed.filter((p) => !US_METROS.includes(p.name)).length))
     : CITIES.filter((c) => !placed.some((p) => p.name === c.label))
         .slice(0, PANEL_SIZE)
         .map((c) => ({ name: c.label, lat: c.lat, lon: c.lon }));
