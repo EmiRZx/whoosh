@@ -1,0 +1,7 @@
+# Never upload local secrets or cached Qloo data.
+.env*
+!.env.example
+.cache
+evals/**/runs
+node_modules
+.next

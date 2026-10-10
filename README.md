@@ -4,7 +4,7 @@
 
 Bring a stand-up set, a speech, a wedding toast or a lecture, choose the room (a college crowd in Birmingham, a corporate offsite in San Francisco), and Whoosh tells you which of your references that audience will actually get. It's built on [Qloo](https://qloo.com)'s taste graph for the Qloo Agentic Hackathon.
 
-> Status: in active development. Reference extraction, Qloo matching, the room and city signals, verdicts, the swap agent, local hooks, the UI and the MCP server work today. Next: a hosted demo.
+> Status: in active development. Everything described here works today, end to end with live Claude and Qloo calls, and is hosted on Vercel.
 
 ## Why
 
@@ -56,14 +56,20 @@ npm run dev                  # http://localhost:3000
 | Variable | Purpose |
 |---|---|
 | `QLOO_API_KEY` | Qloo hackathon key. Only valid on `https://hackathon.api.qloo.com`. |
-| `ANTHROPIC_API_KEY` | Claude key for analyzing your own scripts. The built-in examples replay a recorded extraction and don't need it. |
+| `ANTHROPIC_API_KEY` | Claude key for analyzing your own scripts. The built-in examples replay recorded model output and don't need it. |
+| `ANTHROPIC_BASE_URL` | Optional: an Anthropic-compatible endpoint instead of the Claude API. |
+| `LLM_MODEL` | Optional: the model for every agent step. Defaults to `claude-opus-5-5`. |
+| `KV_REST_API_URL`, `KV_REST_API_TOKEN` | Optional: a Redis REST store (Upstash). Makes the Qloo response cache shared and durable, and backs the rate limits. |
+| `LIVE_PER_IP_PER_HOUR`, `LIVE_PER_DAY` | Optional: limits on live analyses (defaults 8 and 150). The examples are never limited. |
 
 Keys stay on the server; nothing is sent to the browser.
 
 ```bash
 npm test             # unit tests
 npm run typecheck
-npx tsx evals/extraction/score.ts <run-dir>   # score reference extraction against the gold set
+npx tsx evals/extraction/run.ts <run-dir> [effort]   # run live extraction on the examples
+npx tsx evals/extraction/score.ts <run-dir>          # score it against the gold set
+npx tsx --env-file=.env.local evals/gut/compare.ts   # how often the model's gut call matches Qloo
 ```
 
 ## Project layout
