@@ -1,9 +1,10 @@
 "use client";
 
 import { ArrowRight, Check, ChevronDown, LoaderCircle, MapPin } from "lucide-react";
-import type { AudiencePreset } from "@/lib/audience/audience";
+import type { AgeMix } from "@/lib/audience/audience";
 import type { AnalyzedReference, Verdict } from "@/lib/analysis/types";
 import { VERDICT_LABEL } from "./labels";
+import { EntityThumb } from "./entity-thumb";
 import { AgeHistogram } from "./room-picker";
 import { VerdictIcon } from "./verdict";
 
@@ -140,14 +141,31 @@ export function FixesCard({ references, accepted, selectedKey, onSelect }: Fixes
   );
 }
 
-export function RoomCard({ preset, cities }: { preset: AudiencePreset; cities: string[] }) {
+// A room as the results show it: a preset, or a performer's fans.
+export interface RoomInfo {
+  label: string;
+  description: string;
+  ageMix: AgeMix;
+  // How sentences refer to the people in it ("college crowd audiences",
+  // "fans of Cedric the Entertainer").
+  audience: string;
+  imageUrl?: string;
+  name?: string;
+}
+
+export function RoomCard({ room, cities }: { room: RoomInfo; cities: string[] }) {
   return (
     <section className="card rounded-2xl p-5">
       <CardTitle>The room</CardTitle>
-      <p className="font-medium">{preset.label}</p>
-      <p className="text-xs text-ink-faint">{preset.description}</p>
+      <div className="flex items-start gap-3">
+        {room.name && <EntityThumb src={room.imageUrl} name={room.name} className="size-10" />}
+        <div className="min-w-0">
+          <p className="font-medium leading-tight">{room.label}</p>
+          <p className="mt-0.5 text-xs text-ink-faint">{room.description}</p>
+        </div>
+      </div>
       <div className="mt-3">
-        <AgeHistogram mix={preset.ageMix} className="h-12" labels />
+        <AgeHistogram mix={room.ageMix} className="h-12" labels />
       </div>
       {cities.length > 0 && (
         <ul className="mt-4 flex flex-col gap-1.5 border-t border-line pt-3 text-sm">

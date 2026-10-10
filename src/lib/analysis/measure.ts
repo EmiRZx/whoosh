@@ -38,38 +38,61 @@ function box(lat: number, lon: number) {
   return `((${w} ${s},${e} ${s},${e} ${n},${w} ${n},${w} ${s}))`;
 }
 
+type Placed = { name: string; lat: number; lon: number };
+
+// The 24 largest US metro areas, one point each. (Ranking by city
+// population instead would count New York five times, once per borough, and
+// leave out Atlanta, Miami and Boston.)
+const US_METROS = [
+  "New York City, NY", "Los Angeles, CA", "Chicago, IL", "Dallas, TX", "Houston, TX", "Washington, DC",
+  "Philadelphia, PA", "Miami, FL", "Atlanta, GA", "Boston, MA", "Phoenix, AZ", "San Francisco, CA",
+  "Detroit, MI", "Seattle, WA", "Minneapolis, MN", "San Diego, CA", "Tampa, FL", "Denver, CO",
+  "Baltimore, MD", "St. Louis, MO", "Orlando, FL", "Charlotte, NC", "San Antonio, TX", "Portland, OR",
+];
+
+const usPanel = (exclude: Placed[] = []) =>
+  US_METROS.map((label) => CITIES.find((c) => c.label === label))
+    .filter((c): c is (typeof CITIES)[number] => !!c && !exclude.some((p) => p.name === c.label))
+    .map((c) => ({ name: c.label, lat: c.lat, lon: c.lon }));
+
 // Heatmap affinities are relative within one response, so a city's number
 // only means something next to other cities in the same call. Each request
-// therefore includes a fixed panel of big metros (US ones for US cities) and
-// reports the requested cities' ranks among them.
-async function cityRanks(client: QlooClient, entityId: string, cities: City[]): Promise<CityRank[] | undefined> {
-  const placed = cities.filter((c): c is City & { lat: number; lon: number } => c.lat !== undefined && c.lon !== undefined);
-  if (!placed.length) return undefined;
-  const usOnly = placed.every((c) => /, [A-Z]{2}$/.test(c.name));
-  const panel = CITIES.filter((c) => (usOnly ? c.country === "US" : true))
-    .filter((c) => !placed.some((p) => p.name === c.label))
-    .slice(0, PANEL_SIZE)
-    .map((c) => ({ name: c.label, lat: c.lat, lon: c.lon }));
-  const all = [...placed, ...panel];
-
+// therefore includes a fixed panel of big metros (US ones for US cities), and
+// cities are ranked against it.
+async function rankCities(client: QlooClient, entityId: string, all: Placed[]): Promise<{ name: string; affinity: number }[]> {
   const cells = await heatmap(client, {
     "signal.interests.entities": entityId,
     "filter.location": `MULTIPOLYGON(${all.map((c) => box(c.lat, c.lon)).join(",")})`,
   }).catch(() => []);
-  if (!cells.length) return undefined;
-
-  const ranked = all
+  return all
     .map((c) => {
       const mine = cells.filter((cell) => Math.abs(cell.lat - c.lat) <= BOX + 0.01 && Math.abs(cell.lon - c.lon) <= BOX * 1.3 + 0.01);
       return { name: c.name, affinity: mine.length ? mine.reduce((s, cell) => s + cell.affinity, 0) / mine.length : undefined };
     })
     .filter((m): m is { name: string; affinity: number } => m.affinity !== undefined)
     .sort((a, b) => b.affinity - a.affinity);
+}
+
+async function cityRanks(client: QlooClient, entityId: string, cities: City[]): Promise<CityRank[] | undefined> {
+  const placed = cities.filter((c): c is City & Placed => c.lat !== undefined && c.lon !== undefined);
+  if (!placed.length) return undefined;
+  const usOnly = placed.every((c) => /, [A-Z]{2}$/.test(c.name));
+  const panel = usOnly
+    ? usPanel(placed)
+    : CITIES.filter((c) => !placed.some((p) => p.name === c.label))
+        .slice(0, PANEL_SIZE)
+        .map((c) => ({ name: c.label, lat: c.lat, lon: c.lon }));
+  const ranked = await rankCities(client, entityId, [...placed, ...panel]);
   const out = placed.flatMap((c) => {
     const rank = ranked.findIndex((m) => m.name === c.name);
     return rank < 0 ? [] : [{ name: c.name, rank: rank + 1, of: ranked.length }];
   });
   return out.length ? out : undefined;
+}
+
+// The big US metros where an entity's fans are most concentrated.
+export async function topMetros(client: QlooClient, entityId: string, n = 3): Promise<string[]> {
+  return (await rankCities(client, entityId, usPanel())).slice(0, n).map((m) => m.name);
 }
 
 export async function measure(

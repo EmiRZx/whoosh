@@ -30,7 +30,8 @@ export interface SwapContext {
     room_index?: number;
     presence?: number;
   };
-  audience: { label: string; ageMix: AgeMix; cities: City[] };
+  // A performer's crowd also steers candidate search by the fans' taste.
+  audience: { label: string; ageMix: AgeMix; cities: City[]; performer?: { id: string; name: string } };
   // Other references in the script, so a swap doesn't repeat one.
   others: string[];
   // Everything check() has measured in this session, by entity id.
@@ -114,7 +115,7 @@ export async function findCandidates(client: QlooClient, ctx: SwapContext, input
   const type = input.type ? `urn:entity:${input.type}` : (INSIGHT_TYPE[original.type] ?? original.type);
   const results = await insightEntities(client, {
     "filter.type": type,
-    "signal.interests.entities": input.similar_to ?? original.id,
+    "signal.interests.entities": [input.similar_to ?? original.id, ctx.audience.performer?.id].filter(Boolean).join(","),
     "signal.demographics.age": dominantAge(ctx.audience.ageMix),
     "filter.popularity.min": input.min_popularity ?? 0.85,
     "filter.exclude.entities": original.id,

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { isExample, runAnalysis, UserFacingError } from "@/lib/analysis/run";
+import { ENTITY_ID } from "@/lib/audience/performer";
 import type { AnalysisEvent } from "@/lib/analysis/types";
 import { clientIp, takeLiveSlot } from "@/lib/limits";
 
@@ -10,6 +11,7 @@ const RequestSchema = z.object({
   text: z.string().trim().min(1).max(8000),
   presetId: z.string().max(40),
   cities: z.array(z.string().trim().min(1).max(80)).max(6),
+  performerId: z.string().regex(ENTITY_ID).optional(),
 });
 
 export async function POST(request: Request) {

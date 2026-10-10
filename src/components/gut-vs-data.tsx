@@ -40,7 +40,7 @@ export function GutVsData({ references, room, selectedKey, onSelect }: Props) {
             Claude&apos;s gut matched the data on {same} of {rows.length} calls
           </h2>
           <p className="mt-1 max-w-2xl text-sm text-ink-soft">
-            Before seeing any numbers, Claude guessed how the {room.toLowerCase()} would take each reference. Then Qloo measured it.
+            Before seeing any numbers, Claude guessed how {room} would take each reference. Then Qloo measured it.
             Disagreements first.
           </p>
           {measured.length > 0 && (

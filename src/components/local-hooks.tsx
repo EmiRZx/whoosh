@@ -10,7 +10,7 @@ export function LocalHooksPanel({ hooks, room }: { hooks: LocalHooks[]; room: st
       <CardTitle>Local hooks</CardTitle>
       <h2 className="text-xl font-semibold tracking-tight">Open with something from their city</h2>
       <p className="mt-1 max-w-2xl text-sm text-ink-soft">
-        What {room.toLowerCase()} audiences like in each city, from Qloo: local places, and artists who do better there than nationally.
+        What {room} like in each city, from Qloo: local places, and artists who do better there than nationally.
       </p>
       <div className={`mt-5 grid grid-cols-1 gap-4 ${hooks.length > 1 ? "md:grid-cols-2" : ""} ${hooks.length > 2 ? "xl:grid-cols-3" : ""}`}>
         {hooks.map((h) => (

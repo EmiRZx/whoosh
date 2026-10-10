@@ -44,6 +44,17 @@ export async function takeLiveSlot(ip: string): Promise<LimitResult> {
   return { ok: true };
 }
 
+// Qloo-only lookups (performer search) are cheap but share the Qloo quota.
+const QLOO_PER_IP_PER_HOUR = 300;
+
+export async function takeLookupSlot(ip: string): Promise<boolean> {
+  try {
+    return (await bump(`whoosh:lookup:ip:${ip}:${Math.floor(Date.now() / 3_600_000)}`, 3600)) <= QLOO_PER_IP_PER_HOUR;
+  } catch {
+    return true;
+  }
+}
+
 export function clientIp(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   return forwarded || request.headers.get("x-real-ip") || "unknown";

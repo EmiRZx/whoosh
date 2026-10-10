@@ -7,6 +7,7 @@ export interface AnalysisRequest {
   text: string;
   presetId: string;
   cities: string[];
+  performerId?: string;
 }
 
 export interface AnalysisState {

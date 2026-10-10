@@ -24,6 +24,7 @@ The language model handles language: reading the script, choosing between candid
 - **The script, marked up.** Every reference is highlighted by verdict (lands, risky, won't land, not measured), each with an icon and a label. Click one for the details.
 - **Why, in numbers.** How much this room likes it compared with the average adult, how present it is in culture today, how each age group feels about it, and where it ranks in each tour city.
 - **Swaps you can use.** Substitutes that do the same job and beat the original for this room. Accept one and the line is rewritten in place as a tracked change, and the room score updates.
+- **Any performer's crowd as the room.** Pick a comedian, musician, show or podcast and the room becomes their fans: Qloo's age profile for that audience sets the mix, their taste steers the swap search and the local hooks, and the cities where their fans are concentrated are suggested for the tour.
 - **A tour view.** Every reference against every city, and the city where the set plays best.
 - **Local hooks.** Places and artists that this crowd likes in each city.
 - **Notes to take away.** Copy the revised script, copy the notes as Markdown, or print them to PDF.
@@ -34,7 +35,7 @@ Light and dark themes; it works on a phone.
 
 The same pipeline is exposed as an MCP server over Streamable HTTP at `/api/mcp`, with two tools:
 
-- `check_script` takes `text`, `room` and optional `cities`, and returns every reference with its role, verdict, reasons and swaps.
+- `check_script` takes `text`, `room`, optional `cities`, and an optional `performer` whose fans are the audience; it returns every reference with its role, verdict, reasons and swaps.
 - `list_rooms` lists the audience presets and their age mixes.
 
 ```json

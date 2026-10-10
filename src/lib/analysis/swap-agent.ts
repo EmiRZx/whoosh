@@ -43,7 +43,9 @@ export function describeSwapTask(ctx: SwapContext): string {
     o.context && o.context !== o.line ? `<paragraph>${o.context}</paragraph>` : "",
     `<line>${o.line}</line>`,
     `<reference>\nname: ${o.name}\nmeasured as: ${o.entity_name} (${o.type.replace("urn:entity:", "")}, id ${o.id})${o.stand_in ? `, a stand-in: ${o.stand_in}` : ""}\nwords in the line: ${o.quotes.map((q) => `"${q}"`).join(", ")}\njob in the line: ${o.role}\nweight: ${o.weight}\nQloo verdict for this room: ${o.verdict}${o.room_index === undefined ? "" : ` (room index ${o.room_index.toFixed(2)})`}\n${o.reasons.map((r) => `- ${r}`).join("\n")}\n</reference>`,
-    `<room>\n${ctx.audience.label}: ${ages}${cities ? `\ncities: ${cities}` : ""}\n</room>`,
+    `<room>\n${ctx.audience.label}: ${ages}${cities ? `\ncities: ${cities}` : ""}${
+      ctx.audience.performer ? `\nfind_candidates also weighs what fans of ${ctx.audience.performer.name} like.` : ""
+    }\n</room>`,
     ctx.others.length ? `<already_in_the_script>\n${ctx.others.join(", ")}\n</already_in_the_script>` : "",
   ]
     .filter(Boolean)
@@ -70,7 +72,8 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
   const tools = [
     betaZodTool({
       name: "find_candidates",
-      description: "Search Qloo for substitutes similar to the original (or to another entity) that this room's main age group likes.",
+      description:
+        "Search Qloo for substitutes similar to the original (or to another entity) that this room's main age group likes, and, when the room is a performer's crowd, that their fans like.",
       inputSchema: FindCandidatesInput,
       run: (input) => safely(() => findCandidates(qloo, ctx, input)),
     }),

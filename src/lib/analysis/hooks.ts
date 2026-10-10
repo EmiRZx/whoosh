@@ -12,7 +12,7 @@ import type { City, LocalHooks } from "./types";
 // Infrastructure and event venues top the place results without being
 // anything to joke about.
 const NOT_A_HOOK =
-  /airport|hospital|medical|clinic|station|terminal|interstate|parking|university|college|school|hotel|\binn\b|suites|marriott|hilton|hyatt|sheraton|westin|\bmall\b|convention|expo\b|fairground|cemetery|welcome center|visitor center|\btours?\b|gift shop|\bstore\b/i;
+  /airport|hospital|medical|clinic|station|terminal|interstate|parking|university|college|school|hotel|\binn\b|suites|marriott|hilton|hyatt|sheraton|westin|\bmall\b|convention|expo\b|fairground|cemetery|welcome center|visitor center|\btours?\b|gift shop|\bstore\b|gentlem[ae]n'?s club|strip club|cabaret|\badult/i;
 
 // Entity names are user-generated in places; never show a slur on stage notes.
 const OFFENSIVE = /n[i1]gg|f[a@]gg|\bretard|\bwhore|\bslut/i;
@@ -34,15 +34,19 @@ function baselinesFor(c: { lat: number; lon: number }) {
   return [coast, nearChicago ? METROS.dallas : METROS.chicago];
 }
 
+// A place worth naming on stage.
+export const isHookPlace = (name: string) => !OFFENSIVE.test(name) && !NOT_A_HOOK.test(name);
+
 const point = (c: { lat: number; lon: number }) => `POINT(${c.lon} ${c.lat})`;
 const clean = (e: QlooEntity) => !OFFENSIVE.test(e.name);
 
-async function localArtists(client: QlooClient, here: { lat: number; lon: number }, age: string): Promise<QlooEntity[]> {
+async function localArtists(client: QlooClient, here: { lat: number; lon: number }, age: string, interest?: string): Promise<QlooEntity[]> {
   const local = (
     await insightEntities(client, {
       "filter.type": "urn:entity:artist",
       "signal.location": point(here),
       "signal.demographics.age": age,
+      "signal.interests.entities": interest,
       take: 20,
     }).catch(() => [])
   ).filter(clean);
@@ -56,6 +60,7 @@ async function localArtists(client: QlooClient, here: { lat: number; lon: number
         "filter.results.entities": ids,
         "signal.location": point(b),
         "signal.demographics.age": age,
+        "signal.interests.entities": interest,
         take: local.length,
       }).catch(() => []),
     ),
@@ -71,7 +76,9 @@ async function localArtists(client: QlooClient, here: { lat: number; lon: number
     .map((x) => x.artist);
 }
 
-export async function localHooks(client: QlooClient, city: City, ageMix: AgeMix): Promise<LocalHooks | undefined> {
+// `interest` narrows the hooks to a performer's fans: what Cedric the
+// Entertainer's crowd likes in Atlanta, not just what people their age like.
+export async function localHooks(client: QlooClient, city: City, ageMix: AgeMix, interest?: string): Promise<LocalHooks | undefined> {
   if (city.lat === undefined || city.lon === undefined) return undefined;
   const here = { lat: city.lat, lon: city.lon };
   const age = [...AGE_BUCKETS].sort((a, b) => ageMix[b] - ageMix[a])[0];
@@ -82,14 +89,15 @@ export async function localHooks(client: QlooClient, city: City, ageMix: AgeMix)
       "filter.location": point(here),
       "filter.location.radius": 15000,
       "signal.demographics.age": age,
+      "signal.interests.entities": interest,
       take: 15,
     }).catch(() => []),
-    localArtists(client, here, age),
+    localArtists(client, here, age, interest),
   ]);
 
   const hooks = {
     city: city.name,
-    places: places.filter((p) => clean(p) && !NOT_A_HOOK.test(p.name)).slice(0, 6).map(toSummary),
+    places: places.filter((p) => isHookPlace(p.name)).slice(0, 6).map(toSummary),
     artists: artists.slice(0, 6).map(toSummary),
   };
   return hooks.places.length || hooks.artists.length ? hooks : undefined;

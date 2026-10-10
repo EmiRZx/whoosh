@@ -15,7 +15,8 @@ import { VERDICT_LABEL } from "./labels";
 import { LocalHooksPanel } from "./local-hooks";
 import { Report } from "./report";
 import { ScriptView } from "./script-view";
-import { AgentTrace, FixesCard, RoomCard, ScoreCard, VERDICT_ORDER } from "./summary";
+import type { PerformerRoomData } from "./performer-picker";
+import { AgentTrace, FixesCard, RoomCard, ScoreCard, VERDICT_ORDER, type RoomInfo } from "./summary";
 import { TourMatrix } from "./tour-matrix";
 import { useAnalysis } from "./use-analysis";
 import { VerdictIcon } from "./verdict";
@@ -39,6 +40,7 @@ function ToolbarButton({ onClick, icon: Icon, children }: { onClick: () => void;
 export function Studio() {
   const [text, setText] = useState("");
   const [presetId, setPresetId] = useState("comedy-club");
+  const [performer, setPerformer] = useState<PerformerRoomData>();
   const [cities, setCities] = useState<string[]>([]);
   const [selectedKey, setSelectedKey] = useState<string>();
   const [accepted, setAccepted] = useState<Record<string, number>>({});
@@ -49,6 +51,16 @@ export function Studio() {
 
   const sample = SAMPLES.find((s) => s.text === text);
   const preset = presetById(presetId);
+  const room: RoomInfo | undefined = performer
+    ? {
+        label: `Fans of ${performer.performer.name}`,
+        description: "Age mix from Qloo's audience data",
+        ageMix: performer.ageMix,
+        audience: `fans of ${performer.performer.name}`,
+        imageUrl: performer.performer.imageUrl,
+        name: performer.performer.name,
+      }
+    : preset && { label: preset.label, description: preset.description, ageMix: preset.ageMix, audience: `${preset.label.toLowerCase()} audiences` };
   const analysedText = state.analysis?.text ?? text.replace(/\r\n/g, "\n").trim();
   const refs = state.references;
   const byKey = useMemo(() => new Map(refs.map((r) => [r.key, r])), [refs]);
@@ -158,7 +170,7 @@ export function Studio() {
     setSelectedKey(undefined);
     setSheetOpen(false);
     window.scrollTo({ top: 0 });
-    run({ text, presetId, cities });
+    run({ text, presetId, cities, performerId: performer?.performer.id });
   };
 
   const loadSample = (id: string) => {
@@ -166,16 +178,19 @@ export function Studio() {
     if (!s) return;
     setText(s.text);
     setPresetId(s.presetId);
+    setPerformer(undefined);
     setCities(s.cities);
   };
 
-  if (state.phase === "idle" || !preset) {
+  if (state.phase === "idle" || !room) {
     return (
       <Composer
         text={text}
         onTextChange={setText}
         presetId={presetId}
         onPresetChange={setPresetId}
+        performer={performer}
+        onPerformerChange={setPerformer}
         cities={cities}
         onCitiesChange={setCities}
         onLoadSample={loadSample}
@@ -188,7 +203,7 @@ export function Studio() {
   const running = state.phase === "running";
   const notes = {
     title,
-    room: preset.label,
+    room: room.label,
     cities,
     references: refs,
     accepted,
@@ -214,7 +229,7 @@ export function Studio() {
       index={Math.max(0, index)}
       total={refs.length}
       onStep={step}
-      mix={preset.ageMix}
+      mix={room.ageMix}
       text={analysedText}
       accepted={selected ? accepted[selected.key] : undefined}
       onAccept={(i) => selected && accept(selected.key, i)}
@@ -244,7 +259,7 @@ export function Studio() {
             </button>
             {sample && <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">{sample.format}</p>}
             <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">
-              {preset.label}
+              {room.label}
               {cities.length > 0 && (
                 <>
                   <span className="text-ink-faint"> in </span>
@@ -280,7 +295,7 @@ export function Studio() {
             <div className="flex flex-col gap-4">
               {fixes}
               <div className="hidden xl:flex xl:flex-col xl:gap-4">
-                <RoomCard preset={preset} cities={cities} />
+                <RoomCard room={room} cities={cities} />
                 <AgentTrace statuses={state.statuses} running={running} />
               </div>
             </div>
@@ -349,12 +364,12 @@ export function Studio() {
           </aside>
         </div>
 
-        <GutVsData references={refs} room={preset.label} selectedKey={activeKey} onSelect={select} />
+        <GutVsData references={refs} room={room.audience} selectedKey={activeKey} onSelect={select} />
         <TourMatrix references={refs} selectedKey={activeKey} onSelect={select} />
-        <LocalHooksPanel hooks={state.hooks} room={preset.label} />
+        <LocalHooksPanel hooks={state.hooks} room={room.audience} />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:hidden">
-          <RoomCard preset={preset} cities={cities} />
+          <RoomCard room={room} cities={cities} />
           <AgentTrace statuses={state.statuses} running={running} />
         </div>
       </div>

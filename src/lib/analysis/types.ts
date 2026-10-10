@@ -11,10 +11,16 @@ export interface City {
 }
 
 export interface AudienceSpec {
+  // A preset id, or "performer" for a room built from a performer's fans.
   presetId: string;
   label: string;
+  description: string;
   ageMix: AgeMix;
   cities: City[];
+  performer?: EntitySummary;
+  // The Qloo entity whose fans the room is (the performer, or a same-name
+  // twin that holds their audience data). Steers swaps and local hooks.
+  fansOf?: string;
 }
 
 export interface EntitySummary {

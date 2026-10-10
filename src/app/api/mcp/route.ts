@@ -4,7 +4,9 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { isExample, runAnalysis, UserFacingError } from "@/lib/analysis/run";
+import { performerRoom, searchPerformers } from "@/lib/audience/performer";
 import { clientIp, takeLiveSlot } from "@/lib/limits";
+import { getQlooClient } from "@/lib/qloo/server";
 import type { Analysis, AnalysisEvent } from "@/lib/analysis/types";
 import { AUDIENCE_PRESETS } from "@/lib/audience/audience";
 import { AGE_BUCKETS } from "@/lib/qloo/api";
@@ -44,17 +46,36 @@ const handler = createMcpHandler(
         inputSchema: z.object({
           text: z.string().min(1).max(8000).describe("The script to check"),
           room: z.enum(ROOM_IDS).describe("Who is in the room; see list_rooms"),
+          performer: z
+            .string()
+            .max(80)
+            .optional()
+            .describe('Optional: a performer, show or podcast whose fans are the audience, e.g. "Cedric the Entertainer". Overrides room.'),
           cities: z.array(z.string().max(80)).max(6).optional().describe('Cities where it will be performed, e.g. "Austin, TX"'),
         }),
       },
-      async ({ text, room, cities }, extra) => {
+      async ({ text, room, performer, cities }, extra) => {
+        let performerId: string | undefined;
+        if (performer) {
+          const qloo = getQlooClient();
+          const hits = qloo ? await searchPerformers(qloo, performer, 3).catch(() => []) : [];
+          for (const hit of hits) {
+            if (await performerRoom(qloo!, hit.id).catch(() => null)) {
+              performerId = hit.id;
+              break;
+            }
+          }
+          if (!performerId) return { isError: true, content: [{ type: "text", text: `Qloo has no audience data for "${performer}".` }] };
+        }
         if (!isExample(text) && process.env.ANTHROPIC_API_KEY) {
           const slot = await takeLiveSlot(`mcp:${caller.getStore() ?? "unknown"}`);
           if (!slot.ok) return { isError: true, content: [{ type: "text", text: slot.message }] };
         }
         const events: AnalysisEvent[] = [];
         try {
-          await runAnalysis({ text, presetId: room, cities: cities ?? [] }, (e) => events.push(e), { signal: extra.mcpReq.signal });
+          await runAnalysis({ text, presetId: room, cities: cities ?? [], performerId }, (e) => events.push(e), {
+            signal: extra.mcpReq.signal,
+          });
         } catch (err) {
           const message = err instanceof UserFacingError ? err.message : "The analysis failed. Please try again.";
           return { isError: true, content: [{ type: "text", text: message }] };

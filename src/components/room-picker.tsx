@@ -5,6 +5,7 @@ import { useEffect, useId, useState } from "react";
 import { AUDIENCE_PRESETS, type AgeMix } from "@/lib/audience/audience";
 import { AGE_BUCKETS } from "@/lib/qloo/api";
 import { AGE_LABELS, AGE_SHORT } from "./labels";
+import { PerformerPicker, type PerformerRoomData } from "./performer-picker";
 
 const MAX_CITIES = 6;
 
@@ -154,18 +155,23 @@ function CityInput({ cities, onAdd }: { cities: string[]; onAdd: (city: string) 
 interface Props {
   presetId: string;
   onPresetChange: (id: string) => void;
+  performer?: PerformerRoomData;
+  onPerformerChange: (room?: PerformerRoomData) => void;
   cities: string[];
   onCitiesChange: (cities: string[]) => void;
 }
 
-export function RoomPicker({ presetId, onPresetChange, cities, onCitiesChange }: Props) {
+export function RoomPicker({ presetId, onPresetChange, performer, onPerformerChange, cities, onCitiesChange }: Props) {
+  const addCity = (name: string) => {
+    if (cities.length < MAX_CITIES && !cities.some((c) => c.toLowerCase() === name.toLowerCase())) onCitiesChange([...cities, name]);
+  };
   return (
     <div className="flex flex-col gap-6">
       <fieldset>
         <legend className="mb-3 text-sm font-semibold">Who&apos;s in the room?</legend>
         <div className="grid grid-cols-2 gap-2">
           {AUDIENCE_PRESETS.map((preset) => {
-            const active = preset.id === presetId;
+            const active = !performer && preset.id === presetId;
             return (
               <label
                 key={preset.id}
@@ -178,7 +184,10 @@ export function RoomPicker({ presetId, onPresetChange, cities, onCitiesChange }:
                   name="room"
                   value={preset.id}
                   checked={active}
-                  onChange={() => onPresetChange(preset.id)}
+                  onChange={() => {
+                    onPerformerChange(undefined);
+                    onPresetChange(preset.id);
+                  }}
                   className="sr-only"
                 />
                 <span>
@@ -193,6 +202,15 @@ export function RoomPicker({ presetId, onPresetChange, cities, onCitiesChange }:
         <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider text-ink-faint" aria-hidden>
           <span>Bars: younger → older</span>
         </div>
+        <div className="mt-3">
+          <PerformerPicker
+            room={performer}
+            onChange={onPerformerChange}
+            cities={cities}
+            onAddCity={addCity}
+            canAddCity={cities.length < MAX_CITIES}
+          />
+        </div>
       </fieldset>
 
       <div>
@@ -200,12 +218,7 @@ export function RoomPicker({ presetId, onPresetChange, cities, onCitiesChange }:
           Where are you playing?
         </label>
         <p className="mb-2.5 text-xs text-ink-soft">Add up to {MAX_CITIES} cities to compare a tour, or leave it empty.</p>
-        <CityInput
-          cities={cities}
-          onAdd={(name) => {
-            if (!cities.some((c) => c.toLowerCase() === name.toLowerCase())) onCitiesChange([...cities, name]);
-          }}
-        />
+        <CityInput cities={cities} onAdd={addCity} />
         {cities.length > 0 && (
           <ul className="mt-2.5 flex flex-wrap gap-1.5">
             {cities.map((city) => (

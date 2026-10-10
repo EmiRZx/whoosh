@@ -3,6 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import { SAMPLES } from "@/content/samples";
 import { presetById } from "@/lib/audience/audience";
+import type { PerformerRoomData } from "./performer-picker";
 import { RoomPicker } from "./room-picker";
 
 export const MAX_CHARS = 8000;
@@ -12,6 +13,8 @@ interface Props {
   onTextChange: (text: string) => void;
   presetId: string;
   onPresetChange: (id: string) => void;
+  performer?: PerformerRoomData;
+  onPerformerChange: (room?: PerformerRoomData) => void;
   cities: string[];
   onCitiesChange: (cities: string[]) => void;
   onLoadSample: (id: string) => void;
@@ -77,6 +80,8 @@ export function Composer(props: Props) {
           <RoomPicker
             presetId={props.presetId}
             onPresetChange={props.onPresetChange}
+            performer={props.performer}
+            onPerformerChange={props.onPerformerChange}
             cities={props.cities}
             onCitiesChange={props.onCitiesChange}
           />

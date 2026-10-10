@@ -8,6 +8,7 @@ import { RECORDED_SWAPS, type RecordedSwap } from "@/content/extractions/swaps";
 import { search, type EntityType, type QlooEntity } from "../qloo/api";
 import type { QlooClient } from "../qloo/client";
 import { getQlooClient } from "../qloo/server";
+import { performerLabel, performerRoom } from "../audience/performer";
 import { getAnthropic, UsageMeter, type LlmOptions } from "../llm/config";
 import { chooseCandidates } from "./choose";
 import { extractReferences, type Extraction } from "./extract";
@@ -25,6 +26,8 @@ export interface AnalysisInput {
   text: string;
   presetId: string;
   cities: string[];
+  // A Qloo entity id: the room is this performer's fans instead of a preset.
+  performerId?: string;
 }
 
 // Errors whose message is safe and useful to show the user as-is.
@@ -74,12 +77,28 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   if (unknown.length) {
     send({ type: "status", message: `Couldn't place ${unknown.join(", ")} on the map; city checks will skip ${unknown.length > 1 ? "them" : "it"}` });
   }
-  const audience: AudienceSpec = {
+  const located = cities.map(({ name, match }) => (match ? { name: match.label, lat: match.lat, lon: match.lon } : { name }));
+  let audience: AudienceSpec = {
     presetId: preset.id,
     label: preset.label,
+    description: preset.description,
     ageMix: preset.ageMix,
-    cities: cities.map(({ name, match }) => (match ? { name: match.label, lat: match.lat, lon: match.lon } : { name })),
+    cities: located,
   };
+  if (input.performerId) {
+    const qloo = getQlooClient();
+    const room = qloo ? await performerRoom(qloo, input.performerId).catch(() => null) : null;
+    if (!room) throw new UserFacingError("Qloo has no audience data for that performer. Pick another one, or one of the rooms.");
+    audience = {
+      presetId: "performer",
+      label: performerLabel(room.performer.name),
+      description: `people who are fans of ${room.performer.name}, with the age mix Qloo measures for that audience`,
+      ageMix: room.ageMix,
+      cities: located,
+      performer: room.performer,
+      fansOf: room.audienceId,
+    };
+  }
 
   // 1. Find the references.
   const sample = SAMPLES.find((s) => normalize(s.text) === text);
@@ -111,11 +130,13 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   const gutDone = (async () => {
     const targets = references.filter((r) => r.resolution.status === "pending");
     if (!targets.length) return;
-    const recorded = mode === "replay" && sample ? RECORDED_GUT[sample.id]?.[preset.id] : undefined;
     try {
-      if (recorded) {
-        for (const ref of targets) {
-          const call = recorded[ref.extracted.name];
+      // Examples never call the model: they show a recorded gut call when one
+      // exists for this room, and none otherwise.
+      if (mode === "replay") {
+        const recorded = sample ? RECORDED_GUT[sample.id]?.[audience.presetId] : undefined;
+        for (const ref of recorded ? targets : []) {
+          const call = recorded![ref.extracted.name];
           if (call) update(ref.key, { gut: toGutCall({ id: ref.key, ...call }) });
         }
       } else if (anthropic) {
@@ -124,7 +145,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
           anthropic,
           text,
           audience,
-          preset.description,
+          audience.description,
           targets.map((r) => ({ id: r.key, reference: r.extracted })),
           llm,
         );
@@ -211,7 +232,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   if (!items.length) return finish();
   send({
     type: "status",
-    message: `Asking Qloo how ${preset.label.toLowerCase()} feels about ${items.length} references${audience.cities.some((c) => c.lat !== undefined) ? ", city by city" : ""}`,
+    message: `Asking Qloo how ${audience.performer ? `${audience.performer.name}'s fans feel` : `${audience.label.toLowerCase()} feels`} about ${items.length} references${audience.cities.some((c) => c.lat !== undefined) ? ", city by city" : ""}`,
   });
   const measured = await measure(qloo, items, audience);
 
@@ -235,7 +256,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   // Local hooks run alongside the swap search.
   const placed = audience.cities.filter((c) => c.lat !== undefined);
   const hooksDone = placed.length
-    ? Promise.all(placed.map((c) => localHooks(qloo, c, audience.ageMix).catch(() => undefined))).then((found) => {
+    ? Promise.all(placed.map((c) => localHooks(qloo, c, audience.ageMix, audience.fansOf).catch(() => undefined))).then((found) => {
         hooks = found.filter((h): h is LocalHooks => !!h);
         if (hooks.length) send({ type: "hooks", hooks });
       })
@@ -314,7 +335,12 @@ export function swapContext(text: string, ref: AnalyzedReference, audience: Audi
       room_index: ref.signals?.roomIndex,
       presence: ref.signals?.recognition,
     },
-    audience: { label: audience.label, ageMix: audience.ageMix, cities: audience.cities },
+    audience: {
+      label: audience.label,
+      ageMix: audience.ageMix,
+      cities: audience.cities,
+      performer: audience.performer && audience.fansOf ? { id: audience.fansOf, name: audience.performer.name } : undefined,
+    },
     others: all.filter((r) => r.key !== ref.key).map((r) => r.extracted.name),
     checked: {},
   };
