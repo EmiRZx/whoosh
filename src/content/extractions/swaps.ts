@@ -40,25 +40,6 @@ export const RECORDED_SWAPS: Record<string, Record<string, { swaps: RecordedSwap
     },
   },
   "05-presidential-roast": {
-    "Rachel McAdams": {
-      swaps: [
-        {
-          name: "Amy Adams",
-          type: "urn:entity:person",
-          rewrite:
-            "I also would like to acknowledge some of the award-winning reporters that we have with us here tonight: Amy Adams, Mark Ruffalo, Liev Schreiber.",
-          why: "She played Lois Lane, a reporter who wins a Pulitzer in the story, so introducing her as a real journalist keeps the gag.",
-        },
-        {
-          name: "Rachel Brosnahan",
-          type: "urn:entity:person",
-          rewrite:
-            "I also would like to acknowledge some of the award-winning reporters that we have with us here tonight: Rachel Brosnahan, Mark Ruffalo, Liev Schreiber.",
-          why: "She played Lois Lane, the Daily Planet's star reporter, in the 2025 Superman.",
-        },
-      ],
-      note: "Michael Keaton, the Spotlight lead, would keep the link best but doesn't beat the original with this room; the \"Spotlight is a film\" follow-up still works because Ruffalo and Schreiber stay in the list.",
-    },
     "Harriet Tubman": {
       swaps: [
         {
@@ -70,21 +51,6 @@ export const RECORDED_SWAPS: Record<string, Record<string, { swaps: RecordedSwap
         },
       ],
       note: "Measured through the Hamilton musical film, which is how this crowd knows the name; the line loses the newly-announced-$20 angle, which has faded anyway.",
-    },
-    Today: {
-      swaps: [],
-      note: "The morning shows that do Today's job (Good Morning America, The View, Ellen, Kelly Clarkson, Drew Barrymore) land no better with this crowd, and the one that did (Dr. Phil) is a confrontational self-help show, not a light morning show, so keep Today.",
-    },
-    "Norah O'Donnell": {
-      swaps: [
-        {
-          name: "George Stephanopoulos",
-          type: "urn:entity:person",
-          rewrite: 'George Stephanopoulos left the briefing room to host "Good Morning America."',
-          why: "He made the same move from the White House briefing room to morning TV, and he ranks first in Washington. The show name changes so the line stays true.",
-        },
-      ],
-      note: "Network anchors skew older across the board; Stephanopoulos is the one who does the same job and fares better with this room, though only modestly.",
     },
   },
   "06-one-liners": {

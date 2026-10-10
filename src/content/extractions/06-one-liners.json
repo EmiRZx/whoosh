@@ -1,18 +1,202 @@
-{"references": [
-{"name": "Star Wars", "kind": "movie", "disambiguation": "film franchise by George Lucas", "quotes": ["Star Wars", "Yoda"], "role": "a universally known film saga whose odd release order and a character's backwards speech pattern drive the joke", "weight": "punchline", "checkable": true},
-{"name": "Microsoft Office", "kind": "brand", "disambiguation": "productivity software suite", "quotes": ["Microsoft Office", "Word"], "role": "everyday office software whose product name doubles as a pun on giving your word", "weight": "punchline", "checkable": true},
-{"name": "Game of Thrones", "kind": "tv_show", "disambiguation": null, "quotes": ["Game of Thrones"], "role": "a famously sprawling show with an overwhelming number of characters", "weight": "setup", "checkable": true},
-{"name": "Twitter", "kind": "brand", "disambiguation": "social media platform, now X", "quotes": ["Twitter", "140 characters"], "role": "a social platform known for its tight character limit, which the punchline puns on", "weight": "punchline", "checkable": true},
-{"name": "Arnold Schwarzenegger", "kind": "person", "disambiguation": null, "quotes": ["Arnold Schwarzenegger"], "role": "an action star instantly tied to a famous movie catchphrase", "weight": "setup", "checkable": true},
-{"name": "Microsoft Windows", "kind": "brand", "disambiguation": "operating system", "quotes": ["Windows 10", "Vista"], "role": "a familiar software upgrade where an infamously disliked old version supplies the pun", "weight": "punchline", "checkable": true},
-{"name": "Terminator 2: Judgment Day", "kind": "movie", "disambiguation": "1991 film", "quotes": ["Vista, baby"], "role": "an iconic action-movie catchphrase that the pun twists", "weight": "punchline", "checkable": true},
-{"name": "Rick Astley", "kind": "artist", "disambiguation": null, "quotes": ["Rick Astley", "never gonna give you Up"], "role": "a singer whose signature, meme-famous song title forms the pun", "weight": "punchline", "checkable": true},
-{"name": "Pixar", "kind": "brand", "disambiguation": "animation studio", "quotes": ["Pixar"], "role": "a beloved animation studio whose film catalog sets up the wordplay", "weight": "setup", "checkable": true},
-{"name": "Up", "kind": "movie", "disambiguation": "2009 Pixar animated film", "quotes": ["Up"], "role": "a well-known animated film whose short title completes the song-lyric pun", "weight": "punchline", "checkable": true},
-{"name": "50 Cent", "kind": "artist", "disambiguation": "rapper", "quotes": ["50 Cent"], "role": "a performer whose stage name is a price, setting up the arithmetic", "weight": "punchline", "checkable": true},
-{"name": "Nickelback", "kind": "artist", "disambiguation": "Canadian rock band", "quotes": ["Nickelback"], "role": "a widely mocked band whose name subtracts value, both as math and as a dig", "weight": "punchline", "checkable": true},
-{"name": "Breaking Bad", "kind": "tv_show", "disambiguation": null, "quotes": ["Walter White", "It's on the house"], "role": "a TV antihero and his famous pizza-on-the-roof scene that the pun recalls", "weight": "punchline", "checkable": true},
-{"name": "Jeopardy!", "kind": "tv_show", "disambiguation": "US TV quiz show", "quotes": ["Jeopardy"], "role": "a long-running quiz show whose answer-then-question format the joke inverts", "weight": "punchline", "checkable": true},
-{"name": "Lego", "kind": "brand", "disambiguation": "toy building bricks", "quotes": ["Lego"], "role": "a ubiquitous toy notorious for being painful to step on", "weight": "setup", "checkable": true},
-{"name": "Tetris", "kind": "video_game", "disambiguation": null, "quotes": ["Tetris"], "role": "a classic block-stacking game that sounds like a disease and pays off the brick setup", "weight": "punchline", "checkable": true}
-]}
+{
+  "references": [
+    {
+      "name": "Star Wars",
+      "kind": "movie",
+      "disambiguation": "film franchise by George Lucas",
+      "quotes": [
+        "Star Wars",
+        "Yoda"
+      ],
+      "role": "a universally known film saga whose odd release order and a character's backwards speech pattern drive the joke",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Microsoft Office",
+      "kind": "brand",
+      "disambiguation": "productivity software suite",
+      "quotes": [
+        "Microsoft Office",
+        "Word"
+      ],
+      "role": "everyday office software whose product name doubles as a pun on giving your word",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Game of Thrones",
+      "kind": "tv_show",
+      "disambiguation": null,
+      "quotes": [
+        "Game of Thrones"
+      ],
+      "role": "a famously sprawling show with an overwhelming number of characters",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Twitter",
+      "kind": "brand",
+      "disambiguation": "social media platform, now X",
+      "quotes": [
+        "Twitter",
+        "140 characters"
+      ],
+      "role": "a social platform known for its tight character limit, which the punchline puns on",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Arnold Schwarzenegger",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Arnold Schwarzenegger"
+      ],
+      "role": "an action star instantly tied to a famous movie catchphrase",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Microsoft Windows",
+      "kind": "brand",
+      "disambiguation": "operating system",
+      "quotes": [
+        "Windows 10",
+        "Vista"
+      ],
+      "role": "a familiar software upgrade where an infamously disliked old version supplies the pun",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Terminator 2: Judgment Day",
+      "kind": "movie",
+      "disambiguation": "1991 film",
+      "quotes": [
+        "Vista, baby"
+      ],
+      "role": "an iconic action-movie catchphrase that the pun twists",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Rick Astley",
+      "kind": "artist",
+      "disambiguation": null,
+      "quotes": [
+        "Rick Astley",
+        "never gonna give you Up"
+      ],
+      "role": "a singer whose signature, meme-famous song title forms the pun",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Pixar",
+      "kind": "brand",
+      "disambiguation": "animation studio",
+      "quotes": [
+        "Pixar"
+      ],
+      "role": "a beloved animation studio whose film catalog sets up the wordplay",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Up",
+      "kind": "movie",
+      "disambiguation": "2009 Pixar animated film",
+      "quotes": [
+        "Up"
+      ],
+      "role": "a well-known animated film whose short title completes the song-lyric pun",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "50 Cent",
+      "kind": "artist",
+      "disambiguation": "rapper",
+      "quotes": [
+        "50 Cent"
+      ],
+      "role": "a performer whose stage name is a price, setting up the arithmetic",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Nickelback",
+      "kind": "artist",
+      "disambiguation": "Canadian rock band",
+      "quotes": [
+        "Nickelback"
+      ],
+      "role": "a widely mocked band whose name subtracts value, both as math and as a dig",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Breaking Bad",
+      "kind": "tv_show",
+      "disambiguation": null,
+      "quotes": [
+        "Walter White",
+        "It's on the house"
+      ],
+      "role": "a TV antihero and his famous pizza-on-the-roof scene that the pun recalls",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Jeopardy!",
+      "kind": "tv_show",
+      "disambiguation": "US TV quiz show",
+      "quotes": [
+        "Jeopardy"
+      ],
+      "role": "a long-running quiz show whose answer-then-question format the joke inverts",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Lego",
+      "kind": "brand",
+      "disambiguation": "toy building bricks",
+      "quotes": [
+        "Lego"
+      ],
+      "role": "a ubiquitous toy notorious for being painful to step on",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Tetris",
+      "kind": "video_game",
+      "disambiguation": null,
+      "quotes": [
+        "Tetris"
+      ],
+      "role": "a classic block-stacking game that sounds like a disease and pays off the brick setup",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    }
+  ]
+}

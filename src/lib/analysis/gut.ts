@@ -2,10 +2,10 @@
 // any Qloo data. Shown next to the measurement, it makes the point of the
 // product visible: where intuition and taste data disagree.
 import type Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 import { AGE_BUCKETS } from "../qloo/api";
-import { AGENT_MODEL, FALLBACK_BETA, LlmError, type LlmOptions } from "../llm/config";
+import { AGENT_MODEL, FALLBACK_BETA, type LlmOptions } from "../llm/config";
+import { structuredCall } from "../llm/structured";
 import type { ExtractedReference } from "./extract";
 import type { AudienceSpec, GutCall } from "./types";
 
@@ -82,21 +82,19 @@ export async function gutCalls(
   opts: LlmOptions = {},
 ): Promise<GutCalls> {
   if (!requests.length) return { calls: [] };
-  const response = await client.beta.messages.parse(
+  return structuredCall(
+    client,
     {
-    model: AGENT_MODEL,
-    max_tokens: 8000,
-    betas: [FALLBACK_BETA],
-    fallbacks: "default",
-    thinking: { type: "adaptive" },
-    output_config: { effort: "medium", format: betaZodOutputFormat(GutSchema) },
-    system: GUT_SYSTEM_PROMPT,
-    messages: [{ role: "user", content: describeGutTask(text, audience, description, requests) }],
+      model: AGENT_MODEL,
+      max_tokens: 8000,
+      betas: [FALLBACK_BETA],
+      fallbacks: "default",
+      thinking: { type: "adaptive" },
+      output_config: { effort: "medium" },
+      system: GUT_SYSTEM_PROMPT,
+      messages: [{ role: "user", content: describeGutTask(text, audience, description, requests) }],
     },
-    { signal: opts.signal },
+    GutSchema,
+    { ...opts, step: "gut", listKey: "calls", refusal: "The model declined to make gut calls." },
   );
-  opts.onUsage?.("gut", response.usage);
-  if (response.stop_reason === "refusal") throw new LlmError("The model declined to make gut calls.");
-  if (!response.parsed_output) throw new LlmError(`Gut calls did not return valid output (${response.stop_reason}).`);
-  return response.parsed_output;
 }

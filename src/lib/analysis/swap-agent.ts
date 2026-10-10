@@ -117,19 +117,19 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
 
   const runner = anthropic.beta.messages.toolRunner(
     {
-    model: AGENT_MODEL,
-    max_tokens: 16000,
-    max_iterations: 14,
-    betas: [FALLBACK_BETA],
-    fallbacks: "default",
-    thinking: { type: "adaptive" },
-    output_config: { effort: opts.effort ?? "high" },
-    system: SWAP_SYSTEM_PROMPT,
-    tools,
-    // Each turn resends the conversation so far; caching its prefix makes
-    // the later turns cheap without changing what the model sees.
-    cache_control: { type: "ephemeral" },
-    messages: [{ role: "user", content: describeSwapTask(ctx) }],
+      model: AGENT_MODEL,
+      max_tokens: 16000,
+      max_iterations: 14,
+      betas: [FALLBACK_BETA],
+      fallbacks: "default",
+      thinking: { type: "adaptive" },
+      output_config: { effort: opts.effort ?? "high" },
+      system: SWAP_SYSTEM_PROMPT,
+      tools,
+      // Each turn resends the conversation so far; caching its prefix makes
+      // the later turns cheap without changing what the model sees.
+      cache_control: { type: "ephemeral" },
+      messages: [{ role: "user", content: describeSwapTask(ctx) }],
     },
     { signal: opts.signal },
   );

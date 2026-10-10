@@ -10,6 +10,7 @@ const ref = (name: string, quotes: string[], weight: ExtractedReference["weight"
   role: "test",
   weight,
   checkable: true,
+  swappable: true,
 });
 
 describe("buildReferences", () => {

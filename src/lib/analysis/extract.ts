@@ -1,7 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
-import { AGENT_MODEL, FALLBACK_BETA, LlmError, type LlmOptions } from "../llm/config";
+import { AGENT_MODEL, FALLBACK_BETA, type LlmOptions } from "../llm/config";
+import { structuredCall } from "../llm/structured";
 
 export const REFERENCE_KINDS = [
   "movie",
@@ -34,7 +34,10 @@ export const ExtractionSchema = z.object({
   references: z.array(ExtractedReferenceSchema),
 });
 
-export type ExtractedReference = z.infer<typeof ExtractedReferenceSchema>;
+// `swappable: false` marks a reference the line states a fact about (a quote,
+// someone in the room). It is set by hand on the recorded examples; live runs
+// leave it unset and rely on the swap agent's own rule against changing facts.
+export type ExtractedReference = z.infer<typeof ExtractedReferenceSchema> & { swappable?: boolean };
 export type Extraction = z.infer<typeof ExtractionSchema>;
 
 export const EXTRACT_SYSTEM_PROMPT = `You find the cultural references in writing that someone will say out loud to an audience: a stand-up set, a speech, a wedding toast, a lecture, a pitch, ad copy. A downstream system looks each reference up in Qloo's taste graph to measure whether a specific audience will recognize and enjoy it, then suggests replacements for the ones that won't land. Your list decides what gets checked, so be complete about real references and strict about everything else.
@@ -62,26 +65,24 @@ Fields:
 - weight: punchline if the joke or point depends on the audience getting it, setup if it frames a punchline, color if it is decoration.`;
 
 export async function extractReferences(client: Anthropic, text: string, opts: LlmOptions = {}): Promise<Extraction> {
-  const response = await client.beta.messages.parse(
+  return structuredCall(
+    client,
     {
-    model: AGENT_MODEL,
-    max_tokens: 16000,
-    betas: [FALLBACK_BETA],
-    fallbacks: "default",
-    thinking: { type: "adaptive" },
-    // Medium matched high on the extraction eval (every gold reference found,
-    // nothing extra) in under half the time; re-run the eval before changing
-    // the model or this setting.
-    output_config: { effort: opts.effort ?? "medium", format: betaZodOutputFormat(ExtractionSchema) },
-    system: EXTRACT_SYSTEM_PROMPT,
-    messages: [{ role: "user", content: `<text>\n${text}\n</text>` }],
+      model: AGENT_MODEL,
+      max_tokens: 16000,
+      betas: [FALLBACK_BETA],
+      fallbacks: "default",
+      thinking: { type: "adaptive" },
+      // Medium matched high on the extraction eval (every gold reference found,
+      // nothing extra) in under half the time; re-run the eval before changing
+      // the model or this setting.
+      output_config: { effort: opts.effort ?? "medium" },
+      system: EXTRACT_SYSTEM_PROMPT,
+      messages: [{ role: "user", content: `<text>\n${text}\n</text>` }],
     },
-    { signal: opts.signal },
+    ExtractionSchema,
+    { ...opts, step: "extract", listKey: "references", refusal: "The model declined to analyze this text." },
   );
-  opts.onUsage?.("extract", response.usage);
-  if (response.stop_reason === "refusal") throw new LlmError("The model declined to analyze this text.");
-  if (!response.parsed_output) throw new LlmError(`Extraction did not return valid output (${response.stop_reason}).`);
-  return response.parsed_output;
 }
 
 export interface QuoteSpan {

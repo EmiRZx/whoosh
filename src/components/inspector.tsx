@@ -145,6 +145,9 @@ function Generations({ age, mix }: { age: NonNullable<Signals["age"]>; mix: AgeM
 
 // A next step for a weak reference the swap agent didn't (or couldn't) fix.
 function advice(r: AnalyzedReference): string | undefined {
+  if ((r.verdict === "dead" || r.verdict === "risky") && r.extracted.swappable === false) {
+    return `This line is about the real ${r.extracted.name}, so a swap would change what you're saying. If the room may not know it, add a few words of context instead.`;
+  }
   if (r.verdict === "dead") return "Hardly anyone in this room will get it. Cut it, or reword the line so it works without knowing the reference.";
   if (r.verdict !== "risky") return undefined;
   if (r.extracted.weight === "color") return "It's an aside here, so it's safe to keep; it just won't add much for this room.";

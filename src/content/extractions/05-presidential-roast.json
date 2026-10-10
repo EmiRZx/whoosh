@@ -1,21 +1,234 @@
-{"references": [
-{"name": "Goldman Sachs", "kind": "brand", "disambiguation": "investment bank", "quotes": ["Goldman Sachs"], "role": "a Wall Street firm known for paying politicians lucrative speaking fees", "weight": "punchline", "checkable": true},
-{"name": "Harriet Tubman", "kind": "person", "disambiguation": "abolitionist, new face of the US $20 bill", "quotes": ["Tubmans"], "role": "slang for cash that riffs on the newly announced face of a banknote", "weight": "punchline", "checkable": true},
-{"name": "Savannah Guthrie", "kind": "person", "disambiguation": null, "quotes": ["Savannah Guthrie"], "role": "a well-known network reporter who traded the political beat for morning TV", "weight": "setup", "checkable": true},
-{"name": "Today", "kind": "tv_show", "disambiguation": "NBC morning show", "quotes": ["Today"], "role": "a light network morning show as a step away from hard news", "weight": "setup", "checkable": true},
-{"name": "Norah O'Donnell", "kind": "person", "disambiguation": null, "quotes": ["Norah O'Donnell"], "role": "a well-known network reporter who traded the political beat for morning TV", "weight": "setup", "checkable": true},
-{"name": "CBS This Morning", "kind": "tv_show", "disambiguation": null, "quotes": ["CBS This Morning"], "role": "a network morning show as a step away from hard news", "weight": "setup", "checkable": true},
-{"name": "Jake Tapper", "kind": "person", "disambiguation": null, "quotes": ["Jake Tapper"], "role": "a prominent news anchor whose career move sets up a jab at his network", "weight": "setup", "checkable": true},
-{"name": "CNN", "kind": "brand", "disambiguation": "cable news network", "quotes": ["CNN"], "role": "a major news outlet mocked as not being real journalism", "weight": "punchline", "checkable": true},
-{"name": "Rachel McAdams", "kind": "person", "disambiguation": "actress", "quotes": ["Rachel McAdams"], "role": "a famous actor who played a journalist, introduced as if a real reporter", "weight": "punchline", "checkable": true},
-{"name": "Mark Ruffalo", "kind": "person", "disambiguation": "actor", "quotes": ["Mark Ruffalo"], "role": "a famous actor who played a journalist, introduced as if a real reporter", "weight": "punchline", "checkable": true},
-{"name": "Liev Schreiber", "kind": "person", "disambiguation": "actor", "quotes": ["Liev Schreiber"], "role": "a famous actor who played a journalist, introduced as if a real reporter", "weight": "punchline", "checkable": true},
-{"name": "Spotlight", "kind": "movie", "disambiguation": "2015 film about Boston Globe journalists", "quotes": ["Spotlight"], "role": "an acclaimed film about heroic investigative reporting, set up to be called fiction", "weight": "setup", "checkable": true},
-{"name": "Star Wars", "kind": "movie", "disambiguation": "1977 film", "quotes": ["Star Wars"], "role": "the archetypal fantasy blockbuster, used to brand something as pure make-believe", "weight": "punchline", "checkable": true},
-{"name": "BuzzFeed", "kind": "brand", "disambiguation": "digital media company", "quotes": ["BuzzFeed"], "role": "a digital media upstart disrupting traditional news", "weight": "setup", "checkable": true},
-{"name": "The Washington Post", "kind": "brand", "disambiguation": "newspaper", "quotes": ["Washington Post"], "role": "a legacy newspaper losing ground to digital media", "weight": "punchline", "checkable": true},
-{"name": "Kendall Jenner", "kind": "person", "disambiguation": null, "quotes": ["Kendall Jenner"], "role": "a young celebrity famous mainly for being famous, with a huge social media following", "weight": "punchline", "checkable": true},
-{"name": "Twitter", "kind": "brand", "disambiguation": "social media platform", "quotes": ["Twitter"], "role": "the social media platform where online buzz is measured", "weight": "color", "checkable": true},
-{"name": "Hillary Clinton", "kind": "other", "disambiguation": null, "quotes": ["Hillary"], "role": "a presidential candidate teased as awkward when courting young voters", "weight": "punchline", "checkable": false},
-{"name": "Facebook", "kind": "brand", "disambiguation": "social network", "quotes": ["Facebook", "poke", "wall"], "role": "a social network seen as where older relatives awkwardly arrive late", "weight": "punchline", "checkable": true}
-]}
+{
+  "references": [
+    {
+      "name": "Goldman Sachs",
+      "kind": "brand",
+      "disambiguation": "investment bank",
+      "quotes": [
+        "Goldman Sachs"
+      ],
+      "role": "a Wall Street firm known for paying politicians lucrative speaking fees",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Harriet Tubman",
+      "kind": "person",
+      "disambiguation": "abolitionist, new face of the US $20 bill",
+      "quotes": [
+        "Tubmans"
+      ],
+      "role": "slang for cash that riffs on the newly announced face of a banknote",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Savannah Guthrie",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Savannah Guthrie"
+      ],
+      "role": "a well-known network reporter who traded the political beat for morning TV",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Today",
+      "kind": "tv_show",
+      "disambiguation": "NBC morning show",
+      "quotes": [
+        "Today"
+      ],
+      "role": "a light network morning show as a step away from hard news",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Norah O'Donnell",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Norah O'Donnell"
+      ],
+      "role": "a well-known network reporter who traded the political beat for morning TV",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "CBS This Morning",
+      "kind": "tv_show",
+      "disambiguation": null,
+      "quotes": [
+        "CBS This Morning"
+      ],
+      "role": "a network morning show as a step away from hard news",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Jake Tapper",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Jake Tapper"
+      ],
+      "role": "a prominent news anchor whose career move sets up a jab at his network",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "CNN",
+      "kind": "brand",
+      "disambiguation": "cable news network",
+      "quotes": [
+        "CNN"
+      ],
+      "role": "a major news outlet mocked as not being real journalism",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Rachel McAdams",
+      "kind": "person",
+      "disambiguation": "actress",
+      "quotes": [
+        "Rachel McAdams"
+      ],
+      "role": "a famous actor who played a journalist, introduced as if a real reporter",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Mark Ruffalo",
+      "kind": "person",
+      "disambiguation": "actor",
+      "quotes": [
+        "Mark Ruffalo"
+      ],
+      "role": "a famous actor who played a journalist, introduced as if a real reporter",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Liev Schreiber",
+      "kind": "person",
+      "disambiguation": "actor",
+      "quotes": [
+        "Liev Schreiber"
+      ],
+      "role": "a famous actor who played a journalist, introduced as if a real reporter",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Spotlight",
+      "kind": "movie",
+      "disambiguation": "2015 film about Boston Globe journalists",
+      "quotes": [
+        "Spotlight"
+      ],
+      "role": "an acclaimed film about heroic investigative reporting, set up to be called fiction",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Star Wars",
+      "kind": "movie",
+      "disambiguation": "1977 film",
+      "quotes": [
+        "Star Wars"
+      ],
+      "role": "the archetypal fantasy blockbuster, used to brand something as pure make-believe",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "BuzzFeed",
+      "kind": "brand",
+      "disambiguation": "digital media company",
+      "quotes": [
+        "BuzzFeed"
+      ],
+      "role": "a digital media upstart disrupting traditional news",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "The Washington Post",
+      "kind": "brand",
+      "disambiguation": "newspaper",
+      "quotes": [
+        "Washington Post"
+      ],
+      "role": "a legacy newspaper losing ground to digital media",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Kendall Jenner",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Kendall Jenner"
+      ],
+      "role": "a young celebrity famous mainly for being famous, with a huge social media following",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Twitter",
+      "kind": "brand",
+      "disambiguation": "social media platform",
+      "quotes": [
+        "Twitter"
+      ],
+      "role": "the social media platform where online buzz is measured",
+      "weight": "color",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Hillary Clinton",
+      "kind": "other",
+      "disambiguation": null,
+      "quotes": [
+        "Hillary"
+      ],
+      "role": "a presidential candidate teased as awkward when courting young voters",
+      "weight": "punchline",
+      "checkable": false,
+      "swappable": false
+    },
+    {
+      "name": "Facebook",
+      "kind": "brand",
+      "disambiguation": "social network",
+      "quotes": [
+        "Facebook",
+        "poke",
+        "wall"
+      ],
+      "role": "a social network seen as where older relatives awkwardly arrive late",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    }
+  ]
+}

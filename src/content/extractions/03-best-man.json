@@ -1,15 +1,162 @@
-{"references": [
-{"name": "Pokémon", "kind": "brand", "disambiguation": "trading card game and media franchise", "quotes": ["Pokémon"], "role": "a childhood craze that dates a friendship back to elementary school", "weight": "color", "checkable": true},
-{"name": "Spotify", "kind": "brand", "disambiguation": "music streaming app", "quotes": ["Spotify"], "role": "a modern streaming app that undercuts a nostalgic romantic gesture", "weight": "setup", "checkable": true},
-{"name": "Ed Sheeran", "kind": "artist", "disambiguation": null, "quotes": ["Ed Sheeran", "Perfect"], "role": "an earnest, mainstream romantic pop singer whose love ballad signals sincere but unsubtle courtship", "weight": "punchline", "checkable": true},
-{"name": "Chipotle", "kind": "brand", "disambiguation": "fast-casual Mexican restaurant chain", "quotes": ["Chipotle"], "role": "a cheap, casual chain restaurant known for charging extra for an add-on, framing a modest first date and a frugal guy", "weight": "setup", "checkable": true},
-{"name": "Paris", "kind": "destination", "disambiguation": "France", "quotes": ["Paris"], "role": "the clichéd romantic city for a grand proposal", "weight": "setup", "checkable": true},
-{"name": "Eiffel Tower", "kind": "place", "disambiguation": null, "quotes": ["Eiffel Tower"], "role": "the most picture-perfect romantic landmark, setting up a proposal that goes wrong", "weight": "setup", "checkable": true},
-{"name": "Hallmark Channel", "kind": "brand", "disambiguation": "TV network known for romance movies", "quotes": ["Hallmark"], "role": "a shorthand for formulaic, saccharine on-screen romance", "weight": "setup", "checkable": true},
-{"name": "The Office", "kind": "tv_show", "disambiguation": "US sitcom 2005-2013", "quotes": ["The Office"], "role": "an endlessly rewatched comfort sitcom that marks someone as a lovable TV superfan", "weight": "color", "checkable": true},
-{"name": "Fortnite", "kind": "video_game", "disambiguation": null, "quotes": ["Fortnite"], "role": "a popular video game standing in for a sedentary hobby someone pretends is exercise", "weight": "punchline", "checkable": true},
-{"name": "Coldplay", "kind": "artist", "disambiguation": null, "quotes": ["Coldplay", "Fix You"], "role": "an earnest stadium band whose emotional ballad reliably makes a grown man cry", "weight": "punchline", "checkable": true},
-{"name": "LeBron James", "kind": "person", "disambiguation": "NBA basketball player", "quotes": ["LeBron"], "role": "an elite superstar athlete who would wildly outclass ordinary amateurs", "weight": "punchline", "checkable": true},
-{"name": "YMCA", "kind": "brand", "disambiguation": "community gym and recreation center", "quotes": ["the Y"], "role": "a humble neighborhood gym where amateurs play, contrasting with elite talent", "weight": "color", "checkable": true},
-{"name": "Taco Bell", "kind": "brand", "disambiguation": "fast food restaurant chain", "quotes": ["Taco Bell"], "role": "cheap late-night fast food that signals a reckless but satisfying indulgence", "weight": "punchline", "checkable": true}
-]}
+{
+  "references": [
+    {
+      "name": "Pokémon",
+      "kind": "brand",
+      "disambiguation": "trading card game and media franchise",
+      "quotes": [
+        "Pokémon"
+      ],
+      "role": "a childhood craze that dates a friendship back to elementary school",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Spotify",
+      "kind": "brand",
+      "disambiguation": "music streaming app",
+      "quotes": [
+        "Spotify"
+      ],
+      "role": "a modern streaming app that undercuts a nostalgic romantic gesture",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Ed Sheeran",
+      "kind": "artist",
+      "disambiguation": null,
+      "quotes": [
+        "Ed Sheeran",
+        "Perfect"
+      ],
+      "role": "an earnest, mainstream romantic pop singer whose love ballad signals sincere but unsubtle courtship",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Chipotle",
+      "kind": "brand",
+      "disambiguation": "fast-casual Mexican restaurant chain",
+      "quotes": [
+        "Chipotle"
+      ],
+      "role": "a cheap, casual chain restaurant known for charging extra for an add-on, framing a modest first date and a frugal guy",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Paris",
+      "kind": "destination",
+      "disambiguation": "France",
+      "quotes": [
+        "Paris"
+      ],
+      "role": "the clichéd romantic city for a grand proposal",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Eiffel Tower",
+      "kind": "place",
+      "disambiguation": null,
+      "quotes": [
+        "Eiffel Tower"
+      ],
+      "role": "the most picture-perfect romantic landmark, setting up a proposal that goes wrong",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Hallmark Channel",
+      "kind": "brand",
+      "disambiguation": "TV network known for romance movies",
+      "quotes": [
+        "Hallmark"
+      ],
+      "role": "a shorthand for formulaic, saccharine on-screen romance",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "The Office",
+      "kind": "tv_show",
+      "disambiguation": "US sitcom 2005-2013",
+      "quotes": [
+        "The Office"
+      ],
+      "role": "an endlessly rewatched comfort sitcom that marks someone as a lovable TV superfan",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Fortnite",
+      "kind": "video_game",
+      "disambiguation": null,
+      "quotes": [
+        "Fortnite"
+      ],
+      "role": "a popular video game standing in for a sedentary hobby someone pretends is exercise",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Coldplay",
+      "kind": "artist",
+      "disambiguation": null,
+      "quotes": [
+        "Coldplay",
+        "Fix You"
+      ],
+      "role": "an earnest stadium band whose emotional ballad reliably makes a grown man cry",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "LeBron James",
+      "kind": "person",
+      "disambiguation": "NBA basketball player",
+      "quotes": [
+        "LeBron"
+      ],
+      "role": "an elite superstar athlete who would wildly outclass ordinary amateurs",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "YMCA",
+      "kind": "brand",
+      "disambiguation": "community gym and recreation center",
+      "quotes": [
+        "the Y"
+      ],
+      "role": "a humble neighborhood gym where amateurs play, contrasting with elite talent",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Taco Bell",
+      "kind": "brand",
+      "disambiguation": "fast food restaurant chain",
+      "quotes": [
+        "Taco Bell"
+      ],
+      "role": "cheap late-night fast food that signals a reckless but satisfying indulgence",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    }
+  ]
+}

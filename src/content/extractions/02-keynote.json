@@ -1,13 +1,139 @@
-{"references": [
-{"name": "BlackBerry", "kind": "brand", "disambiguation": "smartphone brand", "quotes": ["BlackBerry"], "role": "a once-cutting-edge device that now dates the speaker's career", "weight": "setup", "checkable": true},
-{"name": "Microsoft Office", "kind": "brand", "disambiguation": null, "quotes": ["Clippy", "It looks like you're writing a letter!"], "role": "a laughably primitive software assistant once mistaken for the future of AI", "weight": "punchline", "checkable": true},
-{"name": "Spotify", "kind": "brand", "disambiguation": null, "quotes": ["Spotify"], "role": "a music app whose listening stats expose the speaker's embarrassing habits", "weight": "setup", "checkable": true},
-{"name": "The Killers", "kind": "artist", "disambiguation": "American rock band", "quotes": ["Mr. Brightside"], "role": "an overplayed singalong anthem the speaker is sheepish about having on endless repeat", "weight": "punchline", "checkable": true},
-{"name": "Duolingo", "kind": "brand", "disambiguation": null, "quotes": ["Duolingo owl"], "role": "an app mascot famous for guilt-tripping people who quit", "weight": "punchline", "checkable": true},
-{"name": "Netflix", "kind": "brand", "disambiguation": null, "quotes": ["Netflix", "Are you still watching?"], "role": "a streaming service whose idle check-in prompt reads as oddly personal concern", "weight": "punchline", "checkable": true},
-{"name": "Apple", "kind": "brand", "disambiguation": "consumer electronics company", "quotes": ["iPod"], "role": "a breakthrough gadget everyone adored, the benchmark for a beloved product", "weight": "color", "checkable": true},
-{"name": "Breaking Bad", "kind": "tv_show", "disambiguation": null, "quotes": ["Breaking Bad"], "role": "a near-universally acclaimed TV show as an example of something people loved", "weight": "color", "checkable": true},
-{"name": "Pret A Manger", "kind": "brand", "disambiguation": null, "quotes": ["Pret"], "role": "an everyday sandwich chain that deflates the grand examples with a humble, reliable pleasure", "weight": "punchline", "checkable": true},
-{"name": "Steve Jobs", "kind": "person", "disambiguation": null, "quotes": ["Steve Jobs", "Stay hungry, stay foolish."], "role": "a revered tech visionary whose famous motto sets up a self-deprecating twist", "weight": "setup", "checkable": true},
-{"name": "Jony Ive", "kind": "person", "disambiguation": null, "quotes": ["Jony Ive"], "role": "a celebrated product designer standing for the gold standard of elegant design", "weight": "color", "checkable": true}
-]}
+{
+  "references": [
+    {
+      "name": "BlackBerry",
+      "kind": "brand",
+      "disambiguation": "smartphone brand",
+      "quotes": [
+        "BlackBerry"
+      ],
+      "role": "a once-cutting-edge device that now dates the speaker's career",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Microsoft Office",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Clippy",
+        "It looks like you're writing a letter!"
+      ],
+      "role": "a laughably primitive software assistant once mistaken for the future of AI",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Spotify",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Spotify"
+      ],
+      "role": "a music app whose listening stats expose the speaker's embarrassing habits",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "The Killers",
+      "kind": "artist",
+      "disambiguation": "American rock band",
+      "quotes": [
+        "Mr. Brightside"
+      ],
+      "role": "an overplayed singalong anthem the speaker is sheepish about having on endless repeat",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Duolingo",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Duolingo owl"
+      ],
+      "role": "an app mascot famous for guilt-tripping people who quit",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Netflix",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Netflix",
+        "Are you still watching?"
+      ],
+      "role": "a streaming service whose idle check-in prompt reads as oddly personal concern",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Apple",
+      "kind": "brand",
+      "disambiguation": "consumer electronics company",
+      "quotes": [
+        "iPod"
+      ],
+      "role": "a breakthrough gadget everyone adored, the benchmark for a beloved product",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Breaking Bad",
+      "kind": "tv_show",
+      "disambiguation": null,
+      "quotes": [
+        "Breaking Bad"
+      ],
+      "role": "a near-universally acclaimed TV show as an example of something people loved",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Pret A Manger",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Pret"
+      ],
+      "role": "an everyday sandwich chain that deflates the grand examples with a humble, reliable pleasure",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Steve Jobs",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Steve Jobs",
+        "Stay hungry, stay foolish."
+      ],
+      "role": "a revered tech visionary whose famous motto sets up a self-deprecating twist",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Jony Ive",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Jony Ive"
+      ],
+      "role": "a celebrated product designer standing for the gold standard of elegant design",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    }
+  ]
+}

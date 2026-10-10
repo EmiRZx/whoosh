@@ -5,10 +5,29 @@ import Anthropic from "@anthropic-ai/sdk";
 // Anthropic-compatible gateway, ANTHROPIC_BASE_URL.
 export const AGENT_MODEL = process.env.LLM_MODEL || "claude-opus-5-5";
 
+// Gateways and keys cap concurrent requests; past the cap they queue and then
+// fail. Requests from this server wait their turn here instead, which also
+// covers the swap agents' tool loops.
+const MAX_CONCURRENT = Number(process.env.LLM_CONCURRENCY) || 3;
+let active = 0;
+const waiting: (() => void)[] = [];
+
+const limitedFetch: typeof fetch = async (input, init) => {
+  if (active >= MAX_CONCURRENT) await new Promise<void>((resolve) => waiting.push(resolve));
+  active++;
+  try {
+    return await fetch(input, init);
+  } finally {
+    active--;
+    waiting.shift()?.();
+  }
+};
+
 // Null when no key is configured: only the built-in examples run then.
 export function getAnthropic(): Anthropic | null {
-  return process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
+  return process.env.ANTHROPIC_API_KEY ? new Anthropic({ fetch: limitedFetch, maxRetries: 3 }) : null;
 }
+
 
 // Server-side refusal fallback: if the primary model declines, the API re-runs
 // the request on a model chosen by refusal category within the same call.

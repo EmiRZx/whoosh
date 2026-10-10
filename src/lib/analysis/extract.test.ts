@@ -33,6 +33,7 @@ describe("ExtractionSchema", () => {
           role: "a shorthand for 90s TV romance",
           weight: "punchline",
           checkable: true,
+          swappable: true,
         },
       ],
     });

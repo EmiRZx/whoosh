@@ -4,7 +4,7 @@ import { gutRows, topBucket } from "./gut";
 
 const ref = (key: string, verdict: AnalyzedReference["verdict"], gut?: AnalyzedReference["gut"], roomIndex?: number): AnalyzedReference => ({
   key,
-  extracted: { name: key, kind: "brand", disambiguation: null, quotes: [key], role: "", weight: "setup", checkable: true },
+  extracted: { name: key, kind: "brand", disambiguation: null, quotes: [key], role: "", weight: "setup", checkable: true, swappable: true },
   spans: [],
   resolution: { status: "resolved" },
   signals: { roomIndex, age: { "24_and_younger": 0.1, "25_to_29": 0.3, "55_and_older": -0.4 } },

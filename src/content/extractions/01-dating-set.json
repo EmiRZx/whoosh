@@ -1,20 +1,223 @@
-{"references": [
-{"name": "Hinge", "kind": "brand", "disambiguation": "dating app", "quotes": ["Hinge"], "role": "a mainstream dating app that sets the scene of modern app dating", "weight": "color", "checkable": true},
-{"name": "Bumble", "kind": "brand", "disambiguation": "dating app", "quotes": ["Bumble"], "role": "a second well-known dating app that rounds out the modern dating scene", "weight": "color", "checkable": true},
-{"name": "Friends", "kind": "tv_show", "disambiguation": "US sitcom 1994-2004", "quotes": ["Ross", "Rachel"], "role": "a shorthand for 90s TV romance whose characters younger people no longer recognize, dating the speaker", "weight": "punchline", "checkable": true},
-{"name": "Williamsburg", "kind": "destination", "disambiguation": "Brooklyn neighborhood", "quotes": ["Williamsburg"], "role": "a hip, trendy neighborhood that signals pretentious young-person dining", "weight": "setup", "checkable": true},
-{"name": "Peloton", "kind": "brand", "disambiguation": null, "quotes": ["Peloton"], "role": "a trendy, pricey fitness product whose repurposing as furniture mocks hipster decor", "weight": "color", "checkable": true},
-{"name": "Olive Garden", "kind": "brand", "disambiguation": null, "quotes": ["Olive Garden", "when you're here, you're family"], "role": "a cheap chain restaurant with a famous warm slogan that signals comfort over sophistication", "weight": "punchline", "checkable": true},
-{"name": "The Sopranos", "kind": "tv_show", "disambiguation": null, "quotes": ["The Sopranos"], "role": "a prestige TV drama a middle-aged man names as his passion, whose premise gets reframed as a therapy podcast", "weight": "punchline", "checkable": true},
-{"name": "Bad Bunny", "kind": "artist", "disambiguation": null, "quotes": ["Bad Bunny"], "role": "a current chart-topping artist an older speaker name-drops to seem cool", "weight": "setup", "checkable": true},
-{"name": "Luis Fonsi", "kind": "artist", "disambiguation": null, "quotes": ["Despacito"], "role": "a ubiquitous older Latin pop hit the speaker wrongly attributes, exposing that he is out of touch", "weight": "punchline", "checkable": true},
-{"name": "Taylor Swift", "kind": "artist", "disambiguation": null, "quotes": ["Swiftie", "Eras Tour"], "role": "a megastar with an intense fandom the speaker tries to bluff his way into", "weight": "setup", "checkable": true},
-{"name": "Harry Styles", "kind": "artist", "disambiguation": null, "quotes": ["the guy from One Direction"], "role": "a famous celebrity ex used to reduce a pop star's career to her boyfriends", "weight": "punchline", "checkable": true},
-{"name": "Avengers: Infinity War", "kind": "movie", "disambiguation": "2018 Marvel film", "quotes": ["Thanos"], "role": "a blockbuster image of someone vanishing instantly and without a word", "weight": "punchline", "checkable": true},
-{"name": "Blockbuster", "kind": "brand", "disambiguation": "video rental chain", "quotes": ["Blockbuster"], "role": "a defunct video rental chain that signals shared 90s nostalgia between people of the same age", "weight": "punchline", "checkable": true},
-{"name": "Tower Records", "kind": "brand", "disambiguation": null, "quotes": ["Tower Records"], "role": "a defunct music store chain mourned as a symbol of a lost era", "weight": "punchline", "checkable": true},
-{"name": "Be Kind, Rewind", "kind": "other", "disambiguation": "VHS rental-era slogan", "quotes": ["Be kind, rewind"], "role": "a dated catchphrase from the tape-rental era that only people of a certain age find meaningful", "weight": "punchline", "checkable": false},
-{"name": "Cracker Barrel", "kind": "brand", "disambiguation": null, "quotes": ["Cracker Barrel"], "role": "a homey, unglamorous chain restaurant that signals middle-aged comfort over sophistication", "weight": "punchline", "checkable": true},
-{"name": "Tupperware", "kind": "brand", "disambiguation": null, "quotes": ["Tupperware"], "role": "a mundane household brand that signals unglamorous middle-aged domesticity", "weight": "punchline", "checkable": true},
-{"name": "Costco", "kind": "brand", "disambiguation": null, "quotes": ["Costco"], "role": "a bulk-buying warehouse store that signals practical middle-aged life", "weight": "punchline", "checkable": true}
-]}
+{
+  "references": [
+    {
+      "name": "Hinge",
+      "kind": "brand",
+      "disambiguation": "dating app",
+      "quotes": [
+        "Hinge"
+      ],
+      "role": "a mainstream dating app that sets the scene of modern app dating",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Bumble",
+      "kind": "brand",
+      "disambiguation": "dating app",
+      "quotes": [
+        "Bumble"
+      ],
+      "role": "a second well-known dating app that rounds out the modern dating scene",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Friends",
+      "kind": "tv_show",
+      "disambiguation": "US sitcom 1994-2004",
+      "quotes": [
+        "Ross",
+        "Rachel"
+      ],
+      "role": "a shorthand for 90s TV romance whose characters younger people no longer recognize, dating the speaker",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Williamsburg",
+      "kind": "destination",
+      "disambiguation": "Brooklyn neighborhood",
+      "quotes": [
+        "Williamsburg"
+      ],
+      "role": "a hip, trendy neighborhood that signals pretentious young-person dining",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Peloton",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Peloton"
+      ],
+      "role": "a trendy, pricey fitness product whose repurposing as furniture mocks hipster decor",
+      "weight": "color",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Olive Garden",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Olive Garden",
+        "when you're here, you're family"
+      ],
+      "role": "a cheap chain restaurant with a famous warm slogan that signals comfort over sophistication",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "The Sopranos",
+      "kind": "tv_show",
+      "disambiguation": null,
+      "quotes": [
+        "The Sopranos"
+      ],
+      "role": "a prestige TV drama a middle-aged man names as his passion, whose premise gets reframed as a therapy podcast",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Bad Bunny",
+      "kind": "artist",
+      "disambiguation": null,
+      "quotes": [
+        "Bad Bunny"
+      ],
+      "role": "a current chart-topping artist an older speaker name-drops to seem cool",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Luis Fonsi",
+      "kind": "artist",
+      "disambiguation": null,
+      "quotes": [
+        "Despacito"
+      ],
+      "role": "a ubiquitous older Latin pop hit the speaker wrongly attributes, exposing that he is out of touch",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Taylor Swift",
+      "kind": "artist",
+      "disambiguation": null,
+      "quotes": [
+        "Swiftie",
+        "Eras Tour"
+      ],
+      "role": "a megastar with an intense fandom the speaker tries to bluff his way into",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Harry Styles",
+      "kind": "artist",
+      "disambiguation": null,
+      "quotes": [
+        "the guy from One Direction"
+      ],
+      "role": "a famous celebrity ex used to reduce a pop star's career to her boyfriends",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Avengers: Infinity War",
+      "kind": "movie",
+      "disambiguation": "2018 Marvel film",
+      "quotes": [
+        "Thanos"
+      ],
+      "role": "a blockbuster image of someone vanishing instantly and without a word",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Blockbuster",
+      "kind": "brand",
+      "disambiguation": "video rental chain",
+      "quotes": [
+        "Blockbuster"
+      ],
+      "role": "a defunct video rental chain that signals shared 90s nostalgia between people of the same age",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Tower Records",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Tower Records"
+      ],
+      "role": "a defunct music store chain mourned as a symbol of a lost era",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Be Kind, Rewind",
+      "kind": "other",
+      "disambiguation": "VHS rental-era slogan",
+      "quotes": [
+        "Be kind, rewind"
+      ],
+      "role": "a dated catchphrase from the tape-rental era that only people of a certain age find meaningful",
+      "weight": "punchline",
+      "checkable": false,
+      "swappable": true
+    },
+    {
+      "name": "Cracker Barrel",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Cracker Barrel"
+      ],
+      "role": "a homey, unglamorous chain restaurant that signals middle-aged comfort over sophistication",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Tupperware",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Tupperware"
+      ],
+      "role": "a mundane household brand that signals unglamorous middle-aged domesticity",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    },
+    {
+      "name": "Costco",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Costco"
+      ],
+      "role": "a bulk-buying warehouse store that signals practical middle-aged life",
+      "weight": "punchline",
+      "checkable": true,
+      "swappable": true
+    }
+  ]
+}

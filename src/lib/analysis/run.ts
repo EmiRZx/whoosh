@@ -278,6 +278,9 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   const weak = references
     .filter((r) => (r.verdict === "dead" || r.verdict === "risky") && r.resolution.entity && r.spans.length)
     .filter((r) => r.verdict === "dead" || r.extracted.weight !== "color")
+    // A line that states a fact about this person or thing can't trade it
+    // for another without saying something false.
+    .filter((r) => r.extracted.swappable !== false)
     .sort((a, b) => rank(a) - rank(b))
     .slice(0, MAX_SWAP_REFERENCES);
   if (weak.length) {

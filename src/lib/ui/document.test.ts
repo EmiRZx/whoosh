@@ -14,6 +14,7 @@ const ref = (name: string, quotes: string[], weight: ExtractedReference["weight"
   role: "test",
   weight,
   checkable: true,
+  swappable: true,
 });
 
 const swap = (name: string, rewrite: string): Swap => ({
