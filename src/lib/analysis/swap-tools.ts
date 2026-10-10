@@ -7,6 +7,7 @@ import type { AgeMix } from "../audience/audience";
 import { AGE_BUCKETS, findTags, getEntities, insightEntities, search, type EntityType, type QlooEntity } from "../qloo/api";
 import type { QlooClient } from "../qloo/client";
 import { measure } from "./measure";
+import { isPolitical } from "./politics";
 import type { City, Verdict } from "./types";
 import { AGE_LABEL, judge } from "./verdict";
 
@@ -124,7 +125,7 @@ export async function findCandidates(client: QlooClient, ctx: SwapContext, input
     "filter.release_year.min": input.released_after && /movie|tv_show/.test(type) ? input.released_after : undefined,
     take: 10,
   });
-  return results.map(compact);
+  return results.filter((e) => !isPolitical(e)).map(compact);
 }
 
 export const LookupInput = z.object({
@@ -134,7 +135,7 @@ export const LookupInput = z.object({
 
 export async function lookup(client: QlooClient, input: z.infer<typeof LookupInput>) {
   const type = (input.type === "videogame" ? "urn:entity:videogame" : `urn:entity:${input.type}`) as EntityType;
-  return (await search(client, input.name, { types: [type], take: 5 })).map(compact);
+  return (await search(client, input.name, { types: [type], take: 5 })).filter((e) => !isPolitical(e)).map(compact);
 }
 
 export const FindTagsInput = z.object({ query: z.string().describe('A genre or descriptor, e.g. "sitcom", "fast food", "boy band"') });
@@ -169,7 +170,8 @@ export async function check(client: QlooClient, ctx: SwapContext, input: z.infer
       biggest_fans: fans ? `${AGE_LABEL[fans]} (${Math.round(m.profile!.age[fans]! * 100)}%)` : undefined,
       cities: m.cities?.map((c) => `${c.name} #${c.rank} of ${c.of}`),
     };
-    result.beats_original = beatsOriginal(result, ctx.original);
+    // Political figures are never offered as swaps.
+    result.beats_original = !isPolitical(e) && beatsOriginal(result, ctx.original);
     ctx.checked[e.id] = result;
     return result;
   });

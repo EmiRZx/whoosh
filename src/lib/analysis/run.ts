@@ -20,6 +20,7 @@ import { runSwapAgent, type SwapResult } from "./swap-agent";
 import { check, type SwapContext } from "./swap-tools";
 import { localHooks } from "./hooks";
 import type { AnalysisEvent, AnalyzedReference, AudienceSpec, LocalHooks } from "./types";
+import { isPolitical } from "./politics";
 import { judge } from "./verdict";
 
 export interface AnalysisInput {
@@ -51,8 +52,12 @@ const BUDGET_MS = Number(process.env.ANALYSIS_BUDGET_MS) || 270_000;
 // Below this, starting a swap agent isn't worth it.
 const MIN_SWAP_MS = 25_000;
 
-export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEvent) => void, options: { signal?: AbortSignal } = {}) {
-  const meter = new UsageMeter();
+export async function runAnalysis(
+  input: AnalysisInput,
+  send: (event: AnalysisEvent) => void,
+  options: { signal?: AbortSignal; meter?: UsageMeter } = {},
+) {
+  const meter = options.meter ?? new UsageMeter();
   const llm: LlmOptions = { signal: options.signal, onUsage: meter.record };
   const started = Date.now();
   const elapsed = () => `${((Date.now() - started) / 1000).toFixed(1)}s`;
@@ -219,7 +224,14 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
 
   for (const ref of checkable) {
     const r = resolutions.get(ref.key);
-    if (r && "entity" in r) update(ref.key, { resolution: { status: "resolved", entity: toSummary(r.entity), standIn: r.standIn } });
+    if (r && "entity" in r && isPolitical(r.entity)) {
+      // Missed by the extractor; Qloo's tags say it's a political figure.
+      resolutions.delete(ref.key);
+      update(ref.key, {
+        resolution: { status: "not_checkable", entity: toSummary(r.entity) },
+        reasons: ["A political figure: Whoosh doesn't measure political taste, so this one is your call."],
+      });
+    } else if (r && "entity" in r) update(ref.key, { resolution: { status: "resolved", entity: toSummary(r.entity), standIn: r.standIn } });
     else if (r) update(ref.key, { resolution: { status: "ambiguous", candidates: r.candidates.map(toSummary) } });
     else update(ref.key, { resolution: { status: "not_found" }, reasons: ["Qloo doesn't have this one, so it's your call."] });
   }
