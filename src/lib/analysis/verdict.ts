@@ -100,5 +100,9 @@ export function judge(m: Measured, entityType: string, weight: ExtractedReferenc
   if (verdict === "risky" && (t === "universal" || t === "known") && w !== undefined) {
     reasons.push(`They'll know it, but it isn't this room's thing${weight === "punchline" ? ", and the joke depends on it" : ""}.`);
   }
+  // A cool number next to "lands" reads like a contradiction; say why it isn't.
+  if (verdict === "lands" && w !== undefined && w <= -0.05) {
+    reasons.push("Cooler than average, but well enough known that most of this room will still get it.");
+  }
   return { verdict, reasons };
 }
