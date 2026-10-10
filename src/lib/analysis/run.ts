@@ -1,4 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { RECORDED_EXTRACTIONS } from "@/content/extractions";
 import { RECORDED_GUT } from "@/content/extractions/gut";
 import { RECORDED_PICKS } from "@/content/extractions/picks";
@@ -9,7 +8,7 @@ import { RECORDED_SWAPS, type RecordedSwap } from "@/content/extractions/swaps";
 import { search, type EntityType, type QlooEntity } from "../qloo/api";
 import type { QlooClient } from "../qloo/client";
 import { getQlooClient } from "../qloo/server";
-import { UsageMeter, type LlmOptions } from "../llm/config";
+import { getAnthropic, UsageMeter, type LlmOptions } from "../llm/config";
 import { chooseCandidates } from "./choose";
 import { extractReferences, type Extraction } from "./extract";
 import { gutCalls, toGutCall } from "./gut";
@@ -42,17 +41,32 @@ export function isExample(text: string) {
   return SAMPLES.some((s) => normalize(s.text) === t && !!RECORDED_EXTRACTIONS[s.id]);
 }
 
+// Hosts cap a request's duration (300 s on Vercel Hobby). Swap agents get
+// whatever is left of this budget and are stopped when it runs out, so the
+// analysis always finishes with what it has.
+const BUDGET_MS = Number(process.env.ANALYSIS_BUDGET_MS) || 270_000;
+// Below this, starting a swap agent isn't worth it.
+const MIN_SWAP_MS = 25_000;
+
 export async function runAnalysis(input: AnalysisInput, send: (event: AnalysisEvent) => void, options: { signal?: AbortSignal } = {}) {
   const meter = new UsageMeter();
   const llm: LlmOptions = { signal: options.signal, onUsage: meter.record };
+  const started = Date.now();
+  const elapsed = () => `${((Date.now() - started) / 1000).toFixed(1)}s`;
+  // Status lines double as a timing log on the server.
+  const timed = (event: AnalysisEvent) => {
+    if (event.type === "status") console.info(`[analysis ${elapsed()}] ${event.message}`);
+    send(event);
+  };
   try {
-    await analyze(input, send, llm);
+    await analyze(input, timed, llm, started + BUDGET_MS);
   } finally {
+    console.info(`[analysis ${elapsed()}] finished`);
     if (!meter.empty) console.info("llm usage", JSON.stringify(meter.summary()));
   }
 }
 
-async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => void, llm: LlmOptions) {
+async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => void, llm: LlmOptions, deadline: number) {
   const text = normalize(input.text);
   const preset = presetById(input.presetId) ?? AUDIENCE_PRESETS[0];
   const cities = input.cities.map((name) => ({ name, match: findCity(name) }));
@@ -69,7 +83,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
 
   // 1. Find the references.
   const sample = SAMPLES.find((s) => normalize(s.text) === text);
-  const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
+  const anthropic = getAnthropic();
   let extraction: Extraction;
   let mode: "live" | "replay";
   if (sample && RECORDED_EXTRACTIONS[sample.id]) {
@@ -235,13 +249,22 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     .slice(0, MAX_SWAP_REFERENCES);
   if (weak.length) {
     const recorded = mode === "replay" && sample ? RECORDED_SWAPS[sample.id] : undefined;
-    if (recorded || anthropic) {
+    const remaining = deadline - Date.now();
+    if (!recorded && anthropic && remaining < MIN_SWAP_MS) {
+      send({ type: "status", message: "Out of time to look for swaps on this run" });
+    } else if (recorded || anthropic) {
       send({ type: "status", message: `Looking for swaps that do the same job for ${weak.map((r) => r.extracted.name).join(", ")}` });
+      // Stops the swap agents at the deadline, or when the visitor leaves.
+      const swapAbort = new AbortController();
+      const stop = () => swapAbort.abort();
+      llm.signal?.addEventListener("abort", stop, { once: true });
+      const timer = setTimeout(stop, remaining);
+      const swapLlm: LlmOptions = { ...llm, signal: swapAbort.signal };
       await Promise.all(
         weak.map(async (ref) => {
           const ctx = swapContext(text, ref, audience, references);
           try {
-            const result = recorded ? await replaySwaps(qloo, ctx, recorded[ref.extracted.name]) : await runSwapAgent(anthropic!, qloo, ctx, llm);
+            const result = recorded ? await replaySwaps(qloo, ctx, recorded[ref.extracted.name]) : await runSwapAgent(anthropic!, qloo, ctx, swapLlm);
             update(ref.key, {
               swaps: result.swaps.map(({ checked, rewrite, why }) => ({
                 entity: { id: checked.id, name: checked.name, type: checked.type },
@@ -253,10 +276,14 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
               swapNote: result.note,
             });
           } catch (err) {
-            if (!llm.signal?.aborted) console.error(`swap agent failed for ${ref.extracted.name}`, err);
+            if (llm.signal?.aborted) return;
+            if (swapAbort.signal.aborted) update(ref.key, { swapNote: "Ran out of time before a swap was confirmed." });
+            else console.error(`swap agent failed for ${ref.extracted.name}`, err);
           }
         }),
       );
+      clearTimeout(timer);
+      llm.signal?.removeEventListener("abort", stop);
     }
   }
   await hooksDone;
@@ -267,7 +294,7 @@ const MAX_SWAP_REFERENCES = 4;
 const rank = (r: AnalyzedReference) =>
   (r.verdict === "dead" ? 0 : 3) + { punchline: 0, setup: 1, color: 2 }[r.extracted.weight];
 
-function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpec, all: AnalyzedReference[]): SwapContext {
+export function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpec, all: AnalyzedReference[]): SwapContext {
   const entity = ref.resolution.entity!;
   return {
     original: {

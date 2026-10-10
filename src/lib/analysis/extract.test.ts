@@ -39,3 +39,12 @@ describe("ExtractionSchema", () => {
     expect(parsed.success).toBe(true);
   });
 });
+
+describe("locateQuotes with quotation marks copied from the text", () => {
+  it("finds a title quoted with its quotation marks when punctuation sits inside them", () => {
+    const text = 'She left to host "CBS This Morning." Then she left.';
+    const { spans, missing } = locateQuotes(text, ['"CBS This Morning"']);
+    expect(missing).toEqual([]);
+    expect(spans[0].quote).toBe("CBS This Morning");
+  });
+});

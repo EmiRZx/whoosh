@@ -117,7 +117,7 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
     betas: [FALLBACK_BETA],
     fallbacks: "default",
     thinking: { type: "adaptive" },
-    output_config: { effort: "high" },
+    output_config: { effort: opts.effort ?? "high" },
     system: SWAP_SYSTEM_PROMPT,
     tools,
     // Each turn resends the conversation so far; caching its prefix makes
@@ -127,9 +127,13 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
     },
     { signal: opts.signal },
   );
+  const started = Date.now();
+  let turns = 0;
   for await (const message of runner) {
+    turns++;
     opts.onUsage?.("swap", message.usage);
     if (submitted || message.stop_reason === "refusal") break;
   }
+  console.info(`[swap] ${ctx.original.name}: ${turns} turns in ${((Date.now() - started) / 1000).toFixed(1)}s`);
   return submitted ?? { swaps: [], note: "No substitute was confirmed for this room." };
 }

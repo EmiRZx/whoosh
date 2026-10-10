@@ -69,9 +69,10 @@ export async function extractReferences(client: Anthropic, text: string, opts: L
     betas: [FALLBACK_BETA],
     fallbacks: "default",
     thinking: { type: "adaptive" },
-    // Missing a reference or mapping it to the wrong entity spoils every later
-    // step, so this call gets more effort than the model's default.
-    output_config: { effort: "high", format: betaZodOutputFormat(ExtractionSchema) },
+    // Medium matched high on the extraction eval (every gold reference found,
+    // nothing extra) in under half the time; re-run the eval before changing
+    // the model or this setting.
+    output_config: { effort: opts.effort ?? "medium", format: betaZodOutputFormat(ExtractionSchema) },
     system: EXTRACT_SYSTEM_PROMPT,
     messages: [{ role: "user", content: `<text>\n${text}\n</text>` }],
     },
@@ -104,43 +105,44 @@ export function locateQuotes(
   const fold = (s: string) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').toLowerCase();
   const folded = fold(text);
 
-  for (const quote of quotes) {
-    const needle = quote.trim();
-    if (!needle) continue;
-    let start = -1;
-    // Repeated quotes ("Ross" twice) should land on successive occurrences.
+  // The first unclaimed occurrence of a needle: exact, then with curly quotes
+  // and case folded, then with flexible whitespace.
+  const find = (needle: string): QuoteSpan | undefined => {
     for (const [haystack, target] of [
       [text, needle],
       [folded, fold(needle)],
     ]) {
+      // Repeated quotes ("Ross" twice) should land on successive occurrences.
       let from = 0;
       for (;;) {
         const i = haystack.indexOf(target, from);
         if (i < 0) break;
-        if (!taken.has(i)) {
-          start = i;
-          break;
-        }
+        if (!taken.has(i)) return { quote: text.slice(i, i + needle.length), start: i, end: i + needle.length };
         from = i + 1;
       }
-      if (start >= 0) break;
     }
-    if (start < 0) {
-      const pattern = needle
-        .split(/\s+/)
-        .map((w) => fold(w).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-        .join("\\s+");
-      const m = new RegExp(pattern).exec(folded);
-      if (m && !taken.has(m.index)) {
-        spans.push({ quote: text.slice(m.index, m.index + m[0].length), start: m.index, end: m.index + m[0].length });
-        taken.add(m.index);
-        continue;
-      }
+    const pattern = needle
+      .split(/\s+/)
+      .map((w) => fold(w).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      .join("\\s+");
+    const m = new RegExp(pattern).exec(folded);
+    if (m && !taken.has(m.index)) return { quote: text.slice(m.index, m.index + m[0].length), start: m.index, end: m.index + m[0].length };
+    return undefined;
+  };
+
+  for (const quote of quotes) {
+    const needle = quote.trim();
+    if (!needle) continue;
+    // Models sometimes copy the quotation marks around a title too
+    // ('"CBS This Morning"' for '"CBS This Morning."').
+    const bare = needle.replace(/^["“'‘]+/, "").replace(/["”'’]+$/, "").trim();
+    const span = find(needle) ?? (bare && bare !== needle ? find(bare) : undefined);
+    if (!span) {
       missing.push(quote);
       continue;
     }
-    taken.add(start);
-    spans.push({ quote: text.slice(start, start + needle.length), start, end: start + needle.length });
+    taken.add(span.start);
+    spans.push(span);
   }
   return { spans: spans.sort((a, b) => a.start - b.start), missing };
 }

@@ -1,4 +1,14 @@
-export const AGENT_MODEL = "claude-opus-5-5";
+import Anthropic from "@anthropic-ai/sdk";
+
+// The model behind every agent step. LLM_MODEL overrides it (e.g. a cheaper
+// model while developing); the SDK reads ANTHROPIC_API_KEY and, for an
+// Anthropic-compatible gateway, ANTHROPIC_BASE_URL.
+export const AGENT_MODEL = process.env.LLM_MODEL || "claude-opus-5-5";
+
+// Null when no key is configured: only the built-in examples run then.
+export function getAnthropic(): Anthropic | null {
+  return process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
+}
 
 // Server-side refusal fallback: if the primary model declines, the API re-runs
 // the request on a model chosen by refusal category within the same call.
@@ -20,9 +30,13 @@ export interface TokenUsage {
 
 // Per-analysis plumbing for model calls: stop when the visitor leaves, and
 // count tokens so a run's cost shows up in the server log.
+export type Effort = "low" | "medium" | "high" | "xhigh" | "max";
+
 export interface LlmOptions {
   signal?: AbortSignal;
   onUsage?: (step: string, usage: TokenUsage) => void;
+  // Overrides a step's effort, for evals.
+  effort?: Effort;
 }
 
 export class UsageMeter {
