@@ -25,7 +25,7 @@ export const KIND_LABEL: Record<ExtractedReference["kind"], string> = {
 export const WEIGHT_LABEL: Record<ExtractedReference["weight"], string> = {
   punchline: "Punchline",
   setup: "Setup",
-  color: "Color",
+  color: "Aside",
 };
 
 export const AGE_LABELS = ["24 and under", "25–29", "30–34", "35–44", "45–54", "55+"];

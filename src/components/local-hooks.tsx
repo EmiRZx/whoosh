@@ -3,6 +3,10 @@ import type { LocalHooks } from "@/lib/analysis/types";
 import { EntityThumb } from "./entity-thumb";
 import { CardTitle } from "./summary";
 
+// Some place names come back all lowercase ("franklin park conservatory").
+const display = (name: string) =>
+  name === name.toLowerCase() ? name.replace(/(^|[\s-])(\p{L})/gu, (_, before: string, c: string) => before + c.toUpperCase()) : name;
+
 export function LocalHooksPanel({ hooks, room }: { hooks: LocalHooks[]; room: string }) {
   if (!hooks.length) return null;
   return (
@@ -25,7 +29,7 @@ export function LocalHooksPanel({ hooks, room }: { hooks: LocalHooks[]; room: st
                   <li key={p.id} className="flex items-center gap-2.5" title={p.description}>
                     <EntityThumb src={p.imageUrl} name={p.name} className="size-8 rounded-lg" />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm">{p.name}</span>
+                      <span className="block truncate text-sm">{display(p.name)}</span>
                       {p.description && <span className="block truncate text-[11px] text-ink-faint">{p.description}</span>}
                     </span>
                   </li>
@@ -41,7 +45,7 @@ export function LocalHooksPanel({ hooks, room }: { hooks: LocalHooks[]; room: st
                 <ul className="flex flex-wrap gap-1.5">
                   {h.artists.map((a) => (
                     <li key={a.id} className="rounded-full bg-card px-2.5 py-1 text-xs ring-1 ring-line">
-                      {a.name}
+                      {display(a.name)}
                     </li>
                   ))}
                 </ul>

@@ -40,7 +40,7 @@ function ToolbarButton({ onClick, icon: Icon, children }: { onClick: () => void;
 
 export function Studio() {
   const [text, setText] = useState("");
-  const [presetId, setPresetId] = useState("comedy-club");
+  const [presetId, setPresetId] = useState("general");
   const [performer, setPerformer] = useState<PerformerRoomData>();
   const [cities, setCities] = useState<string[]>([]);
   const [selectedKey, setSelectedKey] = useState<string>();

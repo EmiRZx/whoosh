@@ -111,7 +111,7 @@ function CityInput({ cities, onAdd }: { cities: string[]; onAdd: (city: string) 
           autoComplete="off"
           maxLength={80}
           disabled={full}
-          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm outline-none placeholder:text-ink-faint disabled:opacity-50"
+          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm outline-none placeholder:text-ink-faint focus-visible:outline-none disabled:opacity-50"
         />
         <button
           type="button"

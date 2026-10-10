@@ -166,7 +166,7 @@ export function PerformerPicker({ room, onChange, cities, onAddCity, canAddCity 
           placeholder="Or play to someone's fans, e.g. Cedric the Entertainer"
           autoComplete="off"
           maxLength={80}
-          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm outline-none placeholder:text-ink-faint"
+          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm outline-none placeholder:text-ink-faint focus-visible:outline-none"
         />
       </div>
       {error && <p className="mt-1.5 text-xs text-dead-ink">{error}</p>}

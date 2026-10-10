@@ -46,7 +46,7 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
 
   return (
     <section className="card rounded-2xl p-5 sm:p-6">
-      <CardTitle>On tour</CardTitle>
+      <CardTitle>City by city</CardTitle>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold tracking-tight">

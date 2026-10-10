@@ -82,7 +82,7 @@ export function setNotes(input: NotesInput): string {
     lines.push("");
   }
 
-  if (input.changed) lines.push("## Revised script", "", input.revised.trim(), "");
+  lines.push(input.changed ? "## Revised script" : "## Your script", "", input.revised.trim(), "");
   lines.push("---", "Numbers from Qloo's taste graph, describing audiences in aggregate. Made with Whoosh.");
   return lines.join("\n");
 }

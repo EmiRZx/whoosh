@@ -27,7 +27,9 @@ How to work:
 - Judge the fit yourself. A substitute has to do the same job in the line: same role, tone and status (a dated gadget for a dated gadget, a cheesy boy band for a cheesy boy band, a cheap comfort chain for a cheap comfort chain). A popular substitute that does a different job is worse than none.
 - Don't reuse something the script already mentions elsewhere; the performer would be repeating themselves.
 - Change only the words that carry the reference. Keep the performer's voice, rhythm and punchline, and adjust nearby words only when grammar or sense requires it. Don't write new jokes.
+- Match the occasion's tone: a wedding toast or a classroom needs swaps that are warm and clean, not edgy.
 - Finish by calling submit_swaps. If nothing both fits the job and lands, submit an empty list with a one-sentence note; that is a useful answer.
+- Write each why and the note for the performer, in plain words: say "this room likes it 30% more than average", never raw index values like "room index 0.30".
 
 You have about ten tool calls.`;
 

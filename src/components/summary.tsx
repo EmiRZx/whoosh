@@ -187,7 +187,7 @@ export function AgentTrace({ statuses, running }: { statuses: string[]; running:
       <summary className="flex cursor-pointer list-none items-center justify-between [&::-webkit-details-marker]:hidden">
         <h2 className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">Agent log</h2>
         <span className="flex items-center gap-1 text-[11px] text-ink-faint">
-          {statuses.length} steps
+          {statuses.length} {statuses.length === 1 ? "step" : "steps"}
           <ChevronDown className="size-3.5 transition-transform group-open:rotate-180" aria-hidden />
         </span>
       </summary>

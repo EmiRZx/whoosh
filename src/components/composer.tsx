@@ -79,13 +79,13 @@ export function Composer(props: Props) {
         <section className="flex flex-col p-5 sm:p-7">
           <div className="mb-4">
             <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">Try a real one</p>
-            <div className="scrollbar-none -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
               {EXAMPLE_ORDER.map((id) => SAMPLES.find((s) => s.id === id)!).map((s) => (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => onLoadSample(s.id)}
-                  className="shrink-0 rounded-xl border border-line px-3 py-2 text-left transition-colors hover:border-ink-faint hover:bg-sunk"
+                  className="min-w-0 rounded-xl border border-line px-3 py-2 text-left transition-colors hover:border-ink-faint hover:bg-sunk"
                 >
                   <span className="block text-[11px] text-ink-faint">{s.format}</span>
                   <span className="block text-sm font-medium">{s.title}</span>
@@ -105,7 +105,7 @@ export function Composer(props: Props) {
             value={text}
             onChange={(e) => onTextChange(e.target.value)}
             placeholder="Your script goes here: a tight five, a best man speech, a lecture, a keynote. Every name in it gets measured against the room."
-            className="min-h-[22rem] w-full flex-1 resize-y rounded-2xl bg-sunk p-5 font-serif text-[17px] leading-[1.8] outline-none ring-focus/60 placeholder:text-ink-faint focus:ring-2"
+            className="min-h-[22rem] w-full flex-1 resize-y rounded-2xl bg-sunk p-5 font-serif text-[17px] leading-[1.8] outline-none ring-focus/60 placeholder:text-ink-faint focus:ring-2 focus-visible:outline-none"
           />
           <p className={`mt-2 text-right text-xs tabular-nums ${text.length > MAX_CHARS ? "text-dead-ink" : "text-ink-faint"}`}>
             {text.length.toLocaleString("en-US")} / {MAX_CHARS.toLocaleString("en-US")}

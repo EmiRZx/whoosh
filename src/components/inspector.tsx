@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUp, Check, ChevronLeft, ChevronRight, MapPin, MousePoin
 import type { AgeMix } from "@/lib/audience/audience";
 import type { AnalyzedReference, Signals, Swap } from "@/lib/analysis/types";
 import { planEdit } from "@/lib/ui/document";
+import { generations, type Generation } from "@/lib/ui/generations";
 import { topBucket } from "@/lib/ui/gut";
 import { AGE_BUCKETS } from "@/lib/qloo/api";
 import { AgeChart } from "./age-chart";
@@ -110,6 +111,46 @@ function GutOnly({ reference }: { reference: AnalyzedReference }) {
       </p>
     </div>
   );
+}
+
+const FEELING_STYLE: Record<Generation["feeling"], string> = {
+  "big fans": "text-more",
+  "like it": "text-more",
+  "about average": "text-ink-soft",
+  lukewarm: "text-less",
+  cool: "text-less",
+};
+
+// "Under 30: cool · 55+: big fans" for rooms that span generations.
+function Generations({ age, mix }: { age: NonNullable<Signals["age"]>; mix: AgeMix }) {
+  const gens = generations(age, mix);
+  if (!gens.length) return null;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-xs text-ink-soft">Across this room</p>
+      <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-3">
+        {gens.map((g) => (
+          <li key={g.label} className="rounded-lg bg-sunk px-2.5 py-1.5 text-xs" title={`${Math.round(g.share * 100)}% of the room`}>
+            <span className="block text-ink-faint">
+              {g.label} · {Math.round(g.share * 100)}%
+            </span>
+            <span className={`font-semibold ${FEELING_STYLE[g.feeling]}`}>{g.feeling}</span>{" "}
+            <span className="tabular-nums text-ink-soft">{signed(g.index)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// A next step for a weak reference the swap agent didn't (or couldn't) fix.
+function advice(r: AnalyzedReference): string | undefined {
+  if (r.verdict === "dead") return "Hardly anyone in this room will get it. Cut it, or reword the line so it works without knowing the reference.";
+  if (r.verdict !== "risky") return undefined;
+  if (r.extracted.weight === "color") return "It's an aside here, so it's safe to keep; it just won't add much for this room.";
+  if (r.reasons.some((x) => x.startsWith("They'll know it")))
+    return "Most of the room will recognize it, but it won't excite them. Keep it if the line doesn't depend on it; if it's the punchline, consider a reference this room is warmer on.";
+  return "Only part of this room will get it. If the line depends on it, add a few words of setup, or pick a better-known example.";
 }
 
 const ageLabel = (b?: string) => (b ? AGE_LABELS[AGE_BUCKETS.indexOf(b as (typeof AGE_BUCKETS)[number])] : "–");
@@ -318,7 +359,9 @@ export function Inspector(props: InspectorProps) {
       <Section title="How this room reads it">
         {status === "not_checkable" ? (
           <p className="text-sm leading-relaxed text-ink-soft">
-            Events, memes and trends aren&apos;t in a taste graph, and political figures aren&apos;t measured, so this one is your call.
+            {extracted.kind === "other" && !resolution.entity
+              ? "Events, eras, memes and political figures aren't measured here (a taste graph doesn't hold the first three, and this tool doesn't measure political taste), so this one is your call."
+              : "A political figure: this tool doesn't measure political taste, so this one is your call."}
           </p>
         ) : status === "pending" ? (
           <div className="flex flex-col gap-2" aria-busy>
@@ -353,6 +396,7 @@ export function Inspector(props: InspectorProps) {
                 </Stat>
               </div>
             )}
+            {mix && reference.signals?.age && <Generations age={reference.signals.age} mix={mix} />}
             <ul className="flex flex-col gap-1.5 text-sm leading-relaxed">
               {reference.reasons.map((reason, i) => (
                 <li key={i} className="flex gap-2">
@@ -368,6 +412,12 @@ export function Inspector(props: InspectorProps) {
       {status !== "resolved" && status !== "not_checkable" && status !== "pending" && reference.gut && (
         <Section title="Claude's guess">
           <GutOnly reference={reference} />
+        </Section>
+      )}
+
+      {status === "resolved" && !reference.swaps.length && advice(reference) && (
+        <Section title="What to do">
+          <p className="text-sm leading-relaxed">{advice(reference)}</p>
         </Section>
       )}
 

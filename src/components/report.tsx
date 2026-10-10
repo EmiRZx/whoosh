@@ -127,12 +127,11 @@ export function Report({ title, room, cities, references, accepted, score, proje
         </>
       )}
 
-      {changed && (
-        <section className="break-before-page">
-          <h2 className="mt-6 text-[12pt] font-semibold">Revised script</h2>
-          <p className="mt-2 whitespace-pre-wrap font-serif text-[11pt] leading-relaxed">{revised}</p>
-        </section>
-      )}
+      {/* The script itself always prints: it's what goes on stage. */}
+      <section className="break-before-page">
+        <h2 className="mt-6 text-[12pt] font-semibold">{changed ? "Revised script" : "Your script"}</h2>
+        <p className="mt-2 whitespace-pre-wrap font-serif text-[12pt] leading-relaxed">{revised}</p>
+      </section>
 
       <p className="mt-6 border-t border-[#c3c2b7] pt-2 text-[8.5pt] text-[#898781]">
         Numbers from Qloo&apos;s taste graph, describing audiences in aggregate, never individuals.

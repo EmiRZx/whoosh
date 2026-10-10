@@ -3,7 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import type { AnalyzedReference } from "@/lib/analysis/types";
 import { gutRows } from "@/lib/ui/gut";
-import { signed } from "./labels";
+import { signed, VERDICT_LABEL } from "./labels";
 import { CardTitle } from "./summary";
 import { VerdictIcon } from "./verdict";
 
@@ -139,7 +139,7 @@ export function GutVsData({ references, room, selectedKey, onSelect }: Props) {
                 <ArrowRight className="size-3" aria-hidden />
                 <VerdictIcon verdict={r.verdict} className="size-3" />
                 <span className="sr-only">
-                  Guessed {r.gut.verdict}, measured {r.verdict}
+                  Guessed {VERDICT_LABEL[r.gut.verdict]}, Qloo says {VERDICT_LABEL[r.verdict]}
                 </span>
               </span>
             </div>

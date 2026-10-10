@@ -71,6 +71,9 @@ function call(t: Tier, w: number | undefined, hasData: boolean): Verdict {
   }
 }
 
+// Ranking this high among the big-city panel counts as a local favorite.
+export const LOCAL_FAVORITE_RANK = 3;
+
 export function judge(m: Measured, entityType: string, weight: ExtractedReference["weight"]): { verdict: Verdict; reasons: string[] } {
   const pop = m.recognition;
   const w = m.roomIndex;
@@ -96,7 +99,13 @@ export function judge(m: Measured, entityType: string, weight: ExtractedReferenc
     if (fans && lift > 0.05) reasons.push(`Its biggest fans are ${AGE_LABEL[fans]} (+${pct(lift)}).`);
   }
 
-  const verdict = call(t, w, pop !== undefined);
+  let verdict = call(t, w, pop !== undefined);
+  // A reference that tops every tour city is a local thing: the room will
+  // know it even if the national numbers are lukewarm.
+  if (verdict === "risky" && m.cities?.length && m.cities.every((c) => c.rank <= LOCAL_FAVORITE_RANK)) {
+    verdict = "lands";
+    reasons.push(`A local favorite: ${m.cities.map((c) => `#${c.rank} of ${c.of} big cities in ${c.name.split(",")[0]}`).join(", ")}.`);
+  }
   if (verdict === "risky" && (t === "universal" || t === "known") && w !== undefined) {
     reasons.push(`They'll know it, but it isn't this room's thing${weight === "punchline" ? ", and the joke depends on it" : ""}.`);
   }
