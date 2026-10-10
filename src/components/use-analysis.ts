@@ -90,10 +90,16 @@ export function useAnalysis() {
     }
   }, []);
 
+  // Shows a finished analysis again without re-running it.
+  const restore = useCallback((analysis: Analysis) => {
+    controller.current?.abort();
+    setState({ phase: "done", statuses: [], references: analysis.references, hooks: analysis.hooks ?? [], analysis });
+  }, []);
+
   const reset = useCallback(() => {
     controller.current?.abort();
     setState(IDLE);
   }, []);
 
-  return { state, run, reset };
+  return { state, run, reset, restore };
 }

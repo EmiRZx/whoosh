@@ -1,12 +1,17 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, History } from "lucide-react";
 import { SAMPLES } from "@/content/samples";
 import { presetById } from "@/lib/audience/audience";
+import type { LastRun } from "./last-run";
 import type { PerformerRoomData } from "./performer-picker";
 import { RoomPicker } from "./room-picker";
 
 export const MAX_CHARS = 8000;
+
+// Examples where something won't land come first, so a first click shows
+// the whole loop: a flag, the numbers behind it, and a swap.
+const EXAMPLE_ORDER = ["04-lecture", "05-presidential-roast", "02-keynote", "03-best-man", "01-dating-set", "06-one-liners"];
 
 interface Props {
   text: string;
@@ -19,10 +24,20 @@ interface Props {
   onCitiesChange: (cities: string[]) => void;
   onLoadSample: (id: string) => void;
   onRun: () => void;
+  lastRun?: LastRun;
+  onReopen: (run: LastRun) => void;
 }
 
+const ago = (t: number) => {
+  const m = Math.round((Date.now() - t) / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  return h < 24 ? `${h} h ago` : `${Math.round(h / 24)} d ago`;
+};
+
 export function Composer(props: Props) {
-  const { text, onTextChange, onLoadSample, onRun } = props;
+  const { text, onTextChange, onLoadSample, onRun, lastRun, onReopen } = props;
   const canRun = text.trim().length > 0 && text.length <= MAX_CHARS;
 
   return (
@@ -39,12 +54,33 @@ export function Composer(props: Props) {
         </p>
       </section>
 
+      {lastRun && (
+        <div className="card -mb-4 flex flex-wrap items-center gap-3 rounded-2xl px-5 py-3.5">
+          <History className="size-4 text-ink-faint" aria-hidden />
+          <p className="min-w-0 flex-1 text-sm">
+            <span className="font-medium">Your last check</span>
+            <span className="text-ink-soft">
+              {" "}
+              · {lastRun.analysis.audience.label} · {lastRun.analysis.references.length} references · {ago(lastRun.savedAt)}
+            </span>
+            <span className="block truncate text-xs text-ink-faint">{lastRun.text.slice(0, 140)}</span>
+          </p>
+          <button
+            type="button"
+            onClick={() => onReopen(lastRun)}
+            className="rounded-full border border-line px-3.5 py-1.5 text-sm font-medium hover:border-ink-faint"
+          >
+            Open results
+          </button>
+        </div>
+      )}
+
       <div className="card grid grid-cols-1 overflow-hidden rounded-3xl lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
         <section className="flex flex-col p-5 sm:p-7">
           <div className="mb-4">
             <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">Try a real one</p>
             <div className="scrollbar-none -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0">
-              {SAMPLES.map((s) => (
+              {EXAMPLE_ORDER.map((id) => SAMPLES.find((s) => s.id === id)!).map((s) => (
                 <button
                   key={s.id}
                   type="button"

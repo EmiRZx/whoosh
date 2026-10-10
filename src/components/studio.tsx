@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, Check, Copy, FileText, Printer, RotateCw, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SAMPLES } from "@/content/samples";
 import { presetById } from "@/lib/audience/audience";
 import type { Verdict } from "@/lib/analysis/types";
@@ -18,6 +18,7 @@ import { ScriptView } from "./script-view";
 import type { PerformerRoomData } from "./performer-picker";
 import { AgentTrace, FixesCard, RoomCard, ScoreCard, VERDICT_ORDER, type RoomInfo } from "./summary";
 import { TourMatrix } from "./tour-matrix";
+import { saveLastRun, useLastRun, type LastRun } from "./last-run";
 import { useAnalysis } from "./use-analysis";
 import { VerdictIcon } from "./verdict";
 
@@ -47,7 +48,9 @@ export function Studio() {
   const [showChanges, setShowChanges] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [flash, setFlash] = useState<string>();
-  const { state, run, reset } = useAnalysis();
+  const { state, run, reset, restore } = useAnalysis();
+  const lastRun = useLastRun();
+  const inspectorBox = useRef<HTMLDivElement>(null);
 
   const sample = SAMPLES.find((s) => s.text === text);
   const preset = presetById(presetId);
@@ -93,6 +96,17 @@ export function Studio() {
         weight: r.extracted.weight,
       })),
   );
+  // The counts follow the script as it now reads: swapped references take
+  // their substitute's verdict, rewritten-away ones drop out.
+  const shownCounts = useMemo(() => {
+    if (!changed) return counts;
+    const c: Record<Verdict, number> = { lands: 0, risky: 0, dead: 0, unchecked: 0 };
+    for (const r of refs) {
+      if (accepted[r.key] !== undefined) c[r.swaps[accepted[r.key]].verdict]++;
+      else if (!doc.removed.has(r.key)) c[r.verdict]++;
+    }
+    return c;
+  }, [changed, counts, refs, accepted, doc.removed]);
   const checkable = refs.filter((r) => r.resolution.status !== "not_checkable");
   const progress = { done: checkable.filter((r) => r.resolution.status !== "pending").length, total: checkable.length };
 
@@ -159,6 +173,27 @@ export function Studio() {
     return () => window.removeEventListener("keydown", onKey);
   }, [state.phase, step]);
 
+  // Keep the finished run (and the swaps taken) so a reload doesn't lose it.
+  useEffect(() => {
+    if (state.phase !== "done" || !state.analysis) return;
+    saveLastRun({ savedAt: Date.now(), text, presetId, cities, performer, analysis: state.analysis, accepted });
+  }, [state.phase, state.analysis, accepted, text, presetId, cities, performer]);
+
+  const reopen = (last: LastRun) => {
+    setText(last.text);
+    setPresetId(last.presetId);
+    setCities(last.cities);
+    setPerformer(last.performer);
+    setAccepted(last.accepted);
+    setSelectedKey(undefined);
+    restore(last.analysis);
+  };
+
+  // A new reference starts at the top of the inspector, not where the last one was scrolled.
+  useEffect(() => {
+    inspectorBox.current?.scrollTo({ top: 0 });
+  }, [activeKey]);
+
   useEffect(() => {
     if (!flash) return;
     const t = setTimeout(() => setFlash(undefined), 2200);
@@ -195,6 +230,8 @@ export function Studio() {
         onCitiesChange={setCities}
         onLoadSample={loadSample}
         onRun={start}
+        lastRun={lastRun}
+        onReopen={reopen}
       />
     );
   }
@@ -238,7 +275,7 @@ export function Studio() {
     />
   );
 
-  const scoreCard = <ScoreCard score={score} projected={projected} counts={counts} progress={running ? progress : undefined} onJump={jump} />;
+  const scoreCard = <ScoreCard score={score} projected={projected} counts={shownCounts} progress={running ? progress : undefined} onJump={jump} />;
   const fixes = <FixesCard references={refs} accepted={accepted} selectedKey={activeKey} onSelect={select} />;
 
   return (
@@ -347,20 +384,22 @@ export function Studio() {
               {refs.length ? (
                 <ScriptView pieces={doc.pieces} references={byKey} selectedKey={activeKey} onSelect={select} showChanges={showChanges} />
               ) : (
-                <div className="relative">
-                  <p className="whitespace-pre-wrap font-serif text-[17px] leading-[1.85] text-ink-faint sm:text-[18.5px]">{analysedText}</p>
+                <div>
                   {running && (
-                    <p className="absolute left-0 top-0 flex animate-shimmer items-center gap-2 rounded-full bg-card px-3 py-1 text-xs text-ink-soft ring-1 ring-line">
+                    <p className="mb-4 inline-flex animate-shimmer items-center gap-2 rounded-full bg-sunk px-3 py-1 text-xs text-ink-soft">
                       Finding the references…
                     </p>
                   )}
+                  <p className="whitespace-pre-wrap font-serif text-[17px] leading-[1.85] text-ink-faint sm:text-[18.5px]">{analysedText}</p>
                 </div>
               )}
             </div>
           </section>
 
           <aside className="hidden lg:block">
-            <div className="card scrollbar-none sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-3xl p-5 sm:p-6">{inspector}</div>
+            <div ref={inspectorBox} className="card sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-3xl p-5 [scrollbar-width:thin] sm:p-6">
+              {inspector}
+            </div>
           </aside>
         </div>
 

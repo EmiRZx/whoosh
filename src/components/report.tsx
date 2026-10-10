@@ -50,6 +50,7 @@ export function Report({ title, room, cities, references, accepted, score, proje
           </div>
         )}
         <div className="text-[10pt]">
+          {changed && <p className="text-[9pt] text-[#52514e]">As written</p>}
           {(["lands", "risky", "dead", "unchecked"] as const).map((v) => (
             <p key={v}>
               <span style={{ color: MARK[v].color }}>{MARK[v].glyph}</span> {VERDICT_LABEL[v]}:{" "}

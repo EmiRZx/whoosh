@@ -73,6 +73,45 @@ function CityRanks({ cities }: { cities: NonNullable<Signals["cities"]> }) {
   );
 }
 
+const TYPE_NAME: Record<string, string> = {
+  "urn:entity:movie": "movie",
+  "urn:entity:tv_show": "TV show",
+  "urn:entity:artist": "music artist",
+  "urn:entity:person": "person",
+  "urn:entity:brand": "brand",
+  "urn:entity:book": "book",
+  "urn:entity:author": "author",
+  "urn:entity:videogame": "video game",
+  "urn:entity:podcast": "podcast",
+  "urn:entity:place": "place",
+  "urn:entity:locality": "place",
+  "urn:entity:destination": "destination",
+};
+
+const squash = (s: string) => s.toLowerCase().replace(/^the\s+/, "").replace(/[^a-z0-9]/g, "");
+// False when Qloo measured something named differently ("Motorola" for
+// "Motorola Razr"), so the inspector can say what was actually measured.
+const sameName = (a: string, b: string) => squash(a) === squash(b);
+
+// When Qloo has nothing, the model's blind guess is the only read there is.
+function GutOnly({ reference }: { reference: AnalyzedReference }) {
+  const gut = reference.gut!;
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <VerdictChip verdict={gut.verdict} />
+        <span className="text-ink-soft">
+          this room {signed(gut.roomIndex)} vs. average · biggest fans {ageLabel(gut.fans)}
+        </span>
+      </div>
+      <p className="text-xs leading-relaxed text-ink-soft">
+        <span className="italic">&ldquo;{gut.reason}&rdquo;</span> Claude&apos;s call without data, since Qloo has none for this one. Treat it as a
+        second opinion, not a measurement.
+      </p>
+    </div>
+  );
+}
+
 const ageLabel = (b?: string) => (b ? AGE_LABELS[AGE_BUCKETS.indexOf(b as (typeof AGE_BUCKETS)[number])] : "–");
 
 // The model's blind guess next to what Qloo measured.
@@ -257,6 +296,11 @@ export function Inspector(props: InspectorProps) {
           {(extracted.disambiguation ?? entity?.description) && (
             <p className="mt-1 line-clamp-2 text-sm text-ink-soft">{extracted.disambiguation ?? entity?.description}</p>
           )}
+          {entity && sameName(entity.name, extracted.name) === false && (
+            <p className="mt-1.5 text-xs text-ink-faint">
+              Measured as <span className="font-medium text-ink-soft">{entity.name}</span> ({TYPE_NAME[entity.type] ?? "entity"})
+            </p>
+          )}
         </div>
       </header>
 
@@ -317,25 +361,13 @@ export function Inspector(props: InspectorProps) {
                 </li>
               ))}
             </ul>
-            {reference.signals?.age && Object.keys(reference.signals.age).length > 0 && (
-              <div className="flex flex-col gap-2">
-                <p className="text-xs text-ink-soft">Each age group vs. the average adult</p>
-                <AgeChart age={reference.signals.age} mix={mix} />
-              </div>
-            )}
-            {reference.signals?.cities && reference.signals.cities.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <p className="text-xs text-ink-soft">Where it ranks among {reference.signals.cities[0].of} big cities</p>
-                <CityRanks cities={reference.signals.cities} />
-              </div>
-            )}
           </div>
         )}
       </Section>
 
-      {reference.gut && status === "resolved" && reference.verdict !== "unchecked" && (
-        <Section title="Gut vs. data">
-          <GutCheck reference={reference} />
+      {status !== "resolved" && status !== "not_checkable" && status !== "pending" && reference.gut && (
+        <Section title="Claude's guess">
+          <GutOnly reference={reference} />
         </Section>
       )}
 
@@ -357,6 +389,29 @@ export function Inspector(props: InspectorProps) {
             </ul>
           )}
           {reference.swapNote && <p className="text-xs leading-relaxed text-ink-soft">{reference.swapNote}</p>}
+        </Section>
+      )}
+
+      {status === "resolved" && reference.signals && (reference.signals.age || reference.signals.cities?.length) && (
+        <Section title="Who likes it">
+          {reference.signals.age && Object.keys(reference.signals.age).length > 0 && (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-ink-soft">Each age group vs. the average adult</p>
+              <AgeChart age={reference.signals.age} mix={mix} />
+            </div>
+          )}
+          {reference.signals.cities && reference.signals.cities.length > 0 && (
+            <div className="mt-2 flex flex-col gap-2">
+              <p className="text-xs text-ink-soft">Where it ranks among {reference.signals.cities[0].of} big cities</p>
+              <CityRanks cities={reference.signals.cities} />
+            </div>
+          )}
+        </Section>
+      )}
+
+      {reference.gut && status === "resolved" && reference.verdict !== "unchecked" && (
+        <Section title="Gut vs. data">
+          <GutCheck reference={reference} />
         </Section>
       )}
 

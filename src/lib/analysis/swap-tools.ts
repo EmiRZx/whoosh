@@ -167,7 +167,7 @@ export async function check(client: QlooClient, ctx: SwapContext, input: z.infer
       verdict,
       presence: m.recognition === undefined ? undefined : Math.round(m.recognition * 100) / 100,
       room_index: m.roomIndex === undefined ? undefined : Math.round(m.roomIndex * 100) / 100,
-      biggest_fans: fans ? `${AGE_LABEL[fans]} (${Math.round(m.profile!.age[fans]! * 100)}%)` : undefined,
+      biggest_fans: fans ? `${AGE_LABEL[fans]} (${m.profile!.age[fans]! >= 0 ? "+" : ""}${Math.round(m.profile!.age[fans]! * 100)}%)` : undefined,
       cities: m.cities?.map((c) => `${c.name} #${c.rank} of ${c.of}`),
     };
     // Political figures are never offered as swaps.
