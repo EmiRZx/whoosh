@@ -19,6 +19,9 @@ const mix = (...weights: number[]): AgeMix => {
 export const AUDIENCE_PRESETS: AudiencePreset[] = [
   { id: "general", label: "General adult crowd", description: "Roughly the US adult population", ageMix: mix(12, 8.5, 9, 17, 15.5, 38) },
   { id: "college", label: "College crowd", description: "Campus show, mostly undergrads", ageMix: mix(78, 12, 4, 3, 2, 1) },
+  // Qloo's youngest age group is "24 and under", so teenagers are measured
+  // through it; the description says so.
+  { id: "high-school", label: "High school class", description: "Teenagers, read through Qloo's youngest group (24 and under)", ageMix: mix(100, 0, 0, 0, 0, 0) },
   { id: "comedy-club", label: "Comedy club", description: "Weekend club audience", ageMix: mix(14, 22, 20, 24, 12, 8) },
   { id: "corporate", label: "Corporate event", description: "Conference or company offsite", ageMix: mix(6, 16, 18, 30, 20, 10) },
   { id: "wedding", label: "Wedding reception", description: "Couple's friends plus both families", ageMix: mix(10, 22, 18, 14, 14, 22) },
