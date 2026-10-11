@@ -14,6 +14,7 @@ import { EXAMPLE_ORDER, MAX_CHARS } from "../composer";
 import { Inspector } from "../inspector";
 import { VERDICT_LABEL, WEIGHT_LABEL } from "../labels";
 import { PerformerPicker, type PerformerRoomData } from "../performer-picker";
+import { ScopeNote } from "../summary";
 import { AgeHistogram, CityChips, CityInput, MAX_CITIES } from "../room-picker";
 import { useAnalysis } from "../use-analysis";
 import { VerdictIcon } from "../verdict";
@@ -266,7 +267,13 @@ export function AddonPanel() {
   if (state.phase === "idle") {
     return (
       <div className="flex flex-col gap-6 p-4">
-        <Brand />
+        <div className="flex flex-col gap-2">
+          <Brand />
+          <p className="text-xs leading-relaxed text-ink-soft">
+            Checks the shows, people, music, brands and places your script leans on against the room you pick, and finds swaps for the ones that
+            won&apos;t land.
+          </p>
+        </div>
         <section>
           <label htmlFor="room" className="mb-2 block text-sm font-semibold">
             Who&apos;s in the room?
@@ -454,6 +461,7 @@ export function AddonPanel() {
             </li>
           ))}
         </ul>
+        {state.phase === "done" && <ScopeNote count={refs.length} text={source?.text ?? ""} />}
       </section>
 
       {(running || state.swapsPending.length > 0) && (

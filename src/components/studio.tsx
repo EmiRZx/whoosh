@@ -280,7 +280,16 @@ export function Studio() {
     />
   );
 
-  const scoreCard = <ScoreCard score={score} projected={projected} counts={shownCounts} progress={running ? progress : undefined} onJump={jump} />;
+  const scoreCard = (
+    <ScoreCard
+      score={score}
+      projected={projected}
+      counts={shownCounts}
+      progress={running ? progress : undefined}
+      onJump={jump}
+      scope={state.phase === "done" ? { count: refs.length, text: analysedText } : undefined}
+    />
+  );
   const fixes = <FixesCard references={refs} accepted={accepted} selectedKey={activeKey} onSelect={select} />;
 
   return (

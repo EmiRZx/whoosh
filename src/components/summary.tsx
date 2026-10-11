@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowRight, Check, ChevronDown, LoaderCircle, MapPin } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Info, LoaderCircle, MapPin } from "lucide-react";
 import type { AgeMix } from "@/lib/audience/audience";
 import type { AnalyzedReference, Verdict } from "@/lib/analysis/types";
+import { lightOnReferences } from "@/lib/ui/score";
 import { VERDICT_LABEL } from "./labels";
 import { EntityThumb } from "./entity-thumb";
 import { AgeHistogram } from "./room-picker";
@@ -27,9 +28,11 @@ interface ScoreProps {
   counts: Record<Verdict, number>;
   progress?: { done: number; total: number };
   onJump: (verdict: Verdict) => void;
+  // The finished analysis, to say so when the script leans on few references.
+  scope?: { count: number; text: string };
 }
 
-export function ScoreCard({ score, projected, counts, progress, onJump }: ScoreProps) {
+export function ScoreCard({ score, projected, counts, progress, onJump, scope }: ScoreProps) {
   const total = VERDICT_ORDER.reduce((sum, v) => sum + counts[v], 0);
   const pct = (x: number) => Math.round(x * 100);
   const improved = projected !== undefined && score !== undefined && pct(projected) !== pct(score);
@@ -85,7 +88,28 @@ export function ScoreCard({ score, projected, counts, progress, onJump }: ScoreP
           </li>
         ))}
       </ul>
+      {scope && <ScopeNote {...scope} />}
     </section>
+  );
+}
+
+// Whoosh checks named culture, not jokes. When a script has little of
+// it, say so, so an observational set doesn't look like a check that missed.
+export function ScopeNote({ count, text }: { count: number; text: string }) {
+  if (!lightOnReferences(count, text)) return null;
+  const words = text.trim().split(/\s+/).length;
+  const about = words >= 100 ? Math.round(words / 10) * 10 : words;
+  return (
+    <p className="mt-3 flex gap-2 border-t border-line pt-3 text-xs leading-relaxed text-ink-soft">
+      <Info className="mt-0.5 size-3.5 shrink-0 text-ink-faint" aria-hidden />
+      <span>
+        {count === 0
+          ? "No references to check. "
+          : `${count === 1 ? "One reference" : `${count} references`} in about ${about.toLocaleString("en-US")} words. `}
+        Whoosh checks the named culture a script leans on (shows, people, music, brands, places), not whether a joke is funny
+        {count === 0 ? ", and this one doesn't lean on any." : ", so the other lines aren't marked."}
+      </span>
+    </p>
   );
 }
 

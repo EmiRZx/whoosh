@@ -26,3 +26,10 @@ export function roomScore(items: Scored[]): number | undefined {
   }
   return total > 0 ? earned / total : undefined;
 }
+
+// A script that leans on few named references. The examples carry 9 to 19 per
+// thousand characters and real sets 2 to 4, but a real set runs long enough to
+// have a dozen; a short observational bit has a handful at most.
+export function lightOnReferences(count: number, text: string): boolean {
+  return count === 0 || (count <= 4 && count * 1000 < 5 * text.length);
+}

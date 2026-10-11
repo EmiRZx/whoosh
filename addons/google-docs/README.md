@@ -4,6 +4,8 @@ Checks the script you're writing in Google Docs, right where you write it. A sid
 
 It isn't published to the Google Workspace Marketplace. It runs as a script bound to a document, so anyone can use it by copying a document that carries it.
 
+**Try it:** [make a copy of the template document](https://docs.google.com/document/d/1OQeF2oHjghGVVpGxqt1NRmLSRXUbn5_6-zBSXhIcIYE/copy), then choose **Whoosh → Check this room** in your copy.
+
 ## How it works
 
 - `Code.gs` does the document work: reads the script (or the selection), colors the references, selects one, and applies or undoes a swap. It needs only access to the current document and permission to show a sidebar.

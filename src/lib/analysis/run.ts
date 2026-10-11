@@ -51,6 +51,10 @@ export function isExample(text: string) {
 const BUDGET_MS = Number(process.env.ANALYSIS_BUDGET_MS) || 270_000;
 // Below this, starting a swap agent isn't worth it.
 const MIN_SWAP_MS = 25_000;
+// A swap agent is asked to submit what it has this long before the budget
+// runs out (or halfway, when little is left): time for a last check and the
+// submission.
+const WRAP_UP_MS = 100_000;
 
 export async function runAnalysis(
   input: AnalysisInput,
@@ -312,7 +316,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
       const stop = () => swapAbort.abort();
       llm.signal?.addEventListener("abort", stop, { once: true });
       const timer = setTimeout(stop, remaining);
-      const swapLlm: LlmOptions = { ...llm, signal: swapAbort.signal };
+      const swapLlm = { ...llm, signal: swapAbort.signal, wrapUpAt: deadline - Math.min(WRAP_UP_MS, remaining / 2) };
       await Promise.all(
         weak.map(async (ref) => {
           const ctx = swapContext(text, ref, audience, references.filter((r) => r.key !== ref.key).map((r) => r.extracted.name));
@@ -366,7 +370,8 @@ export async function runSwapSearch(
   options.signal?.addEventListener("abort", () => abort.abort(), { once: true });
   const timer = setTimeout(() => abort.abort(), BUDGET_MS);
   try {
-    const patch = toPatch(await runSwapAgent(anthropic, qloo, ctx, { signal: abort.signal, onUsage: meter.record }));
+    const wrapUpAt = Date.now() + BUDGET_MS - WRAP_UP_MS;
+    const patch = toPatch(await runSwapAgent(anthropic, qloo, ctx, { signal: abort.signal, onUsage: meter.record, wrapUpAt }));
     return { swaps: patch.swaps ?? [], swapNote: patch.swapNote };
   } catch (err) {
     if (abort.signal.aborted && !options.signal?.aborted) return { swaps: [], swapNote: "Ran out of time before a swap was confirmed." };

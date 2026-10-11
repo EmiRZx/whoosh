@@ -46,7 +46,7 @@ For stdio-only clients, wrap it with `npx -y mcp-remote https://<your-deployment
 
 ## Use it in Google Docs
 
-A Google Docs sidebar ([`addons/google-docs`](addons/google-docs)) checks the script where it's written: it marks each reference in the document with its verdict, jumps to a reference when you click it, and puts the swap you pick into the document. It runs as a script bound to a document, so a copy of a document that carries it is all anyone needs; the folder's README has the setup.
+A Google Docs sidebar ([`addons/google-docs`](addons/google-docs)) checks the script where it's written: it marks each reference in the document with its verdict, jumps to a reference when you click it, and puts the swap you pick into the document. It runs as a script bound to a document, so a copy of a document that carries it is all anyone needs: [make a copy of the template](https://docs.google.com/document/d/1OQeF2oHjghGVVpGxqt1NRmLSRXUbn5_6-zBSXhIcIYE/copy), then choose **Whoosh → Check this room**. The folder's README has the setup for your own document.
 
 ## Run it locally
 

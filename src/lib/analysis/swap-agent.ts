@@ -60,17 +60,33 @@ export interface SwapResult {
   note: string;
 }
 
-export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: SwapContext, opts: LlmOptions = {}): Promise<SwapResult> {
+export const WRAP_UP = "Time is nearly up. Call submit_swaps now with the substitutes whose check said beats_original: true, or with an empty list.";
+
+// wrapUpAt: past this time the searches stop and every tool result asks for a
+// submission, so a slow run ends with what it has checked instead of being cut
+// off at the host's limit.
+export async function runSwapAgent(
+  anthropic: Anthropic,
+  qloo: QlooClient,
+  ctx: SwapContext,
+  opts: LlmOptions & { wrapUpAt?: number } = {},
+): Promise<SwapResult> {
   let submitted: SwapResult | undefined;
+  const late = () => opts.wrapUpAt !== undefined && Date.now() >= opts.wrapUpAt;
   // Tool errors go back to the model as text so it can adjust, rather than
   // aborting the run.
   const safely = async (fn: () => Promise<unknown>) => {
+    let out: string;
     try {
-      return JSON.stringify(await fn());
+      out = JSON.stringify(await fn());
     } catch (err) {
-      return `Error: ${(err as Error).message}`;
+      out = `Error: ${(err as Error).message}`;
     }
+    return late() ? `${out}
+
+${WRAP_UP}` : out;
   };
+  const search = (fn: () => Promise<unknown>) => (late() ? Promise.resolve(`Not run. ${WRAP_UP}`) : safely(fn));
 
   const tools = [
     betaZodTool({
@@ -78,19 +94,19 @@ export async function runSwapAgent(anthropic: Anthropic, qloo: QlooClient, ctx: 
       description:
         "Search Qloo for substitutes similar to the original (or to another entity) that this room's main age group likes, and, when the room is a performer's crowd, that their fans like.",
       inputSchema: FindCandidatesInput,
-      run: (input) => safely(() => findCandidates(qloo, ctx, input)),
+      run: (input) => search(() => findCandidates(qloo, ctx, input)),
     }),
     betaZodTool({
       name: "lookup",
       description: "Find a specific substitute by name in Qloo, to get its id.",
       inputSchema: LookupInput,
-      run: (input) => safely(() => lookup(qloo, input)),
+      run: (input) => search(() => lookup(qloo, input)),
     }),
     betaZodTool({
       name: "find_tags",
       description: "Find Qloo tag ids for a genre or descriptor, to narrow find_candidates.",
       inputSchema: FindTagsInput,
-      run: (input) => safely(() => findTagIds(qloo, input)),
+      run: (input) => search(() => findTagIds(qloo, input)),
     }),
     betaZodTool({
       name: "check",

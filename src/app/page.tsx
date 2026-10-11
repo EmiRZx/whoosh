@@ -1,8 +1,9 @@
-import { Bot, ScanSearch, Shuffle } from "lucide-react";
+import { ArrowUpRight, Bot, ScanSearch, Shuffle } from "lucide-react";
 import Link from "next/link";
 import { Origin } from "@/components/origin";
 import { Studio } from "@/components/studio";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { DOCS_TEMPLATE_URL } from "@/content/addon";
 
 const STEPS = [
   {
@@ -40,6 +41,11 @@ export default function Home() {
             <a href="#agents" className="hidden hover:text-ink sm:inline">
               For agents (MCP)
             </a>
+            {DOCS_TEMPLATE_URL && (
+              <a href="#docs" className="hidden hover:text-ink md:inline">
+                Google Docs
+              </a>
+            )}
             <ThemeToggle />
           </div>
         </nav>
@@ -82,6 +88,34 @@ export default function Home() {
             </pre>
           </div>
         </section>
+
+        {DOCS_TEMPLATE_URL && (
+          <section id="docs" className="mt-4 scroll-mt-8 print:hidden">
+            <div className="card flex flex-col gap-5 rounded-2xl p-6 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-2xl">
+                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">In Google Docs</p>
+                <h2 className="mt-2 text-lg font-semibold tracking-tight">Check the script where you write it</h2>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+                  A sidebar marks every reference in the document with how the room will read it and puts the swap you pick straight into the
+                  text. Copy the template, then choose <strong className="font-medium text-ink">Whoosh → Check this room</strong>.
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-ink-faint">
+                  It isn&apos;t a published add-on, so the first time Google asks you to approve the script (Advanced → Go to Whoosh). It can
+                  only see the document it&apos;s in.
+                </p>
+              </div>
+              <a
+                href={DOCS_TEMPLATE_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="flex shrink-0 items-center justify-center gap-1.5 self-start rounded-full border border-line px-4 py-2 text-sm font-medium hover:border-ink-faint md:self-center"
+              >
+                Make a copy
+                <ArrowUpRight className="size-4" aria-hidden />
+              </a>
+            </div>
+          </section>
+        )}
       </main>
 
       <footer className="border-t border-line print:hidden">
