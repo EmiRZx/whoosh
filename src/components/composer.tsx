@@ -75,7 +75,7 @@ export function Composer(props: Props) {
         </div>
       )}
 
-      <div className="card grid grid-cols-1 overflow-hidden rounded-3xl lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+      <div className="card relative z-10 grid grid-cols-1 rounded-3xl lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
         <section className="flex flex-col p-5 sm:p-7">
           <div className="mb-4">
             <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">Try a real one</p>

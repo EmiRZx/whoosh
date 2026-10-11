@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, Copy, FileText, Printer, RotateCw, X } from "lucide-react";
+import { ArrowLeft, Check, Copy, FileText, Printer, RotateCw, Shuffle, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SAMPLES } from "@/content/samples";
 import { presetById } from "@/lib/audience/audience";
@@ -111,10 +111,16 @@ export function Studio() {
   const checkable = refs.filter((r) => r.resolution.status !== "not_checkable");
   const progress = { done: checkable.filter((r) => r.resolution.status !== "pending").length, total: checkable.length };
 
-  // Until the user picks one, show the first punchline so the inspector isn't empty.
+  // Until the user picks one, show what's most worth acting on: a reference
+  // with a swap ready, then a weak punchline, then any punchline.
   const activeKey = byKey.has(selectedKey ?? "")
     ? selectedKey
-    : (refs.find((r) => r.extracted.weight === "punchline") ?? refs[0])?.key;
+    : (
+        refs.find((r) => r.swaps.length > 0) ??
+        refs.find((r) => r.extracted.weight === "punchline" && (r.verdict === "dead" || r.verdict === "risky")) ??
+        refs.find((r) => r.extracted.weight === "punchline") ??
+        refs[0]
+      )?.key;
   const index = refs.findIndex((r) => r.key === activeKey);
   const selected = refs[index];
   const rewrittenBy =
@@ -373,6 +379,14 @@ export function Studio() {
                     {VERDICT_LABEL[v]}
                   </span>
                 ))}
+                {refs.some((r) => r.swaps.length > 0) && (
+                  <span className="flex items-center gap-1">
+                    <span className="swap-flag !ml-0 text-[13px]" aria-hidden>
+                      <Shuffle strokeWidth={2.75} />
+                    </span>
+                    Swap ready
+                  </span>
+                )}
                 {changed && (
                   <label className="ml-1 flex cursor-pointer items-center gap-1.5 border-l border-line pl-3">
                     <input type="checkbox" checked={showChanges} onChange={(e) => setShowChanges(e.target.checked)} className="accent-[var(--lands)]" />

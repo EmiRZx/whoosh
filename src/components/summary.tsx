@@ -127,7 +127,7 @@ export function FixesCard({ references, accepted, selectedKey, onSelect }: Fixes
   const taken = fixable.filter((r) => accepted[r.key] !== undefined).length;
   return (
     <section className="card rounded-2xl p-5">
-      <CardTitle right={<span className="text-[11px] tabular-nums text-ink-faint">{taken}/{fixable.length} used</span>}>Swaps</CardTitle>
+      <CardTitle right={<span className="text-[11px] tabular-nums text-ink-faint">{taken}/{fixable.length} used</span>}>Try instead</CardTitle>
       <ul className="-mx-2 flex flex-col">
         {fixable.map((r) => {
           const pick = accepted[r.key];
@@ -149,11 +149,13 @@ export function FixesCard({ references, accepted, selectedKey, onSelect }: Fixes
                   )}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className={`block truncate ${pick !== undefined ? "text-ink-faint line-through" : ""}`}>{r.extracted.name}</span>
-                  <span className={`flex items-center gap-1 text-xs ${pick !== undefined ? "font-medium text-ink" : "text-ink-soft"}`}>
-                    <ArrowRight className="size-3 shrink-0 text-ink-faint" aria-hidden />
+                  <span className={`block truncate text-xs text-ink-soft ${pick !== undefined ? "line-through" : ""}`}>{r.extracted.name}</span>
+                  <span className="flex items-center gap-1 font-medium text-ink">
+                    <ArrowRight className="size-3.5 shrink-0 text-accent" aria-hidden />
                     <span className="truncate">{swap.entity.name}</span>
-                    {pick === undefined && r.swaps.length > 1 && <span className="shrink-0 text-ink-faint">+{r.swaps.length - 1}</span>}
+                    {pick === undefined && r.swaps.length > 1 && (
+                      <span className="shrink-0 text-xs font-normal text-ink-faint">+{r.swaps.length - 1} more</span>
+                    )}
                   </span>
                 </span>
               </button>

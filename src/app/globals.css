@@ -211,9 +211,13 @@ body {
   background: color-mix(in srgb, var(--accent-glow) 35%, transparent);
 }
 
-:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
+/* In the base layer, so a component that draws its own focus ring (a search
+   box whose border lights up) can turn this one off with a utility. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
 }
 
 /* A soft stage light behind the top of the page. */
@@ -278,6 +282,23 @@ body {
   outline: 2px solid var(--mark);
   outline-offset: 1px;
   background-color: color-mix(in srgb, var(--mark) 20%, transparent);
+}
+
+/* On a reference that has a swap ready. */
+.swap-flag {
+  display: inline-grid;
+  place-items: center;
+  width: 1.05em;
+  height: 1.05em;
+  margin-left: 0.3em;
+  border-radius: 999px;
+  background: var(--cta);
+  color: var(--cta-ink);
+  vertical-align: 0.02em;
+}
+.swap-flag svg {
+  width: 0.62em;
+  height: 0.62em;
 }
 
 /* Tracked changes from accepted swaps. */

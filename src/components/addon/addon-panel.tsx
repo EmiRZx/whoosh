@@ -509,7 +509,13 @@ export function AddonPanel() {
                           ) : (
                             <>
                               {WEIGHT_LABEL[r.extracted.weight]}
-                              {r.swaps.length > 0 && ` · ${r.swaps.length} ${r.swaps.length === 1 ? "swap" : "swaps"}`}
+                              {r.swaps.length > 0 && (
+                                <>
+                                  {" · "}
+                                  <span className="font-medium text-ink">Try {r.swaps[0].entity.name}</span>
+                                  {r.swaps.length > 1 && ` +${r.swaps.length - 1}`}
+                                </>
+                              )}
                               {searching && " · finding swaps…"}
                             </>
                           )}

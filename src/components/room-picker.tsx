@@ -66,6 +66,11 @@ export function CityInput({ cities, onAdd }: { cities: string[]; onAdd: (city: s
 
   const visible = open && draft.trim().length >= 2 ? suggestions.slice(0, 6) : [];
 
+  // Keep the option picked with the arrow keys in view when the list scrolls.
+  useEffect(() => {
+    document.getElementById(`${listId}-${active}`)?.scrollIntoView({ block: "nearest" });
+  }, [listId, active]);
+
   const commit = (value: string) => {
     const name = value.trim();
     if (!name || full) return;
@@ -127,7 +132,7 @@ export function CityInput({ cities, onAdd }: { cities: string[]; onAdd: (city: s
         <ul
           id={listId}
           role="listbox"
-          className="absolute inset-x-0 top-full z-30 mt-1.5 overflow-hidden rounded-xl border border-card-border bg-bg p-1 shadow-xl"
+          className="absolute inset-x-0 top-full z-30 mt-1.5 max-h-72 overflow-y-auto overscroll-contain rounded-xl border border-card-border bg-bg p-1 shadow-xl [scrollbar-width:thin]"
         >
           {visible.map((s, i) => (
             <li

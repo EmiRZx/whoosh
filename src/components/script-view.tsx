@@ -1,5 +1,6 @@
 "use client";
 
+import { Shuffle } from "lucide-react";
 import type { AnalyzedReference } from "@/lib/analysis/types";
 import type { Piece } from "@/lib/ui/document";
 import { VERDICT_LABEL } from "./labels";
@@ -27,6 +28,8 @@ const activate = (onSelect: () => void) => ({
 // The script set like a page, with each reference highlighted by verdict and
 // accepted swaps shown as tracked changes.
 export function ScriptView({ pieces, references, selectedKey, onSelect, showChanges }: Props) {
+  // A reference with a swap ready carries a flag on its first mention.
+  const flagged = new Set<string>();
   return (
     <div className="whitespace-pre-wrap font-serif text-[17px] leading-[1.85] text-ink sm:text-[18.5px]">
       {pieces.map((piece, i) => {
@@ -54,6 +57,9 @@ export function ScriptView({ pieces, references, selectedKey, onSelect, showChan
         const ref = piece.refKey ? references.get(piece.refKey) : undefined;
         if (!ref) return <span key={i}>{piece.text}</span>;
         const pending = ref.resolution.status === "pending";
+        const swaps = ref.swaps.length;
+        const flag = swaps > 0 && !flagged.has(ref.key);
+        if (flag) flagged.add(ref.key);
         return (
           <mark
             key={i}
@@ -62,10 +68,17 @@ export function ScriptView({ pieces, references, selectedKey, onSelect, showChan
             data-pending={pending}
             data-selected={ref.key === selectedKey}
             aria-pressed={ref.key === selectedKey}
-            aria-label={`${piece.text}: ${ref.extracted.name}, ${pending ? "checking" : VERDICT_LABEL[ref.verdict]}`}
+            aria-label={`${piece.text}: ${ref.extracted.name}, ${pending ? "checking" : VERDICT_LABEL[ref.verdict]}${
+              swaps ? `, ${swaps} ${swaps === 1 ? "swap" : "swaps"}` : ""
+            }`}
             {...activate(() => onSelect(ref.key))}
           >
             {piece.text}
+            {flag && (
+              <span className="swap-flag" title={`${swaps} ${swaps === 1 ? "swap" : "swaps"} ready`} aria-hidden>
+                <Shuffle strokeWidth={2.75} />
+              </span>
+            )}
           </mark>
         );
       })}

@@ -28,10 +28,10 @@ export interface InspectorProps {
   swapPending?: boolean;
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, accent }: { title: string; children: React.ReactNode; accent?: boolean }) {
   return (
     <section className="flex flex-col gap-2.5">
-      <h3 className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">{title}</h3>
+      <h3 className={`font-mono text-[11px] uppercase tracking-[0.14em] ${accent ? "font-semibold text-accent" : "text-ink-faint"}`}>{title}</h3>
       {children}
     </section>
   );
@@ -47,7 +47,8 @@ function Stat({ label, children, hint }: { label: string; children: React.ReactN
 }
 
 function RoomIndex({ value }: { value?: number }) {
-  if (value === undefined) return <span className="text-ink-faint">–</span>;
+  // Qloo had no age breakdown for it.
+  if (value === undefined) return <span className="text-sm font-normal text-ink-faint">No age data</span>;
   const Arrow = value >= 0 ? ArrowUp : ArrowDown;
   return (
     <>
@@ -357,6 +358,37 @@ export function Inspector(props: InspectorProps) {
         <p className="rounded-lg bg-lands-tint px-3 py-2 text-xs text-lands-ink">Your swap for {rewrittenBy} rewrote this line.</p>
       )}
 
+      {/* What to say instead comes first; the evidence for it follows. */}
+      {swapPending && !reference.swaps.length && (
+        <Section title="Try instead" accent>
+          <p className="flex items-center gap-2 text-sm text-ink-soft" aria-live="polite">
+            <LoaderCircle className="size-4 animate-spin text-accent" aria-hidden />
+            Searching Qloo for substitutes that do the same job and this room likes better. This takes a minute or two.
+          </p>
+        </Section>
+      )}
+
+      {(reference.swaps.length > 0 || reference.swapNote) && (
+        <Section title={reference.swaps.length ? "Try instead" : "Swaps"} accent={reference.swaps.length > 0}>
+          {reference.swaps.length > 0 && (
+            <ul className="flex flex-col gap-2.5">
+              {reference.swaps.map((swap, i) => (
+                <SwapCard
+                  key={swap.entity.id}
+                  swap={swap}
+                  text={text}
+                  reference={reference}
+                  accepted={accepted === i}
+                  onAccept={() => onAccept(i)}
+                  onUndo={onUndo}
+                />
+              ))}
+            </ul>
+          )}
+          {reference.swapNote && <p className="text-xs leading-relaxed text-ink-soft">{reference.swapNote}</p>}
+        </Section>
+      )}
+
       <Section title="Its job in the line">
         <p className="text-[15px] leading-relaxed">{extracted.role}</p>
       </Section>
@@ -420,39 +452,9 @@ export function Inspector(props: InspectorProps) {
         </Section>
       )}
 
-      {swapPending && !reference.swaps.length && (
-        <Section title="Swaps that do the same job">
-          <p className="flex items-center gap-2 text-sm text-ink-soft" aria-live="polite">
-            <LoaderCircle className="size-4 animate-spin text-accent" aria-hidden />
-            Searching Qloo for substitutes this room likes better. This takes a minute or two.
-          </p>
-        </Section>
-      )}
-
       {status === "resolved" && !swapPending && !reference.swaps.length && !reference.swapNote && advice(reference) && (
         <Section title="What to do">
           <p className="text-sm leading-relaxed">{advice(reference)}</p>
-        </Section>
-      )}
-
-      {(reference.swaps.length > 0 || reference.swapNote) && (
-        <Section title="Swaps that do the same job">
-          {reference.swaps.length > 0 && (
-            <ul className="flex flex-col gap-2.5">
-              {reference.swaps.map((swap, i) => (
-                <SwapCard
-                  key={swap.entity.id}
-                  swap={swap}
-                  text={text}
-                  reference={reference}
-                  accepted={accepted === i}
-                  onAccept={() => onAccept(i)}
-                  onUndo={onUndo}
-                />
-              ))}
-            </ul>
-          )}
-          {reference.swapNote && <p className="text-xs leading-relaxed text-ink-soft">{reference.swapNote}</p>}
         </Section>
       )}
 

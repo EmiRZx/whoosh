@@ -40,8 +40,8 @@ function nameMatch(name: string, query: string): number {
 // long one ("cedric the entertainer") pulls in "Teni the Entertainer". One
 // entry per name, so a comedian listed as both a person and a music artist
 // shows up once.
-export async function searchPerformers(client: QlooClient, query: string, take = 6): Promise<EntitySummary[]> {
-  const hits = await search(client, query, { types: PERFORMER_TYPES, take: 15 });
+export async function searchPerformers(client: QlooClient, query: string, take = 10): Promise<EntitySummary[]> {
+  const hits = await search(client, query, { types: PERFORMER_TYPES, take: 25 });
   const seen = new Set<string>();
   return hits
     .filter((e) => e.popularity !== undefined && !e.tags.some((t) => ADULT.test(t.name ?? "")))

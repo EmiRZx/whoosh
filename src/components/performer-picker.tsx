@@ -61,6 +61,11 @@ export function PerformerPicker({ room, onChange, cities, onAddCity, canAddCity 
 
   const visible = open && query.trim().length >= 2 ? results : [];
 
+  // Keep the option picked with the arrow keys in view when the list scrolls.
+  useEffect(() => {
+    document.getElementById(`${listId}-${active}`)?.scrollIntoView({ block: "nearest" });
+  }, [listId, active]);
+
   const pick = async (entity: EntitySummary) => {
     setOpen(false);
     setQuery("");
@@ -174,7 +179,7 @@ export function PerformerPicker({ room, onChange, cities, onAddCity, canAddCity 
         <ul
           id={listId}
           role="listbox"
-          className="absolute inset-x-0 top-full z-30 mt-1.5 overflow-hidden rounded-xl border border-card-border bg-bg p-1 shadow-xl"
+          className="absolute inset-x-0 top-full z-30 mt-1.5 max-h-72 overflow-y-auto overscroll-contain rounded-xl border border-card-border bg-bg p-1 shadow-xl [scrollbar-width:thin]"
         >
           {visible.map((p, i) => (
             <li
