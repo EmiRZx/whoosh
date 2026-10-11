@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_blank" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="app" src="https://whoosh-check.vercel.app/addon" title="Whoosh"></iframe>
+    <script>
+      // The web app in the frame asks for document work by message; only
+      // these functions in Code.gs can be called, and only from that app.
+      var APP_ORIGIN = 'https://whoosh-check.vercel.app';
+      var METHODS = { getScript: true, insertExample: true, paint: true, clear: true, select: true, apply: true };
+      var frame = document.getElementById('app');
+
+      function reply(message) {
+        message.whoosh = 1;
+        frame.contentWindow.postMessage(message, APP_ORIGIN);
+      }
+
+      window.addEventListener('message', function (event) {
+        if (event.origin !== APP_ORIGIN || event.source !== frame.contentWindow) return;
+        var m = event.data;
+        if (!m || m.whoosh !== 1) return;
+        if (m.type === 'ready') return reply({ type: 'hello' });
+        if (m.type !== 'call' || !METHODS.hasOwnProperty(m.method)) return;
+        google.script.run
+          .withSuccessHandler(function (result) {
+            reply({ type: 'result', id: m.id, result: result });
+          })
+          .withFailureHandler(function (error) {
+            reply({ type: 'result', id: m.id, error: String((error && error.message) || error) });
+          })
+          [m.method](m.arg);
+      });
+    </script>
+  </body>
+</html>

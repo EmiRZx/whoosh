@@ -44,6 +44,10 @@ The same pipeline is exposed as an MCP server over Streamable HTTP at `/api/mcp`
 
 For stdio-only clients, wrap it with `npx -y mcp-remote https://<your-deployment>/api/mcp`.
 
+## Use it in Google Docs
+
+A Google Docs sidebar ([`addons/google-docs`](addons/google-docs)) checks the script where it's written: it marks each reference in the document with its verdict, jumps to a reference when you click it, and puts the swap you pick into the document. It runs as a script bound to a document, so a copy of a document that carries it is all anyone needs; the folder's README has the setup.
+
 ## Run it locally
 
 Requires Node.js 20+.
@@ -76,7 +80,7 @@ npx tsx --env-file=.env.local evals/gut/compare.ts   # how often the model's gut
 ## Project layout
 
 ```
-src/app/            UI and route handlers (/api/analyze, /api/cities, /api/mcp)
+src/app/            UI, the Google Docs panel (/addon) and route handlers (/api/analyze, /api/swap, /api/cities, /api/mcp)
 src/components/     UI components
 src/lib/analysis/   extraction, reference spans, the analysis pipeline
 src/lib/ui/         applying swaps to the script, the room score, exported notes
@@ -86,6 +90,7 @@ src/lib/geo/        city lookup
 src/content/        example scripts, their recorded extractions, city data
 evals/extraction/   gold annotations and scorer for reference extraction
 scripts/            data build scripts
+addons/google-docs/ the Google Docs sidebar (Apps Script)
 ```
 
 ## Data and privacy

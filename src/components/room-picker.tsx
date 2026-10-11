@@ -7,7 +7,7 @@ import { AGE_BUCKETS } from "@/lib/qloo/api";
 import { AGE_LABELS, AGE_SHORT } from "./labels";
 import { PerformerPicker, type PerformerRoomData } from "./performer-picker";
 
-const MAX_CITIES = 6;
+export const MAX_CITIES = 6;
 
 // The room's age mix as six small bars, youngest to oldest.
 export function AgeHistogram({ mix, className = "h-8", labels = false }: { mix: AgeMix; className?: string; labels?: boolean }) {
@@ -37,7 +37,7 @@ export function AgeHistogram({ mix, className = "h-8", labels = false }: { mix: 
   );
 }
 
-function CityInput({ cities, onAdd }: { cities: string[]; onAdd: (city: string) => void }) {
+export function CityInput({ cities, onAdd }: { cities: string[]; onAdd: (city: string) => void }) {
   const [draft, setDraft] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
@@ -219,24 +219,29 @@ export function RoomPicker({ presetId, onPresetChange, performer, onPerformerCha
         </label>
         <p className="mb-2.5 text-xs text-ink-soft">Add up to {MAX_CITIES} cities to compare a tour, or leave it empty.</p>
         <CityInput cities={cities} onAdd={addCity} />
-        {cities.length > 0 && (
-          <ul className="mt-2.5 flex flex-wrap gap-1.5">
-            {cities.map((city) => (
-              <li key={city} className="flex items-center gap-1 rounded-full bg-sunk py-1 pl-3 pr-1 text-sm">
-                {city}
-                <button
-                  type="button"
-                  onClick={() => onCitiesChange(cities.filter((c) => c !== city))}
-                  aria-label={`Remove ${city}`}
-                  className="grid size-5 place-items-center rounded-full text-ink-soft hover:bg-line hover:text-ink"
-                >
-                  <X className="size-3" aria-hidden />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <CityChips cities={cities} onRemove={(city) => onCitiesChange(cities.filter((c) => c !== city))} />
       </div>
     </div>
+  );
+}
+
+export function CityChips({ cities, onRemove }: { cities: string[]; onRemove: (city: string) => void }) {
+  if (!cities.length) return null;
+  return (
+    <ul className="mt-2.5 flex flex-wrap gap-1.5">
+      {cities.map((city) => (
+        <li key={city} className="flex items-center gap-1 rounded-full bg-sunk py-1 pl-3 pr-1 text-sm">
+          {city}
+          <button
+            type="button"
+            onClick={() => onRemove(city)}
+            aria-label={`Remove ${city}`}
+            className="grid size-5 place-items-center rounded-full text-ink-soft hover:bg-line hover:text-ink"
+          >
+            <X className="size-3" aria-hidden />
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }

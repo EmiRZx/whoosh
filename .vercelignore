@@ -5,3 +5,4 @@
 evals/**/runs
 node_modules
 .next
+addons

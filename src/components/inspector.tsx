@@ -322,7 +322,7 @@ export function Inspector(props: InspectorProps) {
             {KIND_LABEL[extracted.kind]} · {WEIGHT_LABEL[extracted.weight]}
           </span>
         </div>
-        <div className="flex items-center gap-0.5 text-xs text-ink-faint">
+        <div className="flex shrink-0 items-center gap-0.5 whitespace-nowrap text-xs text-ink-faint">
           <button type="button" onClick={() => onStep(-1)} aria-label="Previous reference" className="grid size-7 place-items-center rounded-full hover:bg-sunk hover:text-ink">
             <ChevronLeft className="size-4" aria-hidden />
           </button>
