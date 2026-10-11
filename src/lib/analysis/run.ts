@@ -15,7 +15,7 @@ import { extractReferences, type Extraction } from "./extract";
 import { gutCalls, toGutCall } from "./gut";
 import { measure } from "./measure";
 import { buildReferences, paragraphAround, passageAround } from "./references";
-import { findCandidates, pickCandidate, toSummary, type Pick } from "./resolve";
+import { findCandidates, pickCandidate, toSummary, type Pick as CandidatePick } from "./resolve";
 import { runSwapAgent, type SwapResult } from "./swap-agent";
 import { check, type SwapContext } from "./swap-tools";
 import { localHooks } from "./hooks";
@@ -55,7 +55,9 @@ const MIN_SWAP_MS = 25_000;
 export async function runAnalysis(
   input: AnalysisInput,
   send: (event: AnalysisEvent) => void,
-  options: { signal?: AbortSignal; meter?: UsageMeter } = {},
+  // deferSwaps: leave the live swap search to separate requests (see
+  // runSwapSearch), so it gets a host time limit of its own.
+  options: { signal?: AbortSignal; meter?: UsageMeter; deferSwaps?: boolean } = {},
 ) {
   const meter = options.meter ?? new UsageMeter();
   const llm: LlmOptions = { signal: options.signal, onUsage: meter.record };
@@ -67,21 +69,19 @@ export async function runAnalysis(
     send(event);
   };
   try {
-    await analyze(input, timed, llm, started + BUDGET_MS);
+    await analyze(input, timed, llm, started + BUDGET_MS, options.deferSwaps ?? false);
   } finally {
     console.info(`[analysis ${elapsed()}] finished`);
     if (!meter.empty) console.info("llm usage", JSON.stringify(meter.summary()));
   }
 }
 
-async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => void, llm: LlmOptions, deadline: number) {
-  const text = normalize(input.text);
+// The room an analysis is measured against: a preset or a performer's fans,
+// plus the cities that could be placed on the map.
+export async function buildAudience(input: { presetId: string; cities: string[]; performerId?: string }) {
   const preset = presetById(input.presetId) ?? AUDIENCE_PRESETS[0];
   const cities = input.cities.map((name) => ({ name, match: findCity(name) }));
   const unknown = cities.filter((c) => !c.match).map((c) => c.name);
-  if (unknown.length) {
-    send({ type: "status", message: `Couldn't place ${unknown.join(", ")} on the map; city checks will skip ${unknown.length > 1 ? "them" : "it"}` });
-  }
   const located = cities.map(({ name, match }) => (match ? { name: match.label, lat: match.lat, lon: match.lon } : { name }));
   let audience: AudienceSpec = {
     presetId: preset.id,
@@ -103,6 +103,15 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
       performer: room.performer,
       fansOf: room.audienceId,
     };
+  }
+  return { audience, unknown };
+}
+
+async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => void, llm: LlmOptions, deadline: number, deferSwaps: boolean) {
+  const text = normalize(input.text);
+  const { audience, unknown } = await buildAudience(input);
+  if (unknown.length) {
+    send({ type: "status", message: `Couldn't place ${unknown.join(", ")} on the map; city checks will skip ${unknown.length > 1 ? "them" : "it"}` });
   }
 
   // 1. Find the references.
@@ -163,9 +172,11 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     }
   })();
 
+  // Live swap searches left for the client to request one by one.
+  let swapTargets: string[] | undefined;
   const finish = async () => {
     await gutDone;
-    send({ type: "done", analysis: { text, audience, references, mode, hooks } });
+    send({ type: "done", analysis: { text, audience, references, mode, hooks, swapTargets } });
   };
 
   const qloo = getQlooClient();
@@ -180,7 +191,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   const searched = await Promise.all(
     checkable.map(async (ref) => {
       const candidates = await findCandidates(qloo, ref.extracted).catch(() => []);
-      return { ref, candidates, pick: pickCandidate(ref.extracted, candidates) as Pick };
+      return { ref, candidates, pick: pickCandidate(ref.extracted, candidates) as CandidatePick };
     }),
   );
 
@@ -283,7 +294,9 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     .filter((r) => r.extracted.swappable !== false)
     .sort((a, b) => rank(a) - rank(b))
     .slice(0, MAX_SWAP_REFERENCES);
-  if (weak.length) {
+  if (weak.length && deferSwaps && mode === "live" && anthropic) {
+    swapTargets = weak.map((r) => r.key);
+  } else if (weak.length) {
     const recorded = mode === "replay" && sample ? RECORDED_SWAPS[sample.id] : undefined;
     const remaining = deadline - Date.now();
     if (!recorded && anthropic && remaining < MIN_SWAP_MS) {
@@ -302,19 +315,10 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
       const swapLlm: LlmOptions = { ...llm, signal: swapAbort.signal };
       await Promise.all(
         weak.map(async (ref) => {
-          const ctx = swapContext(text, ref, audience, references);
+          const ctx = swapContext(text, ref, audience, references.filter((r) => r.key !== ref.key).map((r) => r.extracted.name));
           try {
             const result = recorded ? await replaySwaps(qloo, ctx, recorded[ref.extracted.name]) : await runSwapAgent(anthropic!, qloo, ctx, swapLlm);
-            update(ref.key, {
-              swaps: result.swaps.map(({ checked, rewrite, why }) => ({
-                entity: { id: checked.id, name: checked.name, type: checked.type },
-                signals: { recognition: checked.presence, roomIndex: checked.room_index },
-                verdict: checked.verdict,
-                rewrite,
-                why,
-              })),
-              swapNote: result.note,
-            });
+            update(ref.key, toPatch(result));
           } catch (err) {
             if (llm.signal?.aborted) return;
             if (swapAbort.signal.aborted) update(ref.key, { swapNote: "Ran out of time before a swap was confirmed." });
@@ -334,7 +338,46 @@ const MAX_SWAP_REFERENCES = 4;
 const rank = (r: AnalyzedReference) =>
   (r.verdict === "dead" ? 0 : 3) + { punchline: 0, setup: 1, color: 2 }[r.extracted.weight];
 
-export function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpec, all: AnalyzedReference[]): SwapContext {
+const toPatch = (result: SwapResult): Partial<AnalyzedReference> => ({
+  swaps: result.swaps.map(({ checked, rewrite, why }) => ({
+    entity: { id: checked.id, name: checked.name, type: checked.type },
+    signals: { recognition: checked.presence, roomIndex: checked.room_index },
+    verdict: checked.verdict,
+    rewrite,
+    why,
+  })),
+  swapNote: result.note,
+});
+
+// One live swap search, as its own request: the reference as measured, the
+// script, the room, and what else the script mentions.
+export async function runSwapSearch(
+  input: { text: string; presetId: string; cities: string[]; performerId?: string; reference: AnalyzedReference; others: string[] },
+  options: { signal?: AbortSignal; meter?: UsageMeter } = {},
+): Promise<Pick<AnalyzedReference, "swaps" | "swapNote">> {
+  const anthropic = getAnthropic();
+  const qloo = getQlooClient();
+  if (!anthropic || !qloo) throw new UserFacingError("Live swaps aren't switched on.");
+  const meter = options.meter ?? new UsageMeter();
+  const { audience } = await buildAudience(input);
+  const ctx = swapContext(normalize(input.text), input.reference, audience, input.others);
+  // Stop before the host's limit; a partial answer beats a dropped request.
+  const abort = new AbortController();
+  options.signal?.addEventListener("abort", () => abort.abort(), { once: true });
+  const timer = setTimeout(() => abort.abort(), BUDGET_MS);
+  try {
+    const patch = toPatch(await runSwapAgent(anthropic, qloo, ctx, { signal: abort.signal, onUsage: meter.record }));
+    return { swaps: patch.swaps ?? [], swapNote: patch.swapNote };
+  } catch (err) {
+    if (abort.signal.aborted && !options.signal?.aborted) return { swaps: [], swapNote: "Ran out of time before a swap was confirmed." };
+    throw err;
+  } finally {
+    clearTimeout(timer);
+    if (!meter.empty) console.info("llm usage (swap)", JSON.stringify(meter.summary()));
+  }
+}
+
+export function swapContext(text: string, ref: AnalyzedReference, audience: AudienceSpec, others: string[]): SwapContext {
   const entity = ref.resolution.entity!;
   return {
     original: {
@@ -360,7 +403,7 @@ export function swapContext(text: string, ref: AnalyzedReference, audience: Audi
       cities: audience.cities,
       performer: audience.performer && audience.fansOf ? { id: audience.fansOf, name: audience.performer.name } : undefined,
     },
-    others: all.filter((r) => r.key !== ref.key).map((r) => r.extracted.name),
+    others,
     checked: {},
   };
 }

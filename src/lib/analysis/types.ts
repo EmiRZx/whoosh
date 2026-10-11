@@ -98,6 +98,9 @@ export interface Analysis {
   audience: AudienceSpec;
   references: AnalyzedReference[];
   hooks?: LocalHooks[];
+  // Keys of references whose live swap search the client runs next, one
+  // request each.
+  swapTargets?: string[];
   // "replay" serves a recorded extraction for a built-in example; numbers
   // that need Qloo stay empty rather than being simulated.
   mode: "live" | "replay";

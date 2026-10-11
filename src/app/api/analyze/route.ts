@@ -44,7 +44,8 @@ export async function POST(request: Request) {
         }
       };
       try {
-        await runAnalysis(parsed.data, send, { signal: abort.signal });
+        // Live swap searches come back as separate requests from the page.
+        await runAnalysis(parsed.data, send, { signal: abort.signal, deferSwaps: true });
       } catch (err) {
         if (!abort.signal.aborted) {
           if (!(err instanceof UserFacingError)) console.error("analysis failed", err);

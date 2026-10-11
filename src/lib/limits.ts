@@ -44,6 +44,22 @@ export async function takeLiveSlot(ip: string): Promise<LimitResult> {
   return { ok: true };
 }
 
+// A live run asks for up to four swap searches as separate requests.
+const SWAPS_PER_IP_PER_HOUR = Number(process.env.SWAPS_PER_IP_PER_HOUR) || 40;
+const SWAPS_PER_DAY = Number(process.env.SWAPS_PER_DAY) || 600;
+
+export async function takeSwapSlot(ip: string): Promise<LimitResult> {
+  const hour = Math.floor(Date.now() / 3_600_000);
+  const day = new Date().toISOString().slice(0, 10);
+  try {
+    if ((await bump(`whoosh:swap:ip:${ip}:${hour}`, 3600)) > SWAPS_PER_IP_PER_HOUR) return { ok: false, message: "Too many swap searches this hour." };
+    if ((await bump(`whoosh:swap:day:${day}`, 86_400)) > SWAPS_PER_DAY) return { ok: false, message: "Today's swap searches are used up." };
+  } catch (err) {
+    console.error("rate limiter failed", err);
+  }
+  return { ok: true };
+}
+
 // Qloo-only lookups (performer search) are cheap but share the Qloo quota.
 const QLOO_PER_IP_PER_HOUR = 300;
 

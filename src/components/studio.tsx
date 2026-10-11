@@ -176,9 +176,10 @@ export function Studio() {
 
   // Keep the finished run (and the swaps taken) so a reload doesn't lose it.
   useEffect(() => {
-    if (state.phase !== "done" || !state.analysis) return;
-    saveLastRun({ savedAt: Date.now(), text, presetId, cities, performer, analysis: state.analysis, accepted });
-  }, [state.phase, state.analysis, accepted, text, presetId, cities, performer]);
+    if (state.phase !== "done" || !state.analysis || state.swapsPending.length) return;
+    // The references as they are now: swaps found after the analysis included.
+    saveLastRun({ savedAt: Date.now(), text, presetId, cities, performer, analysis: { ...state.analysis, references: state.references }, accepted });
+  }, [state.phase, state.analysis, state.references, state.swapsPending, accepted, text, presetId, cities, performer]);
 
   const reopen = (last: LastRun) => {
     setText(last.text);
@@ -275,6 +276,7 @@ export function Studio() {
       onAccept={(i) => selected && accept(selected.key, i)}
       onUndo={() => selected && undo(selected.key)}
       rewrittenBy={rewrittenBy ? byKey.get(rewrittenBy)?.extracted.name : undefined}
+      swapPending={selected ? state.swapsPending.includes(selected.key) : false}
     />
   );
 
@@ -336,7 +338,7 @@ export function Studio() {
               {fixes}
               <div className="hidden xl:flex xl:flex-col xl:gap-4">
                 <RoomCard room={room} cities={cities} />
-                <AgentTrace statuses={state.statuses} running={running} />
+                <AgentTrace statuses={state.statuses} running={running || state.swapsPending.length > 0} />
               </div>
             </div>
           </aside>
@@ -412,7 +414,7 @@ export function Studio() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:hidden">
           <RoomCard room={room} cities={cities} />
-          <AgentTrace statuses={state.statuses} running={running} />
+          <AgentTrace statuses={state.statuses} running={running || state.swapsPending.length > 0} />
         </div>
       </div>
 

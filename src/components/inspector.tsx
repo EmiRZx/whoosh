@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Check, ChevronLeft, ChevronRight, MapPin, MousePointerClick, Undo2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, ChevronLeft, ChevronRight, LoaderCircle, MapPin, MousePointerClick, Undo2 } from "lucide-react";
 import type { AgeMix } from "@/lib/audience/audience";
 import type { AnalyzedReference, Signals, Swap } from "@/lib/analysis/types";
 import { planEdit } from "@/lib/ui/document";
@@ -24,6 +24,8 @@ export interface InspectorProps {
   onUndo: () => void;
   // Name of the reference whose accepted swap rewrote this one away.
   rewrittenBy?: string;
+  // A live swap search for this reference is still running.
+  swapPending?: boolean;
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -295,7 +297,7 @@ function SwapCard({
 }
 
 export function Inspector(props: InspectorProps) {
-  const { reference, index, total, onStep, mix, text, accepted, onAccept, onUndo, rewrittenBy } = props;
+  const { reference, index, total, onStep, mix, text, accepted, onAccept, onUndo, rewrittenBy, swapPending } = props;
 
   if (!reference) {
     return (
@@ -418,7 +420,16 @@ export function Inspector(props: InspectorProps) {
         </Section>
       )}
 
-      {status === "resolved" && !reference.swaps.length && !reference.swapNote && advice(reference) && (
+      {swapPending && !reference.swaps.length && (
+        <Section title="Swaps that do the same job">
+          <p className="flex items-center gap-2 text-sm text-ink-soft" aria-live="polite">
+            <LoaderCircle className="size-4 animate-spin text-accent" aria-hidden />
+            Searching Qloo for substitutes this room likes better. This takes a minute or two.
+          </p>
+        </Section>
+      )}
+
+      {status === "resolved" && !swapPending && !reference.swaps.length && !reference.swapNote && advice(reference) && (
         <Section title="What to do">
           <p className="text-sm leading-relaxed">{advice(reference)}</p>
         </Section>
