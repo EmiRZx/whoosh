@@ -18,7 +18,7 @@ import { check, type SwapContext } from "./swap-tools";
 import { localHooks } from "./hooks";
 import type { AnalysisEvent, AnalyzedReference, AudienceSpec, LocalHooks } from "./types";
 import { isPolitical } from "./politics";
-import { judge, weakest } from "./verdict";
+import { judge, weakest, withHomeCity } from "./verdict";
 
 export interface AnalysisInput {
   text: string;
@@ -279,7 +279,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     const m = measured.get(item.key);
     if (!m) continue;
     const ref = references.find((r) => r.key === item.key)!;
-    const { verdict, cityVerdicts, reasons } = judge(m, item.entity.types[0] ?? "", ref.extracted.weight);
+    const { verdict, cityVerdicts, reasons } = withHomeCity(judge(m, item.entity.types[0] ?? "", ref.extracted.weight), item.entity, audience.cities);
     update(item.key, {
       signals: { recognition: m.recognition, roomIndex: m.roomIndex, age: m.profile?.age, cities: m.cities },
       verdict,

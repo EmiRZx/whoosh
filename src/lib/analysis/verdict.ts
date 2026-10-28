@@ -160,3 +160,23 @@ export function weakest(r: { verdict: Verdict; cityVerdicts?: Record<string, Ver
   const all = [r.verdict, ...Object.values(r.cityVerdicts ?? {})];
   return all.includes("dead") ? "dead" : all.includes("risky") ? "risky" : r.verdict;
 }
+
+const PLACE_TYPES = new Set(["urn:entity:destination", "urn:entity:locality"]);
+
+// Naming the city you're playing lands with that crowd, whatever the
+// national numbers say ("Shout out to St. Louis" in St. Louis).
+export function withHomeCity(
+  judged: Judgement,
+  entity: { name: string; types: string[] },
+  cities: { name: string }[],
+): Judgement {
+  if (!entity.types.some((t) => PLACE_TYPES.has(t)) || !cities.length) return judged;
+  const plain = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const home = cities.filter((c) => plain(c.name.split(",")[0]) === plain(entity.name));
+  if (!home.length) return judged;
+  const cityVerdicts = { ...judged.cityVerdicts };
+  for (const c of home) cityVerdicts[c.name] = "lands";
+  const verdict = cityVerdicts[cities[0].name] ?? judged.verdict;
+  const where = home.map((c) => c.name.split(",")[0]).join(" and ");
+  return { verdict, cityVerdicts, reasons: [...judged.reasons, `It's ${where}, where you're playing: the room will know it.`] };
+}

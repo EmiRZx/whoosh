@@ -8,6 +8,8 @@ Whoosh tells her first. It reads a script the way a writer would, finds every na
 
 **Try it: https://whoosh-check.vercel.app.** The page opens on that comic's real check. Built for the Qloo Agentic Hackathon.
 
+![Whoosh opening on a real check: a young comic's set read for Cedric the Entertainer's fans in St. Louis and Atlanta](docs/media/first-visit-light.png)
+
 ## Who it's for
 
 Anyone who says things out loud to people they didn't pick: comics working a new city, best men at a wedding where half the guests are the bride's grandparents, professors whose game-show analogies are older than their students, keynote speakers flying into a different industry every week, ad writers with one script and six markets. Colleges once published a yearly list of things incoming freshmen had never heard of, so faculty would stop making references that died in the lecture hall. Whoosh does that for any room, on any script, in a few seconds.
@@ -34,6 +36,10 @@ Claude does the reading, the matching and the writing. Every number on the page 
 - **Take-aways.** Copy the revised script, copy notes as Markdown, or print them.
 
 Light and dark themes, and it works on a phone.
+
+![A name that won't land, with a stand-in this crowd likes better and the line rewritten](docs/media/check-with-stand-in.png)
+
+![The same set city by city: each name's rank among 24 big metros and its call in each city](docs/media/tour.png)
 
 ## How well it works
 

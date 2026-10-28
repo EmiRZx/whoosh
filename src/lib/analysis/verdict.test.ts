@@ -103,3 +103,23 @@ describe("weakest", () => {
     expect(weakest({ verdict: "unchecked" })).toBe("unchecked");
   });
 });
+
+describe("withHomeCity", () => {
+  it("lands the name of the city you're playing in that city", async () => {
+    const { withHomeCity, judge } = await import("./verdict");
+    const cities = [{ name: "St. Louis, MO" }, { name: "Atlanta, GA" }];
+    const judged = judge({ recognition: 0.4, roomIndex: -0.1, cities: [{ name: "St. Louis, MO", rank: 20, of: 24 }, { name: "Atlanta, GA", rank: 12, of: 24 }] }, "urn:entity:destination", "color");
+    const r = withHomeCity(judged, { name: "St. Louis", types: ["urn:entity:destination"] }, cities);
+    expect(r.verdict).toBe("lands");
+    expect(r.cityVerdicts?.["St. Louis, MO"]).toBe("lands");
+    expect(r.cityVerdicts?.["Atlanta, GA"]).toBe(judged.cityVerdicts?.["Atlanta, GA"]);
+    expect(r.reasons.at(-1)).toMatch(/where you're playing/);
+  });
+
+  it("leaves other places and other kinds alone", async () => {
+    const { withHomeCity } = await import("./verdict");
+    const judged = { verdict: "dead" as const, reasons: [] };
+    expect(withHomeCity(judged, { name: "Los Angeles", types: ["urn:entity:destination"] }, [{ name: "St. Louis, MO" }])).toBe(judged);
+    expect(withHomeCity(judged, { name: "St. Louis", types: ["urn:entity:brand"] }, [{ name: "St. Louis, MO" }])).toBe(judged);
+  });
+});
