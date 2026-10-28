@@ -1,4 +1,4 @@
-// MCP endpoint (Streamable HTTP) an agent can test a script on its crowd before it
+// MCP endpoint (Streamable HTTP): an agent can test a script on its crowd before it
 // writes or delivers it. The tools run the same pipeline as the web app.
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createMcpHandler } from "mcp-handler";
@@ -113,11 +113,11 @@ const handler = createMcpHandler(
       {
         title: "Check a script",
         description:
-          "Find and call the names in a script that will be said out loud (stand-up set, speech, toast, lecture, keynote, ad copy) against a specific audience, using Qloo's taste graph. Songs map to their artist, characters and catchphrases to their show. Returns each reference with the job it does in the line, a verdict (lands, risky, dead, unchecked) with the reasons, a verdict per city, and a room score. Fast by default; set find_swaps to also search Qloo for substitutes (slower, a minute or more), or call find_swaps for one reference.",
+          "Find the names a script leans on (shows, songs, brands, teams, famous people, places) in writing that will be said out loud (stand-up set, speech, toast, lecture, keynote, ad copy), and call each one against a specific audience, using Qloo's taste graph. Songs map to their artist, characters and catchphrases to their show. Returns each reference with the job it does in the line, its call (lands, risky, dead, unchecked) with the reasons, its call in each city, and a room score. Fast by default; set find_swaps to also hunt for stand-ins (slower, a minute or more), or call find_swaps for one name.",
         inputSchema: z.object({
           text: z.string().min(1).max(8000).describe("The script, exactly as it will be said"),
           ...Room,
-          find_swaps: z.boolean().default(false).describe("Also search for substitutes for the references that won't land"),
+          find_swaps: z.boolean().default(false).describe("Also hunt for stand-ins for the weak names"),
         }),
       },
       async ({ text, find_swaps, ...room }, extra) =>
@@ -143,7 +143,7 @@ const handler = createMcpHandler(
       {
         title: "Compare rooms",
         description:
-          "Read one script once and check it against up to four rooms at once (a college crowd vs. a performer's fans vs. a corporate offsite in another city). Returns each reference's verdict in every room and each room's score, and names the references the rooms disagree on most. Use it to see who a script is for.",
+          "Read one script once and check it against up to four rooms at once (a college crowd, a performer's fans, a corporate offsite in another city). Returns each reference's verdict in every room and each room's score, and names the references the rooms disagree on most. Use it to see who a script is for.",
         inputSchema: z.object({
           text: z.string().min(1).max(8000).describe("The script"),
           rooms: z
@@ -184,7 +184,7 @@ const handler = createMcpHandler(
       {
         title: "Find swaps",
         description:
-          "For one reference in a script, run Whoosh's swap agent: it searches Qloo for substitutes that do the same job in the line and that this room likes better, checks each one the same way the original was checked, and rewrites the line. Takes a minute or two.",
+          "For one reference in a script, run Whoosh's swap agent: it hunts through Qloo for stand-ins that play the same part in the line and that this room likes better, checks each one the same way the original was checked, and rewrites the line. Takes a minute or two.",
         inputSchema: z.object({
           text: z.string().min(1).max(8000).describe("The script the reference is in"),
           reference: z.string().min(1).max(120).describe('The reference as Qloo would know it, e.g. "Friends" for a line about Ross and Rachel'),
@@ -247,7 +247,7 @@ const handler = createMcpHandler(
       {
         title: "Who a performer's fans are",
         description:
-          "The audience of a performer, show or podcast as Qloo measures it: the age mix of their fans and the big US cities where those fans are most concentrated. Use it to pick the room for check_script (pass the same name as performer).",
+          "The audience of a performer, show or podcast as Qloo measures it: the age mix of their fans and the big US cities where they cluster. Use it to pick the room for check_script (pass the same name as performer).",
         inputSchema: z.object({ performer: z.string().min(1).max(80).describe('e.g. "Nate Bargatze"') }),
       },
       async ({ performer }) =>

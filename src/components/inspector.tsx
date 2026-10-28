@@ -363,7 +363,7 @@ export function Inspector(props: InspectorProps) {
         <Section title="Try instead" accent>
           <p className="flex items-center gap-2 text-sm text-ink-soft" aria-live="polite">
             <LoaderCircle className="size-4 animate-spin text-accent" aria-hidden />
-            Searching Qloo for substitutes that do the same job and this room likes better. This takes a minute or two.
+            Hunting through Qloo for stand-ins that play the same part and that this room likes better. This takes a minute or two.
           </p>
         </Section>
       )}

@@ -9,7 +9,7 @@ import { DOCS_TEMPLATE_URL } from "@/content/addon";
 const MCP_TOOLS: [string, string][] = [
   ["check_script", "Every reference in a script, judged for a room and each city"],
   ["compare_rooms", "One script, up to four crowds, and where they split"],
-  ["find_swaps", "Substitutes that do the same job, checked and written into the line"],
+  ["find_swaps", "Stand-ins that play the same part, measured and written into the line"],
   ["score_reference", "One name for one room: presence, room index, city ranks"],
   ["fans_of", "A performer's fans as Qloo sees them: ages and cities"],
   ["crowd_hooks", "Local places and artists a crowd loves in one city"],
@@ -18,18 +18,18 @@ const MCP_TOOLS: [string, string][] = [
 const STEPS = [
   {
     icon: ScanSearch,
-    title: "Find every reference",
-    body: "An agent reads your script and pulls out each movie, show, song, brand, place and public figure, along with the job it does in the line.",
+    title: "Spot the names",
+    body: "Claude reads the script the way a writer would: a song counts as its artist, a catchphrase as its show, and every name comes with the work it's doing in its line.",
   },
   {
     icon: Bot,
-    title: "Ask the taste graph",
-    body: "Qloo says how present each one is in culture today, how each age group in your room feels about it compared with the average adult, and how it plays city by city.",
+    title: "Measure the room",
+    body: "Qloo says how alive each name still is, how every age group in your crowd feels about it next to the average adult, and which cities on the tour claim it as their own.",
   },
   {
     icon: Shuffle,
-    title: "Fix what won't land",
-    body: "For references the room won't get, the agent finds substitutes that do the same job for this audience, checks them against Qloo, and rewrites the line.",
+    title: "Swap what misses",
+    body: "For a name that would sail past them, an agent hunts Qloo for one this crowd loves that plays the same part, tests it the same way, and writes it into the line.",
   },
 ];
 
@@ -86,14 +86,14 @@ export default function Home() {
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">Taste data vs. a good guess</p>
               <h2 className="mt-2 text-lg font-semibold tracking-tight">A model knows the names. It doesn&apos;t know who&apos;s in your room.</h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                Every check asks the model for its own call on each reference before it sees any numbers, and shows where the two
-                disagree. We ran that on 21 real scripts: presidential roasts, talks, stand-up sets and wedding toasts.
+                Before it sees a single number, Claude makes its own call on every name, and the results page sets that call next to
+                Qloo&apos;s. Across 21 scripts that were actually performed (presidential roasts, talks, stand-up sets, wedding toasts):
               </p>
             </div>
             <div className="flex flex-col gap-3">
               <p className="flex items-baseline gap-3">
                 <span className="w-28 shrink-0 whitespace-nowrap text-4xl font-semibold leading-none tracking-tight">1 in 3</span>
-                <span className="text-sm leading-snug text-ink-soft">references where the model&apos;s guess and Qloo disagreed (78 of 227)</span>
+                <span className="text-sm leading-snug text-ink-soft">names where the model&apos;s call and Qloo&apos;s numbers parted ways (78 of 227)</span>
               </p>
               <p className="flex items-baseline gap-3">
                 <span className="w-28 shrink-0 whitespace-nowrap text-4xl font-semibold leading-none tracking-tight">6 of 14</span>
@@ -109,8 +109,9 @@ export default function Home() {
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">For agents</p>
               <h2 className="mt-2 text-lg font-semibold tracking-tight">Let your own agent check a script before it ships</h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                Whoosh can be called over MCP too. An agent that writes speeches, toasts, talks or ad copy can check its own draft against the
-                room it&apos;s for, see who a script works for, and fix what won&apos;t land, with the same Qloo measurements as this page.
+                Agents can call Whoosh too, over MCP. One that drafts toasts, talks or ad copy can test its draft on the crowd it&apos;s
+                for, find out which crowd a script suits best, and trade out the names that miss, with the same Qloo measurements as
+                this page.
               </p>
               <ul className="mt-4 grid grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-2">
                 {MCP_TOOLS.map(([name, what]) => (

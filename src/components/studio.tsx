@@ -569,11 +569,11 @@ function DemoIntro({ current, onPick, onOwn }: { current?: string; onPick: (id: 
       <div className="max-w-3xl">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">A reference check for anything said out loud</p>
         <h1 className="mt-3 text-4xl font-semibold leading-[1.04] tracking-tight sm:text-6xl">
-          Will they get the <span className="text-accent">reference</span>?
+          Know which references will go <span className="text-accent">whoosh</span>.
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft sm:text-lg">
-          Below is a real check on Qloo&apos;s taste graph. Every movie, show, song, brand and public figure in the script is measured
-          against the people in the room, and the ones that won&apos;t land come with swaps that do the same job for them.
+          This one is real, run on Qloo&apos;s taste graph. Whoosh picked out every show, song, brand, team and famous name in the
+          script, weighed each against the people in this room, and lined up stand-ins for the ones that would sail past them.
         </p>
         <div className="mt-4 flex flex-wrap gap-1.5" role="group" aria-label="Examples">
           {EXAMPLE_ORDER.map((id) => SAMPLES.find((s) => s.id === id)!).map((s) => (

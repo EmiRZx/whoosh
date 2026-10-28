@@ -45,12 +45,11 @@ export function Composer(props: Props) {
       <section className="max-w-3xl pt-6 sm:pt-12">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">A reference check for anything said out loud</p>
         <h1 className="mt-3 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-7xl">
-          Will they get the <span className="text-accent">reference</span>?
+          Know which references will go <span className="text-accent">whoosh</span>.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
-          Bring a tight five, a toast, a lecture or a keynote, and say who's listening. Whoosh checks every movie, show, song, brand and public
-          figure against what that audience actually loves, using Qloo&apos;s taste graph, and finds swaps for the ones that
-          won&apos;t land.
+          Bring a tight five, a toast, a lecture or a keynote, and say who&apos;s listening. Whoosh weighs every name in it
+          against that crowd on Qloo&apos;s taste graph, and lines up a stand-in for each one that would sail past them.
         </p>
       </section>
 
