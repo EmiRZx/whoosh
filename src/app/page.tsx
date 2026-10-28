@@ -42,7 +42,7 @@ export default function Home() {
         <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-5 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5 text-[17px] font-semibold tracking-tight">
             <LogoMark />
-            Whoosh
+            <span className="font-display tracking-[-0.02em]">Whoosh</span>
           </Link>
           <div className="flex items-center gap-1 text-sm text-ink-soft sm:gap-5">
             <a href="#how" className="hidden hover:text-ink sm:inline">

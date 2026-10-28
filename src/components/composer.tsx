@@ -44,8 +44,8 @@ export function Composer(props: Props) {
     <div className="flex flex-col gap-10">
       <section className="max-w-3xl pt-6 sm:pt-12">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">A reference check for anything said out loud</p>
-        <h1 className="mt-3 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-7xl">
-          Know which references will go <span className="text-accent">whoosh</span>.
+        <h1 className="mt-3 font-display text-5xl font-semibold leading-[1.06] tracking-[-0.03em] sm:text-7xl">
+          Know which references will go <span className="whoosh-word">whoosh</span>.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">
           Bring a tight five, a toast, a lecture or a keynote, and say who&apos;s listening. Whoosh weighs every name in it

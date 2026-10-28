@@ -393,7 +393,7 @@ export function Studio() {
               {changed ? "Edit the revised script" : "Edit script"}
             </button>
             {sample && <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">{sample.format}</p>}
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h1 className="mt-1 font-display text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
               {room.label}
               {cities.length > 0 && (
                 <>
@@ -568,8 +568,8 @@ function DemoIntro({ current, onPick, onOwn }: { current?: string; onPick: (id: 
     <section className="flex flex-col gap-5 pb-2 pt-2 sm:pt-6 lg:flex-row lg:items-end lg:justify-between">
       <div className="max-w-3xl">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">A reference check for anything said out loud</p>
-        <h1 className="mt-3 text-4xl font-semibold leading-[1.04] tracking-tight sm:text-6xl">
-          Know which references will go <span className="text-accent">whoosh</span>.
+        <h1 className="mt-3 font-display text-4xl font-semibold leading-[1.08] tracking-[-0.03em] sm:text-6xl">
+          Know which references will go <span className="whoosh-word">whoosh</span>.
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft sm:text-lg">
           This one is real, run on Qloo&apos;s taste graph. Whoosh picked out every show, song, brand, team and famous name in the
