@@ -80,6 +80,29 @@ export default function Home() {
           </div>
         </section>
 
+        <section id="why" className="mt-6 scroll-mt-8 print:hidden">
+          <div className="card grid grid-cols-1 gap-6 rounded-2xl p-6 md:grid-cols-[1.3fr_1fr] md:items-center">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">Taste data vs. a good guess</p>
+              <h2 className="mt-2 text-lg font-semibold tracking-tight">A model knows the names. It doesn&apos;t know who&apos;s in your room.</h2>
+              <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+                Every check asks the model for its own call on each reference before it sees any numbers, and shows where the two
+                disagree. We ran that on 21 real scripts: presidential roasts, talks, stand-up sets and wedding toasts.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <p className="flex items-baseline gap-3">
+                <span className="w-28 shrink-0 whitespace-nowrap text-4xl font-semibold leading-none tracking-tight">1 in 3</span>
+                <span className="text-sm leading-snug text-ink-soft">references where the model&apos;s guess and Qloo disagreed (78 of 227)</span>
+              </p>
+              <p className="flex items-baseline gap-3">
+                <span className="w-28 shrink-0 whitespace-nowrap text-4xl font-semibold leading-none tracking-tight">6 of 14</span>
+                <span className="text-sm leading-snug text-ink-soft">names Qloo marks as misses that the model called safe</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section id="agents" className="mt-6 scroll-mt-8 print:hidden">
           <div className="card grid grid-cols-1 gap-6 rounded-2xl p-6 lg:grid-cols-[1fr_1.15fr]">
             <div>
