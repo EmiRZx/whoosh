@@ -9,7 +9,7 @@ const sourceSerif = Source_Serif_4({ variable: "--font-source-serif", subsets: [
 export const metadata: Metadata = {
   title: "Whoosh",
   description:
-    "A cultural reference check for anything you say out loud. Know which references your audience will get before you're on stage, built on Qloo's taste graph.",
+    "A cultural reference check for anything you say out loud. Know which references will fly over your audience's heads before you're on stage, built on Qloo's taste graph.",
 };
 
 // Applies a saved theme before the first paint; without one the OS decides.

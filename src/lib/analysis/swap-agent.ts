@@ -27,6 +27,8 @@ How to work:
 - Judge the fit yourself. A substitute has to do the same job in the line: same role, tone and status (a dated gadget for a dated gadget, a cheesy boy band for a cheesy boy band, a cheap comfort chain for a cheap comfort chain). A popular substitute that does a different job is worse than none.
 - Don't reuse something the script already mentions elsewhere; the performer would be repeating themselves.
 - Change only the words that carry the reference. Keep the performer's voice, rhythm and punchline, and adjust nearby words only when grammar or sense requires it. Don't write new jokes.
+- Sometimes a line works because this room won't know the reference: the joke is that it belongs to someone else's world (a young comic's apps and streamers in front of an older crowd, a dad's dated slang). A familiar substitute would break that joke. Then submit an empty list and say in the note that the reference should stay, and why.
+- The rewrite has to stay true with the sentences around it. If the next sentence describes the original ("a grocery store in LA where a smoothie costs nineteen dollars"), pick a substitute that description still fits, or none.
 - Never change who said or did something real. If the line quotes a real person, or states a fact about them, that reference can't be swapped: submit an empty list and say so in the note.
 - Match the occasion's tone: a wedding toast or a classroom needs swaps that are warm and clean, not edgy.
 - Finish by calling submit_swaps. If nothing both fits the job and lands, submit an empty list with a one-sentence note; that is a useful answer.
@@ -62,9 +64,13 @@ export interface SwapResult {
 
 export const WRAP_UP = "Time is nearly up. Call submit_swaps now with the substitutes whose check said beats_original: true, or with an empty list.";
 
-// wrapUpAt: past this time the searches stop and every tool result asks for a
-// submission, so a slow run ends with what it has checked instead of being cut
-// off at the host's limit.
+// The runner stops after MAX_TURNS model turns. From WRAP_UP_TURN on, or past
+// wrapUpAt, the searches stop and every tool result asks for a submission, so
+// a long search ends with what it has checked instead of being cut off at the
+// turn limit or the host's time limit.
+const MAX_TURNS = 14;
+const WRAP_UP_TURN = 10;
+
 export async function runSwapAgent(
   anthropic: Anthropic,
   qloo: QlooClient,
@@ -72,7 +78,8 @@ export async function runSwapAgent(
   opts: LlmOptions & { wrapUpAt?: number } = {},
 ): Promise<SwapResult> {
   let submitted: SwapResult | undefined;
-  const late = () => opts.wrapUpAt !== undefined && Date.now() >= opts.wrapUpAt;
+  let turns = 0;
+  const late = () => turns >= WRAP_UP_TURN || (opts.wrapUpAt !== undefined && Date.now() >= opts.wrapUpAt);
   // Tool errors go back to the model as text so it can adjust, rather than
   // aborting the run.
   const safely = async (fn: () => Promise<unknown>) => {
@@ -135,7 +142,7 @@ ${WRAP_UP}` : out;
     {
       model: AGENT_MODEL,
       max_tokens: 16000,
-      max_iterations: 14,
+      max_iterations: MAX_TURNS,
       betas: [FALLBACK_BETA],
       fallbacks: "default",
       thinking: { type: "adaptive" },
@@ -150,7 +157,6 @@ ${WRAP_UP}` : out;
     { signal: opts.signal },
   );
   const started = Date.now();
-  let turns = 0;
   for await (const message of runner) {
     turns++;
     opts.onUsage?.("swap", message.usage);

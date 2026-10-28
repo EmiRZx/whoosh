@@ -3,26 +3,68 @@
     {
       "name": "Pokémon",
       "kind": "brand",
-      "disambiguation": "trading card game and media franchise",
+      "disambiguation": null,
       "quotes": [
         "Pokémon"
       ],
-      "role": "a childhood craze that dates a friendship back to elementary school",
-      "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "role": "a shared childhood cultural touchstone that dates the friendship to a specific era",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Sheetz",
+      "kind": "brand",
+      "disambiguation": "convenience store chain",
+      "quotes": [
+        "Sheetz"
+      ],
+      "role": "a regional convenience chain that signals unpretentious, working-class taste",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Skyline Chili",
+      "kind": "brand",
+      "disambiguation": "Cincinnati restaurant chain",
+      "quotes": [
+        "Skyline Chili"
+      ],
+      "role": "a polarizing regional chain that signals hometown loyalty and acquired taste",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Pittsburgh Steelers",
+      "kind": "brand",
+      "disambiguation": "NFL team",
+      "quotes": [
+        "Steelers"
+      ],
+      "role": "an NFL team representing fierce Pittsburgh regional loyalty",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Cleveland Browns",
+      "kind": "brand",
+      "disambiguation": "NFL team",
+      "quotes": [
+        "Browns"
+      ],
+      "role": "an NFL team known for decades of disappointment and unfulfilled promise",
+      "weight": "punchline",
+      "checkable": true
     },
     {
       "name": "Spotify",
       "kind": "brand",
-      "disambiguation": "music streaming app",
+      "disambiguation": null,
       "quotes": [
         "Spotify"
       ],
-      "role": "a modern streaming app that undercuts a nostalgic romantic gesture",
+      "role": "a streaming service that made romantic mixtapes obsolete",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Ed Sheeran",
@@ -32,34 +74,53 @@
         "Ed Sheeran",
         "Perfect"
       ],
-      "role": "an earnest, mainstream romantic pop singer whose love ballad signals sincere but unsubtle courtship",
+      "role": "a mainstream romantic pop artist representing safe, earnest, unimaginative taste",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Chipotle",
       "kind": "brand",
-      "disambiguation": "fast-casual Mexican restaurant chain",
+      "disambiguation": null,
       "quotes": [
         "Chipotle"
       ],
-      "role": "a cheap, casual chain restaurant known for charging extra for an add-on, framing a modest first date and a frugal guy",
+      "role": "a fast-casual chain representing low-effort, unromantic dating",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
+    },
+    {
+      "name": "Hooters",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Hooters"
+      ],
+      "role": "a breastaurant chain representing catastrophically poor romantic judgment",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "The Notebook",
+      "kind": "movie",
+      "disambiguation": "2004 romantic film",
+      "quotes": [
+        "The Notebook"
+      ],
+      "role": "the archetypal romantic movie women use to reset expectations after disappointment",
+      "weight": "color",
+      "checkable": true
     },
     {
       "name": "Paris",
       "kind": "destination",
-      "disambiguation": "France",
+      "disambiguation": null,
       "quotes": [
         "Paris"
       ],
-      "role": "the clichéd romantic city for a grand proposal",
+      "role": "the ultimate romantic city cliché",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Eiffel Tower",
@@ -68,22 +129,20 @@
       "quotes": [
         "Eiffel Tower"
       ],
-      "role": "the most picture-perfect romantic landmark, setting up a proposal that goes wrong",
+      "role": "the ultimate romantic proposal landmark cliché",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Hallmark Channel",
       "kind": "brand",
-      "disambiguation": "TV network known for romance movies",
+      "disambiguation": null,
       "quotes": [
         "Hallmark"
       ],
-      "role": "a shorthand for formulaic, saccharine on-screen romance",
-      "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "role": "a channel synonymous with formulaic, predictable romance",
+      "weight": "color",
+      "checkable": true
     },
     {
       "name": "The Office",
@@ -92,71 +151,75 @@
       "quotes": [
         "The Office"
       ],
-      "role": "an endlessly rewatched comfort sitcom that marks someone as a lovable TV superfan",
+      "role": "a beloved workplace sitcom representing millennial comfort viewing and encyclopedic fandom",
       "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
-      "name": "Fortnite",
-      "kind": "video_game",
+      "name": "Ed Hardy",
+      "kind": "brand",
+      "disambiguation": "fashion brand",
+      "quotes": [
+        "Ed Hardy"
+      ],
+      "role": "a dated 2000s fashion brand representing embarrassingly poor taste",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Family Feud",
+      "kind": "tv_show",
       "disambiguation": null,
       "quotes": [
-        "Fortnite"
+        "Family Feud"
       ],
-      "role": "a popular video game standing in for a sedentary hobby someone pretends is exercise",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a game show that inspires passionate audience participation despite being on TV",
+      "weight": "color",
+      "checkable": true
     },
     {
-      "name": "Coldplay",
-      "kind": "artist",
-      "disambiguation": null,
-      "quotes": [
-        "Coldplay",
-        "Fix You"
-      ],
-      "role": "an earnest stadium band whose emotional ballad reliably makes a grown man cry",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
-    },
-    {
-      "name": "LeBron James",
+      "name": "Steve Harvey",
       "kind": "person",
-      "disambiguation": "NBA basketball player",
+      "disambiguation": "TV host and comedian",
       "quotes": [
-        "LeBron"
+        "Steve Harvey"
       ],
-      "role": "an elite superstar athlete who would wildly outclass ordinary amateurs",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
-    },
-    {
-      "name": "YMCA",
-      "kind": "brand",
-      "disambiguation": "community gym and recreation center",
-      "quotes": [
-        "the Y"
-      ],
-      "role": "a humble neighborhood gym where amateurs play, contrasting with elite talent",
+      "role": "the charismatic host of a game show",
       "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
-      "name": "Taco Bell",
+      "name": "Zillow",
       "kind": "brand",
-      "disambiguation": "fast food restaurant chain",
+      "disambiguation": null,
       "quotes": [
-        "Taco Bell"
+        "Zillow"
       ],
-      "role": "cheap late-night fast food that signals a reckless but satisfying indulgence",
+      "role": "a real estate app representing aspirational browsing and house-hunting as entertainment",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Graeter's",
+      "kind": "brand",
+      "disambiguation": "ice cream brand",
+      "quotes": [
+        "Graeter's"
+      ],
+      "role": "a premium regional ice cream brand representing devotion to local favorites",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Eat'n Park",
+      "kind": "brand",
+      "disambiguation": "restaurant chain",
+      "quotes": [
+        "Eat'n Park"
+      ],
+      "role": "a casual Pittsburgh diner chain representing comfort, late-night accessibility, and unpretentious warmth",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     }
   ]
 }

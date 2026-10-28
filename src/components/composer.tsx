@@ -11,7 +11,7 @@ export const MAX_CHARS = 8000;
 
 // Examples where something won't land come first, so a first click shows
 // the whole loop: a flag, the numbers behind it, and a swap.
-export const EXAMPLE_ORDER = ["04-lecture", "05-presidential-roast", "02-keynote", "03-best-man", "01-dating-set", "06-one-liners"];
+export const EXAMPLE_ORDER = ["07-cedric-opener", "01-dating-set", "04-lecture", "02-keynote", "03-best-man", "05-presidential-roast"];
 
 interface Props {
   text: string;
@@ -90,7 +90,7 @@ export function Composer(props: Props) {
                   <span className="block text-[11px] text-ink-faint">{s.format}</span>
                   <span className="block text-sm font-medium">{s.title}</span>
                   <span className="block text-[11px] text-ink-faint">
-                    {presetById(s.presetId)?.label}
+                    {s.performer ? `Fans of ${s.performer.name}` : presetById(s.presetId)?.label}
                     {s.cities.length > 0 && ` · ${s.cities.map((c) => c.split(",")[0]).join(", ")}`}
                   </span>
                 </button>

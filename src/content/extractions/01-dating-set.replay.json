@@ -1,0 +1,283 @@
+{
+  "picks": {
+    "Ross": {
+      "name": "Ross Stores",
+      "type": "urn:entity:brand"
+    },
+    "Blockbuster": {
+      "name": "Blockbuster",
+      "type": "urn:entity:place",
+      "standIn": "The last Blockbuster in Bend, cultural symbol of the defunct chain"
+    },
+    "Tower Records": {
+      "name": "Tower Records",
+      "type": "urn:entity:place",
+      "standIn": "Dublin Tower Records location, continuation of the brand"
+    },
+    "Tupperware": {
+      "name": "Tupperware Brands",
+      "type": "urn:entity:brand"
+    }
+  },
+  "gut": {
+    "college": {
+      "Hinge": {
+        "verdict": "lands",
+        "room_vs_average": 40,
+        "biggest_fans": "24_and_younger",
+        "reason": "Primary dating app for college students, daily usage"
+      },
+      "Bumble": {
+        "verdict": "lands",
+        "room_vs_average": 40,
+        "biggest_fans": "24_and_younger",
+        "reason": "Core dating app for this demographic"
+      },
+      "Ross": {
+        "verdict": "lands",
+        "room_vs_average": -10,
+        "biggest_fans": "35_to_44",
+        "reason": "They know the store exists but not relevant to them"
+      },
+      "Friends": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "35_to_44",
+        "reason": "Aware from streaming but not their formative show"
+      },
+      "Peloton": {
+        "verdict": "lands",
+        "room_vs_average": 20,
+        "biggest_fans": "30_to_34",
+        "reason": "Recognizable fitness brand from pandemic era onward"
+      },
+      "Olive Garden": {
+        "verdict": "lands",
+        "room_vs_average": -20,
+        "biggest_fans": "45_to_54",
+        "reason": "Know it but not their dining preference"
+      },
+      "The Sopranos": {
+        "verdict": "risky",
+        "room_vs_average": -40,
+        "biggest_fans": "45_to_54",
+        "reason": "Heard of it, unlikely to have watched"
+      },
+      "98 Degrees": {
+        "verdict": "dead",
+        "room_vs_average": -60,
+        "biggest_fans": "35_to_44",
+        "reason": "Before their time, no cultural presence now"
+      },
+      "O-Town": {
+        "verdict": "dead",
+        "room_vs_average": -60,
+        "biggest_fans": "35_to_44",
+        "reason": "Early 2000s boy band, completely off radar"
+      },
+      "Carrot Top": {
+        "verdict": "dead",
+        "room_vs_average": -70,
+        "biggest_fans": "45_to_54",
+        "reason": "Nineties prop comic, no relevance to Gen Z"
+      },
+      "Saved by the Bell": {
+        "verdict": "dead",
+        "room_vs_average": -60,
+        "biggest_fans": "45_to_54",
+        "reason": "Ended before they were born, no nostalgia"
+      },
+      "Love Island": {
+        "verdict": "lands",
+        "room_vs_average": 50,
+        "biggest_fans": "24_and_younger",
+        "reason": "Current reality dating show hits their demographic"
+      },
+      "Taylor Swift": {
+        "verdict": "lands",
+        "room_vs_average": 60,
+        "biggest_fans": "24_and_younger",
+        "reason": "Defining artist of their generation, massive fandom"
+      },
+      "One Direction": {
+        "verdict": "lands",
+        "room_vs_average": 40,
+        "biggest_fans": "24_and_younger",
+        "reason": "Their teen years boy band, strong nostalgia"
+      },
+      "Avengers: Infinity War": {
+        "verdict": "lands",
+        "room_vs_average": 30,
+        "biggest_fans": "24_and_younger",
+        "reason": "Major cultural moment during their high school years"
+      },
+      "Blockbuster": {
+        "verdict": "risky",
+        "room_vs_average": -40,
+        "biggest_fans": "35_to_44",
+        "reason": "Vaguely remember from childhood, no emotional weight"
+      },
+      "Sbarro": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "35_to_44",
+        "reason": "Mall culture declined during their youth"
+      },
+      "Tower Records": {
+        "verdict": "dead",
+        "room_vs_average": -60,
+        "biggest_fans": "45_to_54",
+        "reason": "Closed when they were toddlers, no memory"
+      },
+      "Judge Judy": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "55_and_older",
+        "reason": "Daytime TV not their viewing habit"
+      },
+      "Cracker Barrel": {
+        "verdict": "lands",
+        "room_vs_average": -15,
+        "biggest_fans": "45_to_54",
+        "reason": "Still exists and they know it exists"
+      },
+      "Tupperware": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "35_to_44",
+        "reason": "Universal household item everyone recognizes"
+      },
+      "Costco": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "30_to_34",
+        "reason": "Popular warehouse club, family shopping reference works"
+      },
+      "Whataburger": {
+        "verdict": "risky",
+        "room_vs_average": -10,
+        "biggest_fans": "25_to_29",
+        "reason": "Regional chain, only resonates in specific areas"
+      },
+      "Ed Hardy": {
+        "verdict": "risky",
+        "room_vs_average": -20,
+        "biggest_fans": "30_to_34",
+        "reason": "Remember as dated fashion joke from childhood"
+      }
+    }
+  },
+  "swaps": {
+    "Hinge": {
+      "swaps": [
+        {
+          "name": "Tinder",
+          "type": "urn:entity:brand",
+          "rewrite": "Tinder, Bumble, all of them.",
+          "why": "Tinder is extremely well known (top 3% of brands) and this room likes it 4% more than average. It does the same job—naming a dating app—and fits the modern dating context perfectly."
+        }
+      ],
+      "note": "Only Tinder beats the original for this college crowd. Match and OkCupid both land but skew older, so they don't improve the fit."
+    },
+    "98 Degrees": {
+      "swaps": [
+        {
+          "name": "Jonas Brothers",
+          "type": "urn:entity:artist",
+          "rewrite": "I tell her my first concert was the Jonas Brothers, my second was O-Town, and I once waited three hours in the rain to meet Carrot Top.",
+          "why": "This room likes them 44% more than the average adult, their biggest fans are 25–29s, and they rank #13 in Austin and #16 in Birmingham—much stronger than 98 Degrees in both cities."
+        },
+        {
+          "name": "*NSYNC",
+          "type": "urn:entity:artist",
+          "rewrite": "I tell her my first concert was *NSYNC, my second was O-Town, and I once waited three hours in the rain to meet Carrot Top.",
+          "why": "This room likes them 30% more than the average adult, they're from the exact same era as 98 Degrees and O-Town, and everyone in the room will recognize them."
+        },
+        {
+          "name": "Five",
+          "type": "urn:entity:artist",
+          "rewrite": "I tell her my first concert was Five, my second was O-Town, and I once waited three hours in the rain to meet Carrot Top.",
+          "why": "This room likes them 41% more than the average adult, they're a late-90s boy band from the same era as 98 Degrees, and their biggest fans are 25–29s."
+        }
+      ],
+      "note": "All three keep the same generational-disconnect job: boy bands that date you but that this college crowd will actually recognize and appreciate more than 98 Degrees."
+    },
+    "O-Town": {
+      "swaps": [
+        {
+          "name": "Jonas Brothers",
+          "type": "urn:entity:artist",
+          "rewrite": "I tell her my first concert was 98 Degrees, my second was Jonas Brothers, and I once waited three hours in the rain to meet Carrot Top.",
+          "why": "This room likes it 44% more than average, and it ranks solidly in both Austin (#13) and Birmingham (#16). The biggest fans are 25–29s, close to your audience's age range, and it fits the self-deprecating tone of listing dated boy band concerts."
+        },
+        {
+          "name": "*NSYNC",
+          "type": "urn:entity:artist",
+          "rewrite": "I tell her my first concert was 98 Degrees, my second was *NSYNC, and I once waited three hours in the rain to meet Carrot Top.",
+          "why": "This room likes it 30% more than average. It's the iconic late-90s boy band that perfectly matches O-Town's era and creates the same 'I'm dating myself' effect. Ranks #15 in Austin, though it's #24 in Birmingham."
+        },
+        {
+          "name": "Backstreet Boys",
+          "type": "urn:entity:artist",
+          "rewrite": "I tell her my first concert was 98 Degrees, my second was Backstreet Boys, and I once waited three hours in the rain to meet Carrot Top.",
+          "why": "The room dislikes this only 6% compared to O-Town's 31%, a meaningful improvement. It's the most iconic late-90s boy band and everyone knows it. Rankings are middle-of-the-pack in both cities (#17 Austin, #21 Birmingham)."
+        }
+      ],
+      "note": "Jonas Brothers is your strongest swap with the best room fit and city rankings. *NSYNC nails the era but ranks last in Birmingham. Backstreet Boys barely improves the room index but is the most iconic choice for the late-90s boy band joke."
+    },
+    "Love Island": {
+      "swaps": [],
+      "note": "No substitute was confirmed for this room."
+    },
+    "Sbarro": {
+      "swaps": [
+        {
+          "name": "P. F. Chang's",
+          "type": "urn:entity:brand",
+          "rewrite": "We spent two hours talking about Blockbuster late fees and the P. F. Chang's at the mall.",
+          "why": "This room likes it 58% more than average, and its biggest fans are people 24 and under—exactly this crowd. Ranks #18 in Austin and #12 in Birmingham."
+        },
+        {
+          "name": "TGI Fridays",
+          "type": "urn:entity:brand",
+          "rewrite": "We spent two hours talking about Blockbuster late fees and the TGI Fridays at the mall.",
+          "why": "This room likes it 48% more than average. Classic mall anchor that hits the nostalgic Americana note. Ranks #20 in Austin and #15 in Birmingham."
+        },
+        {
+          "name": "Panda Express",
+          "type": "urn:entity:brand",
+          "rewrite": "We spent two hours talking about Blockbuster late fees and the Panda Express at the mall.",
+          "why": "This room likes it 41% more than average, and its biggest fans are 25–29s. Another mall food court staple with the right nostalgic feel."
+        }
+      ],
+      "note": "All three keep the mall location and nostalgic cheap-food vibe that makes the original work—P.F. Chang's has the strongest affinity with this exact age group."
+    },
+    "Judge Judy": {
+      "swaps": [
+        {
+          "name": "New Girl",
+          "type": "urn:entity:tv_show",
+          "rewrite": "We fell asleep at four in the afternoon watching New Girl, like a real couple.",
+          "why": "This room likes it 33% more than average, its biggest fans are people 24 and under, and it ranks #3 in Austin and #9 in Birmingham. Perfect comfort-watch show about relationships and roommates."
+        },
+        {
+          "name": "How I Met Your Mother",
+          "type": "urn:entity:tv_show",
+          "rewrite": "We fell asleep at four in the afternoon watching How I Met Your Mother, like a real couple.",
+          "why": "This room likes it 23% more than average, its biggest fans are people 24 and under, and it ranks #8 in Austin. Classic comfort sitcom about finding love."
+        },
+        {
+          "name": "Brooklyn Nine-Nine",
+          "type": "urn:entity:tv_show",
+          "rewrite": "We fell asleep at four in the afternoon watching Brooklyn Nine-Nine, like a real couple.",
+          "why": "This room likes it 10% more than average, its biggest fans are people 24 and under, and it ranks #7 in Austin. A comfort sitcom that signals the same cozy domestic vibe."
+        }
+      ],
+      "note": "All three are comfort-watch sitcoms that signal the same domestic contentment as the original, and they all land much better with this college crowd."
+    },
+    "Ed Hardy": {
+      "swaps": [],
+      "note": "No substitute was confirmed for this room."
+    }
+  }
+}

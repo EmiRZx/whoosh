@@ -1,15 +1,15 @@
-// Scores reference extractions of src/content/samples.ts against evals/extraction/gold.json.
+// Scores reference extractions of the gold-set texts (texts.json) against evals/extraction/gold.json.
 // Usage: npx tsx evals/extraction/score.ts <run-dir>
 // <run-dir> holds one <sample-id>.json per sample, each matching ExtractionSchema.
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { ExtractionSchema } from "../../src/lib/analysis/extract";
 import { scoreExtraction, type GoldSample } from "./scoring";
-import { sampleById } from "../../src/content/samples";
+import TEXTS from "./texts.json";
 
 async function scoreSample(id: string, gold: GoldSample, runDir: string) {
-  const text = sampleById(id)?.text;
-  if (!text) return { id, error: "no sample script with this id" };
+  const text = (TEXTS as Record<string, string>)[id];
+  if (!text) return { id, error: "no gold-set text with this id" };
   const raw = JSON.parse(await readFile(path.join(runDir, `${id}.json`), "utf8"));
   const parsed = ExtractionSchema.safeParse(raw);
   if (!parsed.success) return { id, error: parsed.error.message };

@@ -2,8 +2,8 @@
 
 import { Star } from "lucide-react";
 import type { AnalyzedReference } from "@/lib/analysis/types";
-import { cityTable } from "@/lib/ui/cities";
-import { shortCity } from "./labels";
+import { cityScores, cityTable, verdictIn } from "@/lib/ui/cities";
+import { shortCity, VERDICT_LABEL } from "./labels";
 import { CardTitle } from "./summary";
 import { VerdictIcon } from "./verdict";
 
@@ -19,13 +19,21 @@ interface Props {
   references: AnalyzedReference[];
   selectedKey?: string;
   onSelect: (key: string) => void;
+  // The city the script is read for, and a way to read it for another.
+  city?: string;
+  onPickCity?: (city: string) => void;
 }
 
 // Every measured reference against every tour city: where each one plays.
-export function TourMatrix({ references, selectedKey, onSelect }: Props) {
+export function TourMatrix({ references, selectedKey, onSelect, city, onPickCity }: Props) {
   const table = cityTable(references);
   if (!table) return null;
-  const { cities, rows, panel, best, typical } = table;
+  const { cities, rows, panel, typical } = table;
+  // The best city is the one where the most should land; ranks break ties.
+  const scores = cityScores(references, cities);
+  const at = (i: number) => scores[i] ?? -1;
+  const best = cities.length > 1 ? cities.reduce((b, _, i) => (at(i) > at(b) || (at(i) === at(b) && typical[i] < typical[b]) ? i : b), 0) : -1;
+  const pct = (x: number | undefined) => (x === undefined ? "–" : `${Math.round(x * 100)}%`);
 
   return (
     <section className="card rounded-2xl p-5 sm:p-6">
@@ -36,14 +44,16 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
             {best >= 0 ? (
               <>
                 Strongest stop: <span className="text-accent">{shortCity(cities[best])}</span>
+                <span className="text-ink-faint"> · {pct(scores[best])} should land</span>
               </>
             ) : (
               <>How {shortCity(cities[0])} ranks for each reference</>
             )}
           </h2>
           <p className="mt-1 max-w-2xl text-sm text-ink-soft">
-            Where each reference is liked most by people in general (not only this room), ranked among {panel} big US metros. #1 is
-            the city that likes it most.
+            Where each reference is liked most by people in general, ranked among {panel} big US metros (#1 likes it most). In a
+            city&apos;s top three it plays one step better there; near the bottom, one step worse.
+            {onPickCity && cities.length > 1 && " Pick a city to read the script for it."}
           </p>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-ink-faint" aria-hidden>
@@ -64,12 +74,24 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
               <th className="min-w-[11rem] text-left text-[11px] font-medium text-ink-faint">
                 <span className="sr-only">Reference</span>
               </th>
-              {cities.map((city, i) => (
-                <th key={city} scope="col" title={city} className="w-[6.5rem] min-w-[4.5rem] px-1 pb-1 text-center text-xs font-medium">
-                  <span className="inline-flex items-center gap-1">
-                    {i === best && <Star className="size-3 fill-accent-glow text-accent-glow" aria-label="Best fit" />}
-                    {shortCity(city)}
-                  </span>
+              {cities.map((c, i) => (
+                <th key={c} scope="col" title={c} className="w-[6.5rem] min-w-[4.5rem] px-0.5 pb-1 text-center text-xs font-medium">
+                  {onPickCity && cities.length > 1 ? (
+                    <button
+                      type="button"
+                      onClick={() => onPickCity(c)}
+                      aria-pressed={c === city}
+                      className={`inline-flex w-full items-center justify-center gap-1 rounded-md px-1.5 py-1 ${c === city ? "bg-ink text-bg" : "hover:bg-sunk"}`}
+                    >
+                      {i === best && <Star className="size-3 fill-accent-glow text-accent-glow" aria-label="Best fit" />}
+                      {shortCity(c)}
+                    </button>
+                  ) : (
+                    <span className="inline-flex items-center gap-1">
+                      {i === best && <Star className="size-3 fill-accent-glow text-accent-glow" aria-label="Best fit" />}
+                      {shortCity(c)}
+                    </span>
+                  )}
                 </th>
               ))}
             </tr>
@@ -99,7 +121,8 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
                     );
                   }
                   const s = step(c.rank, c.of);
-                  const tip = `${r.extracted.name}: #${c.rank} of ${c.of} cities in ${city}`;
+                  const v = verdictIn(r, city);
+                  const tip = `${r.extracted.name}: #${c.rank} of ${c.of} cities in ${shortCity(city)}, ${VERDICT_LABEL[v].toLowerCase()} there`;
                   return (
                     <td
                       key={city}
@@ -108,7 +131,12 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
                       className="group/cell relative h-8 rounded-[4px] text-center text-xs font-medium tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-focus"
                       style={{ background: `var(--seq-${s})`, color: `var(--seq-ink-${s})` }}
                     >
-                      #{c.rank}
+                      <span className="inline-flex items-center gap-1">
+                        <span className="grid size-4 place-items-center rounded-full bg-bg/90">
+                          <VerdictIcon verdict={v} className="size-2.5" />
+                        </span>
+                        #{c.rank}
+                      </span>
                       <span
                         role="tooltip"
                         className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] font-normal text-bg shadow-lg group-hover/cell:block group-focus-visible/cell:block"
@@ -125,11 +153,11 @@ export function TourMatrix({ references, selectedKey, onSelect }: Props) {
             <tfoot>
               <tr>
                 <th scope="row" className="px-1.5 pt-2 text-left text-xs font-medium text-ink-soft">
-                  Typical rank
+                  Should land
                 </th>
                 {cities.map((city, i) => (
                   <td key={city} className={`pt-2 text-center text-xs tabular-nums ${i === best ? "font-semibold text-ink" : "text-ink-soft"}`}>
-                    #{typical[i]}
+                    {pct(scores[i])}
                   </td>
                 ))}
               </tr>

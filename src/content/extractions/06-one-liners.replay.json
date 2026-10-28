@@ -1,0 +1,130 @@
+{
+  "picks": {
+    "Star Wars": {
+      "name": "Star Wars: Episode IV - A New Hope",
+      "type": "urn:entity:movie",
+      "standIn": "The original 1977 film, standing in for the whole saga"
+    },
+    "Microsoft Office": {
+      "name": "Microsoft365",
+      "type": "urn:entity:brand",
+      "standIn": "Microsoft 365, the renamed successor to Microsoft Office"
+    },
+    "Twitter": {
+      "name": "X (Formerly Twitter)",
+      "type": "urn:entity:brand"
+    },
+    "Microsoft Windows": null,
+    "Lego": {
+      "name": "The Lego Group",
+      "type": "urn:entity:brand"
+    },
+    "Tetris": null
+  },
+  "gut": {
+    "college": {
+      "Star Wars": {
+        "verdict": "lands",
+        "room_vs_average": -5,
+        "biggest_fans": "35_to_44",
+        "reason": "Universally known; Yoda speech is meme-familiar, though millennials love it more."
+      },
+      "Microsoft Office": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "45_to_54",
+        "reason": "Students live in Word for essays; everyone gets the pun."
+      },
+      "Game of Thrones": {
+        "verdict": "risky",
+        "room_vs_average": -15,
+        "biggest_fans": "30_to_34",
+        "reason": "Ended when they were young teens; known by name, not watched widely."
+      },
+      "Twitter": {
+        "verdict": "risky",
+        "room_vs_average": -10,
+        "biggest_fans": "25_to_29",
+        "reason": "Known, but they're on TikTok and Instagram; 140-character limit feels ancient."
+      },
+      "Arnold Schwarzenegger": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "45_to_54",
+        "reason": "Recognizable name and accent, but his heyday predates them entirely."
+      },
+      "Microsoft Windows": {
+        "verdict": "risky",
+        "room_vs_average": -10,
+        "biggest_fans": "45_to_54",
+        "reason": "Everyone uses Windows, but Vista's reputation is before their time."
+      },
+      "Rick Astley": {
+        "verdict": "lands",
+        "room_vs_average": -5,
+        "biggest_fans": "45_to_54",
+        "reason": "Rickroll is internet canon for this crowd, even if the music isn't."
+      },
+      "Pixar": {
+        "verdict": "lands",
+        "room_vs_average": 20,
+        "biggest_fans": "24_and_younger",
+        "reason": "Grew up on Pixar; strong nostalgic affection in this room."
+      },
+      "Up": {
+        "verdict": "lands",
+        "room_vs_average": 15,
+        "biggest_fans": "25_to_29",
+        "reason": "A childhood staple; the opening montage is famously beloved."
+      },
+      "50 Cent": {
+        "verdict": "risky",
+        "room_vs_average": -15,
+        "biggest_fans": "35_to_44",
+        "reason": "Known via memes and birthday song, but his peak was 2003."
+      },
+      "Nickelback": {
+        "verdict": "risky",
+        "room_vs_average": -25,
+        "biggest_fans": "35_to_44",
+        "reason": "They know the 'photograph' meme; the hate-joke is a millennial bit."
+      },
+      "Breaking Bad": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "25_to_29",
+        "reason": "Still huge on streaming and memes; pizza-on-roof scene is iconic."
+      },
+      "Jeopardy!": {
+        "verdict": "risky",
+        "room_vs_average": -40,
+        "biggest_fans": "55_and_older",
+        "reason": "They know the format, but it's their grandparents' show."
+      },
+      "Lego": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "24_and_younger",
+        "reason": "Universal childhood toy; stepping-on-Lego pain is a shared meme."
+      },
+      "Tetris": {
+        "verdict": "lands",
+        "room_vs_average": -5,
+        "biggest_fans": "35_to_44",
+        "reason": "Everyone knows Tetris; the tetanus pun reads instantly."
+      },
+      "Terminator 2: Judgment Day": {
+        "verdict": "risky",
+        "room_vs_average": -35,
+        "biggest_fans": "45_to_54",
+        "reason": "Catchphrase survives by osmosis, but few have actually watched the film."
+      }
+    }
+  },
+  "swaps": {
+    "Jeopardy!": {
+      "swaps": [],
+      "note": "The joke needs a quiz show where people win money for answers, and none that fit (Millionaire, Family Feud, Are You Smarter Than a 5th Grader?) lands better with this crowd; the shows they do like are talent contests that would break the joke."
+    }
+  }
+}

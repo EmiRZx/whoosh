@@ -1,0 +1,149 @@
+{
+  "picks": {
+    "Ask Jeeves": null,
+    "Canvas": null,
+    "ChatGPT": null
+  },
+  "gut": {
+    "college": {
+      "Google": {
+        "verdict": "lands",
+        "room_vs_average": 15,
+        "biggest_fans": "24_and_younger",
+        "reason": "Universal, constant presence in their lives since childhood."
+      },
+      "Ask Jeeves": {
+        "verdict": "dead",
+        "room_vs_average": -70,
+        "biggest_fans": "45_to_54",
+        "reason": "Rebranded 2006; this room was too young to remember it."
+      },
+      "The Price Is Right": {
+        "verdict": "lands",
+        "room_vs_average": -15,
+        "biggest_fans": "55_and_older",
+        "reason": "Still on air, sick-day TV staple, universally known."
+      },
+      "Bob Barker": {
+        "verdict": "risky",
+        "room_vs_average": -40,
+        "biggest_fans": "45_to_54",
+        "reason": "Retired 2007; they know the catchphrase culturally, not personally."
+      },
+      "Let's Make a Deal": {
+        "verdict": "lands",
+        "room_vs_average": -20,
+        "biggest_fans": "35_to_44",
+        "reason": "Monty Hall problem is taught in probability courses, still on air."
+      },
+      "Monty Hall": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "25_to_29",
+        "reason": "Known through the famous probability problem in stats classes."
+      },
+      "Wheel of Fortune": {
+        "verdict": "lands",
+        "room_vs_average": -25,
+        "biggest_fans": "55_and_older",
+        "reason": "Still on air, iconic and recognizable to all ages."
+      },
+      "Vanna White": {
+        "verdict": "lands",
+        "room_vs_average": -30,
+        "biggest_fans": "45_to_54",
+        "reason": "Still on the show, cultural icon everyone recognizes."
+      },
+      "Who Wants to Be a Millionaire": {
+        "verdict": "lands",
+        "room_vs_average": -10,
+        "biggest_fans": "35_to_44",
+        "reason": "Childhood memory for this room, multiple revivals kept it alive."
+      },
+      "Regis Philbin": {
+        "verdict": "risky",
+        "room_vs_average": -50,
+        "biggest_fans": "45_to_54",
+        "reason": "Left Millionaire 2002, died 2020; weak personal connection for undergrads."
+      },
+      "Deal or No Deal": {
+        "verdict": "lands",
+        "room_vs_average": -5,
+        "biggest_fans": "30_to_34",
+        "reason": "Ran through their childhood, had recent revivals, memorable format."
+      },
+      "Howie Mandel": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "24_and_younger",
+        "reason": "America's Got Talent keeps him current with younger viewers."
+      },
+      "Las Vegas": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "25_to_29",
+        "reason": "Universal reference, aspirational destination for young adults turning 21."
+      },
+      "Bellagio": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "35_to_44",
+        "reason": "Iconic Vegas landmark, famous fountains known from movies and media."
+      },
+      "DraftKings": {
+        "verdict": "lands",
+        "room_vs_average": 60,
+        "biggest_fans": "24_and_younger",
+        "reason": "Ubiquitous ads, sports betting newly legal, saturates college sports culture."
+      },
+      "Ken Jennings": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "24_and_younger",
+        "reason": "Current Jeopardy host, legendary streak still referenced, continued cultural presence."
+      },
+      "Jeopardy": {
+        "verdict": "lands",
+        "room_vs_average": -10,
+        "biggest_fans": "55_and_older",
+        "reason": "Still on air, iconic quiz show everyone knows."
+      },
+      "Detroit Lions": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "24_and_younger",
+        "reason": "NFL huge with college crowd, losing reputation well-known despite recent improvement."
+      },
+      "Canvas": {
+        "verdict": "lands",
+        "room_vs_average": 250,
+        "biggest_fans": "24_and_younger",
+        "reason": "Dominant college LMS, every student uses it daily for coursework."
+      },
+      "ChatGPT": {
+        "verdict": "lands",
+        "room_vs_average": 120,
+        "biggest_fans": "24_and_younger",
+        "reason": "Released 2022, massive in education, constant topic among students."
+      }
+    }
+  },
+  "swaps": {
+    "The Price Is Right": {
+      "swaps": [],
+      "note": "The Voice and Impractical Jokers both land better with this room, but neither has a specific game that demonstrates probability the way Plinko does—the line needs that visual setup for the bell curve payoff."
+    },
+    "Let's Make a Deal": {
+      "swaps": [],
+      "note": "Squid Game and Survivor both beat the original's weak recognition, but neither demonstrates probability concepts the way the Monty Hall problem does—you need the game show structure with doors and prizes to teach the math, and substituting a survival drama or reality competition would lose the pedagogical setup entirely."
+    },
+    "Wheel of Fortune": {
+      "swaps": [],
+      "note": "No substitute was confirmed for this room."
+    },
+    "Who Wants to Be a Millionaire": {
+      "swaps": [],
+      "note": "No substitute was confirmed for this room."
+    }
+  }
+}

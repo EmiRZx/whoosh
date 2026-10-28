@@ -1,9 +1,19 @@
 import { ArrowUpRight, Bot, ScanSearch, Shuffle } from "lucide-react";
 import Link from "next/link";
+import { LogoMark } from "@/components/logo";
 import { Origin } from "@/components/origin";
 import { Studio } from "@/components/studio";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { DOCS_TEMPLATE_URL } from "@/content/addon";
+
+const MCP_TOOLS: [string, string][] = [
+  ["check_script", "Every reference in a script, judged for a room and each city"],
+  ["compare_rooms", "One script, up to four crowds, and where they split"],
+  ["find_swaps", "Substitutes that do the same job, checked and written into the line"],
+  ["score_reference", "One name for one room: presence, room index, city ranks"],
+  ["fans_of", "A performer's fans as Qloo sees them: ages and cities"],
+  ["crowd_hooks", "Local places and artists a crowd loves in one city"],
+];
 
 const STEPS = [
   {
@@ -31,7 +41,7 @@ export default function Home() {
       <header className="relative print:hidden">
         <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-5 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5 text-[17px] font-semibold tracking-tight">
-            <span className="size-2.5 rounded-full bg-accent-glow shadow-[0_0_18px_5px_color-mix(in_srgb,var(--accent-glow)_55%,transparent)]" aria-hidden />
+            <LogoMark />
             Whoosh
           </Link>
           <div className="flex items-center gap-1 text-sm text-ink-soft sm:gap-5">
@@ -71,21 +81,34 @@ export default function Home() {
         </section>
 
         <section id="agents" className="mt-6 scroll-mt-8 print:hidden">
-          <div className="card grid grid-cols-1 gap-6 rounded-2xl p-6 md:grid-cols-[1fr_1.2fr] md:items-center">
+          <div className="card grid grid-cols-1 gap-6 rounded-2xl p-6 lg:grid-cols-[1fr_1.15fr]">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">For agents</p>
               <h2 className="mt-2 text-lg font-semibold tracking-tight">Let your own agent check a script before it ships</h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                Whoosh can be called over MCP too. Any agent that writes speeches, ads or talks can call{" "}
-                <code className="rounded bg-sunk px-1 py-0.5 font-mono text-[12px]">check_script</code> with a script and a room, and
-                get the same verdicts and swaps.
+                Whoosh can be called over MCP too. An agent that writes speeches, toasts, talks or ad copy can check its own draft against the
+                room it&apos;s for, see who a script works for, and fix what won&apos;t land, with the same Qloo measurements as this page.
               </p>
+              <ul className="mt-4 grid grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-2">
+                {MCP_TOOLS.map(([name, what]) => (
+                  <li key={name}>
+                    <code className="font-mono text-[12px] text-ink">{name}</code>
+                    <span className="block text-xs leading-snug text-ink-soft">{what}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <pre className="overflow-x-auto rounded-xl bg-sunk p-4 font-mono text-[12.5px] leading-relaxed text-ink-soft">
-              <span className="text-ink-faint"># Claude Code</span>
-              {"\n"}claude mcp add --transport http whoosh <Origin fallback="https://…" />
-              /api/mcp
-            </pre>
+            <div className="flex flex-col gap-3 lg:justify-center">
+              <pre className="overflow-x-auto rounded-xl bg-sunk p-4 font-mono text-[12.5px] leading-relaxed text-ink-soft">
+                <span className="text-ink-faint"># Claude Code</span>
+                {"\n"}claude mcp add --transport http whoosh <Origin fallback="https://…" />
+                /api/mcp
+              </pre>
+              <pre className="overflow-x-auto rounded-xl bg-sunk p-4 font-mono text-[12.5px] leading-relaxed text-ink-soft">
+                <span className="text-ink-faint"># Then ask</span>
+                {"\n"}Here&apos;s my toast for my grandpa&apos;s 80th. Will his friends get the references? Fix the ones they won&apos;t.
+              </pre>
+            </div>
           </div>
         </section>
 

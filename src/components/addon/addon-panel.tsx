@@ -12,8 +12,9 @@ import { planEdit } from "@/lib/ui/document";
 import { roomScore } from "@/lib/ui/score";
 import { EXAMPLE_ORDER, MAX_CHARS } from "../composer";
 import { Inspector } from "../inspector";
+import { LogoMark } from "../logo";
 import { VERDICT_LABEL, WEIGHT_LABEL } from "../labels";
-import { PerformerPicker, type PerformerRoomData } from "../performer-picker";
+import { loadPerformerRoom, PerformerPicker, type PerformerRoomData } from "../performer-picker";
 import { ScopeNote } from "../summary";
 import { AgeHistogram, CityChips, CityInput, MAX_CITIES } from "../room-picker";
 import { useAnalysis } from "../use-analysis";
@@ -60,7 +61,7 @@ function Heading({ children }: { children: React.ReactNode }) {
 function Brand() {
   return (
     <Link href="/" target="_blank" className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-      <span className="size-2 rounded-full bg-accent-glow shadow-[0_0_12px_3px_color-mix(in_srgb,var(--accent-glow)_55%,transparent)]" aria-hidden />
+      <LogoMark className="h-3 w-6" />
       Whoosh
     </Link>
   );
@@ -179,10 +180,12 @@ export function AddonPanel() {
       setNotice(message(err));
       return;
     }
-    setPerformer(undefined);
     setPresetId(sample.presetId);
     setCities(sample.cities);
-    await check({ presetId: sample.presetId, cities: sample.cities });
+    let fans: PerformerRoomData | undefined;
+    if (sample.performer) fans = await loadPerformerRoom(sample.performer.id).catch(() => undefined);
+    setPerformer(fans);
+    await check({ presetId: sample.presetId, cities: sample.cities, performerId: fans?.performer.id });
   };
 
   const back = () => {
@@ -351,7 +354,7 @@ export function AddonPanel() {
                 >
                   <span className="block text-sm font-medium">{s.title}</span>
                   <span className="block text-[11px] text-ink-faint">
-                    {s.format} · {presetById(s.presetId)?.label}
+                    {s.format} · {s.performer ? `Fans of ${s.performer.name}` : presetById(s.presetId)?.label}
                   </span>
                 </button>
               </li>

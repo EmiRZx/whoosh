@@ -7,10 +7,9 @@
       "quotes": [
         "Hinge"
       ],
-      "role": "a mainstream dating app that sets the scene of modern app dating",
-      "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "role": "a dating app that frames the modern dating context",
+      "weight": "setup",
+      "checkable": true
     },
     {
       "name": "Bumble",
@@ -19,10 +18,9 @@
       "quotes": [
         "Bumble"
       ],
-      "role": "a second well-known dating app that rounds out the modern dating scene",
-      "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "role": "a dating app that frames the modern dating context",
+      "weight": "setup",
+      "checkable": true
     },
     {
       "name": "Friends",
@@ -32,83 +30,108 @@
         "Ross",
         "Rachel"
       ],
-      "role": "a shorthand for 90s TV romance whose characters younger people no longer recognize, dating the speaker",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "an iconic TV romance that defines the speaker's dating ideal and reveals generational divide",
+      "weight": "setup",
+      "checkable": true
     },
     {
-      "name": "Williamsburg",
-      "kind": "destination",
-      "disambiguation": "Brooklyn neighborhood",
+      "name": "Ross",
+      "kind": "brand",
+      "disambiguation": "Ross Dress for Less discount stores",
       "quotes": [
-        "Williamsburg"
+        "Ross"
       ],
-      "role": "a hip, trendy neighborhood that signals pretentious young-person dining",
-      "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "role": "a budget retailer that becomes an accidental self-deprecating punchline",
+      "weight": "punchline",
+      "checkable": true
     },
     {
       "name": "Peloton",
       "kind": "brand",
-      "disambiguation": null,
+      "disambiguation": "exercise equipment and fitness platform",
       "quotes": [
         "Peloton"
       ],
-      "role": "a trendy, pricey fitness product whose repurposing as furniture mocks hipster decor",
+      "role": "a trendy fitness brand that signals the restaurant's try-hard aesthetic",
       "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Olive Garden",
       "kind": "brand",
-      "disambiguation": null,
+      "disambiguation": "Italian-American restaurant chain",
       "quotes": [
-        "Olive Garden",
-        "when you're here, you're family"
+        "Olive Garden"
       ],
-      "role": "a cheap chain restaurant with a famous warm slogan that signals comfort over sophistication",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a casual dining chain that represents unpretentious comfort and familiarity",
+      "weight": "setup",
+      "checkable": true
     },
     {
       "name": "The Sopranos",
       "kind": "tv_show",
-      "disambiguation": null,
+      "disambiguation": "HBO drama 1999-2007",
       "quotes": [
         "The Sopranos"
       ],
-      "role": "a prestige TV drama a middle-aged man names as his passion, whose premise gets reframed as a therapy podcast",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
-    },
-    {
-      "name": "Bad Bunny",
-      "kind": "artist",
-      "disambiguation": null,
-      "quotes": [
-        "Bad Bunny"
-      ],
-      "role": "a current chart-topping artist an older speaker name-drops to seem cool",
+      "role": "a prestige TV show that reveals generational gap when misidentified as a podcast",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
-      "name": "Luis Fonsi",
+      "name": "98 Degrees",
       "kind": "artist",
-      "disambiguation": null,
+      "disambiguation": "boy band from the late 1990s",
       "quotes": [
-        "Despacito"
+        "98 Degrees"
       ],
-      "role": "a ubiquitous older Latin pop hit the speaker wrongly attributes, exposing that he is out of touch",
+      "role": "a late-90s boy band that dates the speaker's youth",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "O-Town",
+      "kind": "artist",
+      "disambiguation": "boy band from the early 2000s",
+      "quotes": [
+        "O-Town"
+      ],
+      "role": "a late-90s boy band that dates the speaker's youth",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Carrot Top",
+      "kind": "person",
+      "disambiguation": "prop comedian",
+      "quotes": [
+        "Carrot Top"
+      ],
+      "role": "a comedian whose appeal signals uncool earnestness",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
+    },
+    {
+      "name": "Saved by the Bell",
+      "kind": "tv_show",
+      "disambiguation": "teen sitcom 1989-1993",
+      "quotes": [
+        "Zack Morris"
+      ],
+      "role": "a 90s teen TV show whose main character represents a generational crush",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Love Island",
+      "kind": "tv_show",
+      "disambiguation": "reality dating show",
+      "quotes": [
+        "Love Island"
+      ],
+      "role": "a contemporary reality show that highlights the generational misunderstanding",
+      "weight": "punchline",
+      "checkable": true
     },
     {
       "name": "Taylor Swift",
@@ -118,34 +141,31 @@
         "Swiftie",
         "Eras Tour"
       ],
-      "role": "a megastar with an intense fandom the speaker tries to bluff his way into",
+      "role": "a pop star whose fandom and tour define contemporary pop culture literacy",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
-      "name": "Harry Styles",
+      "name": "One Direction",
       "kind": "artist",
-      "disambiguation": null,
+      "disambiguation": "boy band 2010-2016",
       "quotes": [
-        "the guy from One Direction"
+        "One Direction"
       ],
-      "role": "a famous celebrity ex used to reduce a pop star's career to her boyfriends",
+      "role": "a boy band whose member the speaker incorrectly associates with the artist",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Avengers: Infinity War",
       "kind": "movie",
-      "disambiguation": "2018 Marvel film",
+      "disambiguation": "Marvel film 2018",
       "quotes": [
         "Thanos"
       ],
-      "role": "a blockbuster image of someone vanishing instantly and without a word",
+      "role": "a blockbuster movie moment that dramatizes a sudden disappearance",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Blockbuster",
@@ -154,70 +174,108 @@
       "quotes": [
         "Blockbuster"
       ],
-      "role": "a defunct video rental chain that signals shared 90s nostalgia between people of the same age",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a defunct video rental chain that symbolizes shared generational nostalgia",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Sbarro",
+      "kind": "brand",
+      "disambiguation": "pizza chain in shopping malls",
+      "quotes": [
+        "Sbarro"
+      ],
+      "role": "a mall pizza chain that evokes nostalgic Americana",
+      "weight": "color",
+      "checkable": true
     },
     {
       "name": "Tower Records",
       "kind": "brand",
-      "disambiguation": null,
+      "disambiguation": "music retail chain",
       "quotes": [
         "Tower Records"
       ],
-      "role": "a defunct music store chain mourned as a symbol of a lost era",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a defunct music store that becomes a mournable loss for the generation",
+      "weight": "color",
+      "checkable": true
     },
     {
-      "name": "Be Kind, Rewind",
+      "name": "Be kind, rewind",
       "kind": "other",
-      "disambiguation": "VHS rental-era slogan",
+      "disambiguation": "video rental era catchphrase",
       "quotes": [
         "Be kind, rewind"
       ],
-      "role": "a dated catchphrase from the tape-rental era that only people of a certain age find meaningful",
+      "role": "a nostalgic catchphrase from video rental culture that becomes romantic connection",
       "weight": "punchline",
-      "checkable": false,
-      "swappable": true
+      "checkable": false
+    },
+    {
+      "name": "Judge Judy",
+      "kind": "tv_show",
+      "disambiguation": "daytime court show 1996-2021",
+      "quotes": [
+        "Judge Judy"
+      ],
+      "role": "a daytime court show that signals domestic contentment",
+      "weight": "color",
+      "checkable": true
     },
     {
       "name": "Cracker Barrel",
       "kind": "brand",
-      "disambiguation": null,
+      "disambiguation": "Southern-style restaurant chain",
       "quotes": [
         "Cracker Barrel"
       ],
-      "role": "a homey, unglamorous chain restaurant that signals middle-aged comfort over sophistication",
+      "role": "a homestyle restaurant chain that represents unpretentious authenticity",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Tupperware",
       "kind": "brand",
-      "disambiguation": null,
+      "disambiguation": "plastic storage containers",
       "quotes": [
         "Tupperware"
       ],
-      "role": "a mundane household brand that signals unglamorous middle-aged domesticity",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a practical household brand that signals domestic normalcy",
+      "weight": "color",
+      "checkable": true
     },
     {
       "name": "Costco",
       "kind": "brand",
-      "disambiguation": null,
+      "disambiguation": "warehouse club retailer",
       "quotes": [
         "Costco"
       ],
-      "role": "a bulk-buying warehouse store that signals practical middle-aged life",
+      "role": "a warehouse store whose membership represents practical adult partnership",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Whataburger",
+      "kind": "brand",
+      "disambiguation": "regional fast food chain",
+      "quotes": [
+        "Whataburger"
+      ],
+      "role": "a regional fast food chain that represents unpolished late-night romance",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Ed Hardy",
+      "kind": "brand",
+      "disambiguation": "fashion brand popular in the 2000s",
+      "quotes": [
+        "Ed Hardy"
+      ],
+      "role": "a dated fashion brand that signals embracing uncool taste without shame",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     }
   ]
 }

@@ -1,0 +1,195 @@
+{
+  "picks": {
+    "iPod": null,
+    "Blue Bottle": {
+      "name": "Blue Bottle Coffee",
+      "type": "urn:entity:brand"
+    }
+  },
+  "gut": {
+    "corporate": {
+      "BlackBerry": {
+        "verdict": "lands",
+        "room_vs_average": 25,
+        "biggest_fans": "35_to_44",
+        "reason": "Corporate tech audience remembers BlackBerry era fondly and ironically."
+      },
+      "AOL": {
+        "verdict": "lands",
+        "room_vs_average": 15,
+        "biggest_fans": "45_to_54",
+        "reason": "Tech-savvy room knows AOL history well."
+      },
+      "RadioShack": {
+        "verdict": "lands",
+        "room_vs_average": 20,
+        "biggest_fans": "45_to_54",
+        "reason": "Tech audience shopped there; defunct retailer nostalgia lands."
+      },
+      "Slack": {
+        "verdict": "lands",
+        "room_vs_average": 80,
+        "biggest_fans": "25_to_29",
+        "reason": "Core workplace tool for this exact audience."
+      },
+      "Microsoft Teams": {
+        "verdict": "lands",
+        "room_vs_average": 75,
+        "biggest_fans": "35_to_44",
+        "reason": "Corporate professionals use Teams daily; joke about redundancy lands."
+      },
+      "Notion": {
+        "verdict": "lands",
+        "room_vs_average": 65,
+        "biggest_fans": "25_to_29",
+        "reason": "Tech/startup crowd knows Notion documentation culture intimately."
+      },
+      "Spotify": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "25_to_29",
+        "reason": "Universal streaming service everyone uses."
+      },
+      "The Killers": {
+        "verdict": "lands",
+        "room_vs_average": 15,
+        "biggest_fans": "30_to_34",
+        "reason": "Mr. Brightside is millennial anthem; corporate crowd gets it."
+      },
+      "Duolingo": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "24_and_younger",
+        "reason": "Notification meme is widely known across demographics now."
+      },
+      "Netflix": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "25_to_29",
+        "reason": "Are you still watching is universal cultural touchpoint."
+      },
+      "Kai Cenat": {
+        "verdict": "dead",
+        "room_vs_average": -50,
+        "biggest_fans": "24_and_younger",
+        "reason": "Streamer unknown to 30-plus corporate crowd; reference falls flat."
+      },
+      "Love Island": {
+        "verdict": "risky",
+        "room_vs_average": -25,
+        "biggest_fans": "24_and_younger",
+        "reason": "Reality TV not core to corporate tech audience interests."
+      },
+      "Stanley": {
+        "verdict": "risky",
+        "room_vs_average": -15,
+        "biggest_fans": "25_to_29",
+        "reason": "Tumbler trend skews young and female; corporate men miss it."
+      },
+      "WeWork": {
+        "verdict": "lands",
+        "room_vs_average": 70,
+        "biggest_fans": "35_to_44",
+        "reason": "Corporate tech audience lived through WeWork spectacle firsthand."
+      },
+      "Clubhouse": {
+        "verdict": "lands",
+        "room_vs_average": 65,
+        "biggest_fans": "30_to_34",
+        "reason": "Tech crowd remembers 2021 hype cycle vividly."
+      },
+      "Silicon Valley": {
+        "verdict": "lands",
+        "room_vs_average": 85,
+        "biggest_fans": "30_to_34",
+        "reason": "HBO show is beloved documentary for tech workers."
+      },
+      "Succession": {
+        "verdict": "lands",
+        "room_vs_average": 55,
+        "biggest_fans": "35_to_44",
+        "reason": "Educated professionals loved corporate power drama."
+      },
+      "iPod": {
+        "verdict": "lands",
+        "room_vs_average": 35,
+        "biggest_fans": "35_to_44",
+        "reason": "Formative product for tech audience; symbolizes product excellence."
+      },
+      "Blue Bottle": {
+        "verdict": "risky",
+        "room_vs_average": 0,
+        "biggest_fans": "30_to_34",
+        "reason": "Specialty coffee known in tech hubs but not universal."
+      },
+      "Allbirds": {
+        "verdict": "lands",
+        "room_vs_average": 55,
+        "biggest_fans": "30_to_34",
+        "reason": "Tech uniform shoe; dad joke lands with this crowd."
+      },
+      "Steve Jobs": {
+        "verdict": "lands",
+        "room_vs_average": 45,
+        "biggest_fans": "35_to_44",
+        "reason": "Famous quote is tech industry scripture; closing lands."
+      }
+    }
+  },
+  "swaps": {
+    "RadioShack": {
+      "swaps": [],
+      "note": "The joke requires a defunct electronics retailer to signal how long ago you started—Best Buy lands better but it's still around, so it doesn't do the same work as RadioShack in marking the era."
+    },
+    "Microsoft Teams": {
+      "swaps": [
+        {
+          "name": "Zoom",
+          "type": "urn:entity:brand",
+          "rewrite": "Today I have Slack on my laptop, Zoom on my other laptop, and a Notion page explaining which one we actually use.",
+          "why": "Zoom lands well and this room likes it 18% less than average—much better than Microsoft Teams at -27%. It ranks #2 in San Francisco and #1 in New York City. Works perfectly as another communication platform in the tool sprawl joke."
+        },
+        {
+          "name": "Asana",
+          "type": "urn:entity:brand",
+          "rewrite": "Today I have Slack on my laptop, Asana on my other laptop, and a Notion page explaining which one we actually use.",
+          "why": "Asana lands well and this room likes it 21% less than average, still beating Teams. It ranks #1 in San Francisco and #2 in New York City. Fits as a workplace tool that adds to the sprawl—teams often debate whether to chat in Slack or comment in Asana."
+        },
+        {
+          "name": "Grammarly",
+          "type": "urn:entity:brand",
+          "rewrite": "Today I have Slack on my laptop, Grammarly on my other laptop, and a Notion page explaining which one we actually use.",
+          "why": "Grammarly is the strongest fit: this room actually likes it 1% more than average. It lands well and ranks highly in both cities. While less obviously a communication tool, it works as another workplace productivity app that's always running, adding to the sense of digital clutter."
+        }
+      ],
+      "note": "All three options land better than Microsoft Teams with this room and fit the tool sprawl setup—Zoom is the most direct parallel as a communication platform, while Grammarly scores highest with the audience overall."
+    },
+    "Kai Cenat": {
+      "swaps": [],
+      "note": "No substitute was confirmed for this room."
+    },
+    "Stanley": {
+      "swaps": [
+        {
+          "name": "Arc'teryx",
+          "type": "urn:entity:brand",
+          "rewrite": "Last week I found out that Kai Cenat is not a cereal, that Love Island is a show and not a vacation package, and that our designer's jacket is an Arc'teryx, it cost more than my first car, and if I touch it I'm fired.",
+          "why": "This room likes it 5% less than average, much better than Stanley's 15% below. Its biggest fans are 35–44s, who make up 30% of your room. Ranks #4 in San Francisco and #6 in New York. Arc'teryx jackets run $600-800, so the absurd price point lands perfectly."
+        },
+        {
+          "name": "Danner",
+          "type": "urn:entity:brand",
+          "rewrite": "Last week I found out that Kai Cenat is not a cereal, that Love Island is a show and not a vacation package, and that our designer's boots are Danners, they cost more than my first car, and if I touch them I'm fired.",
+          "why": "This room likes it 4% less than average, compared to Stanley's 15% below. Ranks #3 in San Francisco and #7 in New York. Danner boots ($300-400) support the expensive joke, though slightly less absurdly than Arc'teryx."
+        },
+        {
+          "name": "Merrell",
+          "type": "urn:entity:brand",
+          "rewrite": "Last week I found out that Kai Cenat is not a cereal, that Love Island is a show and not a vacation package, and that our designer's hiking shoes are Merrells, they cost more than my first car, and if I touch them I'm fired.",
+          "why": "This room actually likes it 4% more than average, the only positive index. Its biggest fans are 35–44s, your largest age group at 30%. The tradeoff: Merrells typically run $100-150, so the 'cost more than my first car' hyperbole is a bit of a stretch."
+        }
+      ],
+      "note": "All three beat Stanley for this room, but Arc'teryx has the strongest price-to-absurdity ratio for the punchline."
+    }
+  }
+}

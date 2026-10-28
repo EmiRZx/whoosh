@@ -1,10 +1,11 @@
-// Runs live reference extraction on every example script and writes one JSON
+// Runs live reference extraction on every gold-set text (evals/extraction/texts.json,
+// the example scripts as the gold set was written for them) and writes one JSON
 // per sample, for score.ts. Uses the configured model (LLM_MODEL) and key.
 // Usage: npx tsx evals/extraction/run.ts <out-dir> [effort]
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { loadEnvConfig } from "@next/env";
-import { SAMPLES } from "../../src/content/samples";
+import TEXTS from "./texts.json";
 import type { Effort } from "../../src/lib/llm/config";
 
 async function main() {
@@ -19,10 +20,11 @@ async function main() {
   await mkdir(outDir, { recursive: true });
   console.log(`model ${AGENT_MODEL}, effort ${effort ?? "default"}`);
   await Promise.all(
-    SAMPLES.map(async (sample) => {
+    Object.entries(TEXTS as Record<string, string>).map(async ([id, text]) => {
+      const sample = { id };
       const started = Date.now();
       let output = 0;
-      const extraction = await extractReferences(client, sample.text.replace(/\r\n/g, "\n").trim(), {
+      const extraction = await extractReferences(client, text.replace(/\r\n/g, "\n").trim(), {
         effort: effort as Effort | undefined,
         onUsage: (_, u) => (output += u.output_tokens),
       });

@@ -7,60 +7,115 @@
       "quotes": [
         "Google"
       ],
-      "role": "the modern default tool the students take for granted, set up as a contrast with an older one",
+      "role": "a modern ubiquitous search engine that contrasts with dated alternatives",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Ask Jeeves",
       "kind": "brand",
-      "disambiguation": "search engine",
+      "disambiguation": "search engine from the late 1990s and early 2000s",
       "quotes": [
         "Ask Jeeves",
         "Jeeves"
       ],
-      "role": "a defunct, laughably unreliable early-internet service that dates the speaker",
+      "role": "a dated, inadequate search engine that signals the speaker's age and technological limitations",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
-      "name": "TRL",
+      "name": "The Price Is Right",
       "kind": "tv_show",
-      "disambiguation": "MTV Total Request Live",
+      "disambiguation": "US game show",
       "quotes": [
-        "TRL"
+        "The Price Is Right",
+        "Plinko"
       ],
-      "role": "a bygone appointment music TV show that dates the speaker's youth",
+      "role": "a game show whose games demonstrate probability concepts",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Bob Barker",
+      "kind": "person",
+      "disambiguation": "The Price Is Right host",
+      "quotes": [
+        "Bob Barker"
+      ],
+      "role": "a beloved game show host known for a specific catchphrase about pet care",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Let's Make a Deal",
+      "kind": "tv_show",
+      "disambiguation": "US game show",
+      "quotes": [
+        "Let's Make a Deal"
+      ],
+      "role": "a game show that demonstrates counterintuitive probability",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Monty Hall",
+      "kind": "person",
+      "disambiguation": "Let's Make a Deal host",
+      "quotes": [
+        "Monty Hall",
+        "Monty"
+      ],
+      "role": "a host whose name became synonymous with a famous probability problem",
+      "weight": "setup",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Wheel of Fortune",
+      "kind": "tv_show",
+      "disambiguation": "US game show",
+      "quotes": [
+        "Wheel of Fortune"
+      ],
+      "role": "a game show used to illustrate conditional probability",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Vanna White",
+      "kind": "person",
+      "disambiguation": "Wheel of Fortune letter-turner",
+      "quotes": [
+        "Vanna White"
+      ],
+      "role": "a co-host known for a specific repetitive elegant task",
       "weight": "color",
       "checkable": true,
-      "swappable": true
+      "swappable": false
     },
     {
       "name": "Who Wants to Be a Millionaire",
       "kind": "tv_show",
-      "disambiguation": "US game show",
+      "disambiguation": "US quiz show",
       "quotes": [
-        "Who Wants to Be a Millionaire",
-        "50:50 lifeline"
+        "Who Wants to Be a Millionaire"
       ],
-      "role": "a widely known quiz game whose multiple-choice format makes a simple probability example",
+      "role": "a quiz show that illustrates how lifelines affect probability",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Regis Philbin",
       "kind": "person",
-      "disambiguation": null,
+      "disambiguation": "Who Wants to Be a Millionaire host",
       "quotes": [
         "Regis Philbin"
       ],
-      "role": "the familiar host who makes the game-show scenario vivid",
+      "role": "the host of a quiz show",
       "weight": "color",
       "checkable": true,
-      "swappable": true
+      "swappable": false
     },
     {
       "name": "Deal or No Deal",
@@ -69,22 +124,21 @@
       "quotes": [
         "Deal or No Deal"
       ],
-      "role": "a widely known game show built on a take-it-or-gamble choice, used to introduce expected value",
+      "role": "a game show that demonstrates expected value calculation",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Howie Mandel",
       "kind": "person",
-      "disambiguation": null,
+      "disambiguation": "Deal or No Deal host",
       "quotes": [
         "Howie Mandel"
       ],
-      "role": "the familiar host who makes the game-show scenario vivid",
+      "role": "a host who presents probability scenarios with briefcases",
       "weight": "color",
       "checkable": true,
-      "swappable": true
+      "swappable": false
     },
     {
       "name": "Las Vegas",
@@ -93,22 +147,65 @@
       "quotes": [
         "Las Vegas"
       ],
-      "role": "a gambling capital that stands for the house always winning on expected value",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a destination that symbolizes gambling and mathematical house edge",
+      "weight": "setup",
+      "checkable": true
     },
     {
       "name": "Bellagio",
       "kind": "place",
-      "disambiguation": "Las Vegas casino resort",
+      "disambiguation": "Las Vegas casino and hotel",
       "quotes": [
         "Bellagio"
       ],
-      "role": "a famously lavish casino landmark that shows how much money the house makes",
+      "role": "a luxury casino whose extravagant fountains represent gambling industry profits",
       "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "DraftKings",
+      "kind": "brand",
+      "disambiguation": "sports betting app",
+      "quotes": [
+        "DraftKings"
+      ],
+      "role": "a sports betting platform whose advertising budget illustrates house edge",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Ken Jennings",
+      "kind": "person",
+      "disambiguation": "Jeopardy champion",
+      "quotes": [
+        "Ken Jennings"
+      ],
+      "role": "a legendary trivia champion who represents an unrealistic standard for memorization",
+      "weight": "setup",
       "checkable": true,
-      "swappable": true
+      "swappable": false
+    },
+    {
+      "name": "Jeopardy",
+      "kind": "tv_show",
+      "disambiguation": "US quiz show",
+      "quotes": [
+        "Jeopardy"
+      ],
+      "role": "a quiz show that represents mastery through memorization",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Detroit Lions",
+      "kind": "brand",
+      "disambiguation": "NFL team",
+      "quotes": [
+        "Detroit Lions"
+      ],
+      "role": "a sports team known for predictable disappointment",
+      "weight": "punchline",
+      "checkable": true
     },
     {
       "name": "Canvas",
@@ -117,22 +214,20 @@
       "quotes": [
         "Canvas"
       ],
-      "role": "the everyday school platform where coursework lives",
+      "role": "a course platform where assignments are distributed",
       "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "ChatGPT",
       "kind": "brand",
-      "disambiguation": null,
+      "disambiguation": "AI chatbot",
       "quotes": [
         "ChatGPT"
       ],
-      "role": "a popular AI tool students might use to cheat, known for sounding sure while being wrong",
-      "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "role": "an AI tool that produces confident but unreliable answers",
+      "weight": "punchline",
+      "checkable": true
     },
     {
       "name": "fantasy football",
@@ -141,10 +236,9 @@
       "quotes": [
         "fantasy football"
       ],
-      "role": "a hobby of confident predictions that routinely go wrong, used for self-deprecation",
+      "role": "a popular game known for unpredictable outcomes and overconfident players",
       "weight": "punchline",
-      "checkable": false,
-      "swappable": true
+      "checkable": false
     }
   ]
 }

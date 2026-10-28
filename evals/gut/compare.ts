@@ -16,7 +16,7 @@ async function main() {
   let gapSum = 0;
   for (const sample of SAMPLES) {
     let analysis: Analysis | undefined;
-    await runAnalysis({ text: sample.text, presetId: sample.presetId, cities: [] }, (e) => {
+    await runAnalysis({ text: sample.text, presetId: sample.presetId, cities: [], performerId: sample.performer?.id }, (e) => {
       if (e.type === "done") analysis = e.analysis;
     });
     const rows = gutRows(analysis!.references);

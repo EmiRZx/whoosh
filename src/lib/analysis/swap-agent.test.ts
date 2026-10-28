@@ -77,6 +77,19 @@ describe("runSwapAgent", () => {
     expect(result).toEqual({ swaps: [], note: "Nothing checked beats it." });
   });
 
+  it("asks for a submission a few turns before the turn limit", async () => {
+    const search = (i: number): Block[] => [{ type: "tool_use", id: `t${i}`, name: "find_tags", input: { query: "antacid" } }];
+    const { client, sent } = scripted([
+      ...Array.from({ length: 10 }, (_, i) => search(i)),
+      [{ type: "tool_use", id: "s", name: "submit_swaps", input: { swaps: [], note: "Out of turns." } }],
+      [{ type: "text", text: "Submitted." }],
+    ]);
+    const result = await runSwapAgent(client, qloo, ctx());
+    expect(lastToolResult(sent[9])).toMatch(/^Error: Qloo was called/);
+    expect(lastToolResult(sent[10])).toBe(`Not run. ${WRAP_UP}`);
+    expect(result.note).toBe("Out of turns.");
+  });
+
   it("searches as usual before then", async () => {
     const { client, sent } = scripted(turns({ type: "tool_use", id: "t1", name: "find_tags", input: { query: "antacid" } }));
     await runSwapAgent(client, qloo, ctx(), { wrapUpAt: Date.now() + 60_000 });

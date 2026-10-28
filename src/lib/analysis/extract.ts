@@ -58,7 +58,7 @@ Events, memes, eras, holidays, sports leagues used generically and trends (Y2K, 
 
 Fields:
 - name: the canonical name you would type into a search box. For a song, the artist's name, not the song title.
-- kind: movie, tv_show, artist (musicians and bands), person (any other public figure), brand (companies, products, apps, chains, franchises), book (books and authors), video_game, podcast, place (a specific venue, restaurant location or landmark), destination (a city, neighborhood, region or country), other.
+- kind: movie, tv_show, artist (musicians and bands), person (any other public figure), brand (companies, products, apps, chains, franchises, sports teams), book (books and authors), video_game, podcast, place (a specific venue, restaurant location or landmark), destination (a city, neighborhood, region or country), other.
 - disambiguation: when the name alone is ambiguous, a few words that pick the right entity ("US sitcom 2005-2013", "learning management software"); otherwise null.
 - quotes: each span copied from the text exactly, character for character, so it can be highlighted. Use the shortest span that carries the reference, usually just the name: "Clippy", not "Clippy was the future of artificial intelligence"; "Ross", not "Ross was a discount store". A song title, catchphrase or slogan that carries the reference is its own quote.
 - role: the job the reference does in this line, phrased so someone could choose a substitute that does the same job. Describe the job, not the entity: "a shorthand for 90s TV romance", "a cheap chain restaurant that signals comfort over sophistication", "a dated device that dates the speaker".

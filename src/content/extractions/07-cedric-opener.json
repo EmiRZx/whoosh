@@ -1,0 +1,239 @@
+{
+  "references": [
+    {
+      "name": "The Original Kings of Comedy",
+      "kind": "movie",
+      "disambiguation": null,
+      "quotes": [
+        "The Original Kings of Comedy",
+        "one of the Original Kings of Comedy"
+      ],
+      "role": "a cultural touchstone that establishes the speaker's legitimacy and the headliner's credentials",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Barbershop",
+      "kind": "movie",
+      "disambiguation": "2002 comedy film",
+      "quotes": [
+        "Barbershop"
+      ],
+      "role": "a Black cultural classic used to establish comedic education",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Martin",
+      "kind": "tv_show",
+      "disambiguation": "US sitcom 1992-1997",
+      "quotes": [
+        "Martin"
+      ],
+      "role": "a Black cultural classic used to establish comedic education",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "DoorDash",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "DoorDash",
+        "DoorDash"
+      ],
+      "role": "a modern convenience app that signals generational difference",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Waffle House",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Waffle House"
+      ],
+      "role": "a working-class American restaurant that contrasts with app delivery culture",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Kai Cenat",
+      "kind": "person",
+      "disambiguation": "streamer and content creator",
+      "quotes": [
+        "Kai Cenat"
+      ],
+      "role": "a Gen Z cultural figure that replaces traditional family mentorship",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "TikTok",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "TikTok"
+      ],
+      "role": "a platform that represents questionable modern sources of life advice",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Stanley",
+      "kind": "brand",
+      "disambiguation": "tumbler and drinkware brand",
+      "quotes": [
+        "Stanley cup"
+      ],
+      "role": "a trendy product that represents Gen Z consumer culture and emotional attachment",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Crumbl",
+      "kind": "brand",
+      "disambiguation": "cookie chain",
+      "quotes": [
+        "Crumbl cookie"
+      ],
+      "role": "a viral food trend significant enough to end a relationship over",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Duolingo",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Duolingo"
+      ],
+      "role": "a language app known for its persistent notification mascot",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Twitch",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Twitch"
+      ],
+      "role": "a platform for watching others play video games, used to explain Gen Z entertainment",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Family Feud",
+      "kind": "tv_show",
+      "disambiguation": null,
+      "quotes": [
+        "Family Feud"
+      ],
+      "role": "a traditional TV game show used to explain modern streaming culture",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Steve Harvey",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Steve Harvey"
+      ],
+      "role": "the game show host who viewers yell at, used in a generational comparison",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Erewhon",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Erewhon"
+      ],
+      "role": "an expensive LA grocery store that represents absurd pricing",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Los Angeles",
+      "kind": "destination",
+      "disambiguation": null,
+      "quotes": [
+        "LA"
+      ],
+      "role": "a city that connotes expensive lifestyle trends",
+      "weight": "color",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Cracker Barrel",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Cracker Barrel"
+      ],
+      "role": "an affordable family restaurant chain that contrasts with expensive LA food",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Love Island",
+      "kind": "tv_show",
+      "disambiguation": null,
+      "quotes": [
+        "Love Island"
+      ],
+      "role": "a reality show about attractive people that serves as relationship torture",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "St. Louis",
+      "kind": "destination",
+      "disambiguation": null,
+      "quotes": [
+        "St. Louis"
+      ],
+      "role": "the performance city invoked for local connection",
+      "weight": "color",
+      "checkable": true,
+      "swappable": false
+    },
+    {
+      "name": "Uber",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Uber"
+      ],
+      "role": "a ride-sharing service used to frame a local joke",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Nelly",
+      "kind": "artist",
+      "disambiguation": "rapper from St. Louis",
+      "quotes": [
+        "Nelly"
+      ],
+      "role": "a St. Louis artist used for local flavor and a joke about the ride",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Cedric the Entertainer",
+      "kind": "person",
+      "disambiguation": null,
+      "quotes": [
+        "Cedric the Entertainer"
+      ],
+      "role": "the headliner being introduced",
+      "weight": "punchline",
+      "checkable": true
+    }
+  ]
+}

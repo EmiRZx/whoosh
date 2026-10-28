@@ -1,0 +1,143 @@
+{
+  "picks": {
+    "CBS This Morning": {
+      "name": "CBS Mornings",
+      "type": "urn:entity:tv_show",
+      "year": 2012
+    },
+    "Star Wars": {
+      "name": "Star Wars: Episode IV - A New Hope",
+      "type": "urn:entity:movie"
+    },
+    "Twitter": {
+      "name": "X (Formerly Twitter)",
+      "type": "urn:entity:brand"
+    }
+  },
+  "gut": {
+    "college": {
+      "Goldman Sachs": {
+        "verdict": "risky",
+        "room_vs_average": -10,
+        "biggest_fans": "25_to_29",
+        "reason": "Known by name, but Wall Street is mostly business-major territory here."
+      },
+      "Harriet Tubman": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "24_and_younger",
+        "reason": "Fresh from school history lessons; young progressive crowd admires her."
+      },
+      "Savannah Guthrie": {
+        "verdict": "risky",
+        "room_vs_average": -45,
+        "biggest_fans": "55_and_older",
+        "reason": "Morning TV host; undergrads barely watch network TV."
+      },
+      "Today": {
+        "verdict": "risky",
+        "room_vs_average": -40,
+        "biggest_fans": "55_and_older",
+        "reason": "Known brand, but network morning shows are their parents' thing."
+      },
+      "Norah O'Donnell": {
+        "verdict": "dead",
+        "room_vs_average": -65,
+        "biggest_fans": "55_and_older",
+        "reason": "Network news anchor few college students could name."
+      },
+      "CBS This Morning": {
+        "verdict": "dead",
+        "room_vs_average": -65,
+        "biggest_fans": "55_and_older",
+        "reason": "Renamed, older-skewing morning show; off this room's radar."
+      },
+      "Jake Tapper": {
+        "verdict": "risky",
+        "room_vs_average": -40,
+        "biggest_fans": "55_and_older",
+        "reason": "Politics-junkie students know him; most of the room doesn't."
+      },
+      "CNN": {
+        "verdict": "risky",
+        "room_vs_average": -25,
+        "biggest_fans": "55_and_older",
+        "reason": "Everyone knows CNN, but cable news viewership skews old."
+      },
+      "Rachel McAdams": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "25_to_29",
+        "reason": "Mean Girls and The Notebook keep her beloved by young women."
+      },
+      "Mark Ruffalo": {
+        "verdict": "lands",
+        "room_vs_average": 15,
+        "biggest_fans": "25_to_29",
+        "reason": "The Hulk; MCU made him familiar and liked by young adults."
+      },
+      "Liev Schreiber": {
+        "verdict": "dead",
+        "room_vs_average": -45,
+        "biggest_fans": "45_to_54",
+        "reason": "Ray Donovan star; most undergrads couldn't place his face."
+      },
+      "Spotlight": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "55_and_older",
+        "reason": "2015 prestige drama from their childhood; some film students know it."
+      },
+      "Star Wars": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "35_to_44",
+        "reason": "Universal pop culture; the sequels and Disney+ kept it alive for them."
+      },
+      "BuzzFeed": {
+        "verdict": "risky",
+        "room_vs_average": 0,
+        "biggest_fans": "30_to_34",
+        "reason": "Faded millennial brand; they know quizzes and Unsolved, not the newsroom."
+      },
+      "The Washington Post": {
+        "verdict": "risky",
+        "room_vs_average": -25,
+        "biggest_fans": "55_and_older",
+        "reason": "Known legacy paper, but students rarely read or subscribe."
+      },
+      "Kendall Jenner": {
+        "verdict": "lands",
+        "room_vs_average": 30,
+        "biggest_fans": "24_and_younger",
+        "reason": "Kardashian-Jenner fame and Instagram dominance hit this age group squarely."
+      },
+      "Twitter": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "25_to_29",
+        "reason": "Now X, but they know it and still use it for buzz."
+      },
+      "Facebook": {
+        "verdict": "risky",
+        "room_vs_average": -45,
+        "biggest_fans": "55_and_older",
+        "reason": "They know it but see it as their aunt's platform."
+      }
+    }
+  },
+  "swaps": {
+    "Harriet Tubman": {
+      "swaps": [
+        {
+          "name": "Hamilton",
+          "type": "urn:entity:movie",
+          "year": 2020,
+          "rewrite": "Earn me some serious Hamiltons.",
+          "why": "The same cash slang built on the face of a banknote (the $10 bill), and this room knows Hamilton from the musical."
+        }
+      ],
+      "note": "Measured through the Hamilton musical film, which is how this crowd knows the name; the line loses the newly-announced-$20 angle, which has faded anyway."
+    }
+  }
+}

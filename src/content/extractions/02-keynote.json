@@ -3,27 +3,68 @@
     {
       "name": "BlackBerry",
       "kind": "brand",
-      "disambiguation": "smartphone brand",
+      "disambiguation": null,
       "quotes": [
         "BlackBerry"
       ],
-      "role": "a once-cutting-edge device that now dates the speaker's career",
-      "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "role": "a dated mobile device that marks the speaker's tenure in tech",
+      "weight": "color",
+      "checkable": true
     },
     {
-      "name": "Microsoft Office",
+      "name": "AOL",
       "kind": "brand",
       "disambiguation": null,
       "quotes": [
-        "Clippy",
-        "It looks like you're writing a letter!"
+        "AOL"
       ],
-      "role": "a laughably primitive software assistant once mistaken for the future of AI",
+      "role": "a dated chat platform that dates the speaker",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "RadioShack",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "RadioShack"
+      ],
+      "role": "a defunct electronics retailer that signals the speaker's era",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Slack",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Slack"
+      ],
+      "role": "a workplace chat app that represents modern communication tool sprawl",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Microsoft Teams",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Microsoft Teams"
+      ],
+      "role": "a workplace chat app that represents modern communication tool sprawl",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Notion",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Notion"
+      ],
+      "role": "a productivity tool that represents over-documentation culture",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Spotify",
@@ -32,83 +73,152 @@
       "quotes": [
         "Spotify"
       ],
-      "role": "a music app whose listening stats expose the speaker's embarrassing habits",
+      "role": "a music streaming service that tracks listening habits intimately",
       "weight": "setup",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "The Killers",
       "kind": "artist",
-      "disambiguation": "American rock band",
+      "disambiguation": null,
       "quotes": [
         "Mr. Brightside"
       ],
-      "role": "an overplayed singalong anthem the speaker is sheepish about having on endless repeat",
+      "role": "a band with an inescapable 2000s anthem that people play obsessively",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
     },
     {
       "name": "Duolingo",
       "kind": "brand",
       "disambiguation": null,
       "quotes": [
-        "Duolingo owl"
+        "Duolingo"
       ],
-      "role": "an app mascot famous for guilt-tripping people who quit",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a language app notorious for guilt-inducing notification tactics",
+      "weight": "setup",
+      "checkable": true
     },
     {
       "name": "Netflix",
       "kind": "brand",
       "disambiguation": null,
       "quotes": [
-        "Netflix",
-        "Are you still watching?"
+        "Netflix"
       ],
-      "role": "a streaming service whose idle check-in prompt reads as oddly personal concern",
-      "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "role": "a streaming service whose check-in message has become a culturally resonant moment",
+      "weight": "setup",
+      "checkable": true
     },
     {
-      "name": "Apple",
-      "kind": "brand",
-      "disambiguation": "consumer electronics company",
+      "name": "Kai Cenat",
+      "kind": "person",
+      "disambiguation": "streamer and content creator",
       "quotes": [
-        "iPod"
+        "Kai Cenat"
       ],
-      "role": "a breakthrough gadget everyone adored, the benchmark for a beloved product",
-      "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "role": "a current pop culture figure that signals generational knowledge gaps",
+      "weight": "punchline",
+      "checkable": true
     },
     {
-      "name": "Breaking Bad",
+      "name": "Love Island",
       "kind": "tv_show",
       "disambiguation": null,
       "quotes": [
-        "Breaking Bad"
+        "Love Island"
       ],
-      "role": "a near-universally acclaimed TV show as an example of something people loved",
-      "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "role": "a reality TV show the speaker initially misunderstood",
+      "weight": "punchline",
+      "checkable": true
     },
     {
-      "name": "Pret A Manger",
+      "name": "Stanley",
+      "kind": "brand",
+      "disambiguation": "drinkware and tumbler company",
+      "quotes": [
+        "Stanley"
+      ],
+      "role": "a trendy expensive water bottle brand that signals generational taste and status",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "WeWork",
       "kind": "brand",
       "disambiguation": null,
       "quotes": [
-        "Pret"
+        "WeWork"
       ],
-      "role": "an everyday sandwich chain that deflates the grand examples with a humble, reliable pleasure",
+      "role": "a failed startup that exemplifies industry excess and creative accounting",
       "weight": "punchline",
-      "checkable": true,
-      "swappable": true
+      "checkable": true
+    },
+    {
+      "name": "Clubhouse",
+      "kind": "brand",
+      "disambiguation": "audio social networking app",
+      "quotes": [
+        "Clubhouse"
+      ],
+      "role": "a short-lived social app that represents tech industry hype cycles",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Silicon Valley",
+      "kind": "tv_show",
+      "disambiguation": "HBO comedy series 2014-2019",
+      "quotes": [
+        "Silicon Valley"
+      ],
+      "role": "a satirical show that captured tech industry absurdity",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "Succession",
+      "kind": "tv_show",
+      "disambiguation": "HBO drama series",
+      "quotes": [
+        "Succession"
+      ],
+      "role": "a drama about corporate power and dysfunction",
+      "weight": "punchline",
+      "checkable": true
+    },
+    {
+      "name": "iPod",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "iPod"
+      ],
+      "role": "an iconic beloved product that represents ideal design and product-market fit",
+      "weight": "setup",
+      "checkable": true
+    },
+    {
+      "name": "Blue Bottle",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Blue Bottle"
+      ],
+      "role": "a premium coffee brand that signals artisanal quality people love",
+      "weight": "color",
+      "checkable": true
+    },
+    {
+      "name": "Allbirds",
+      "kind": "brand",
+      "disambiguation": null,
+      "quotes": [
+        "Allbirds"
+      ],
+      "role": "a trendy shoe brand whose cool factor evaporates when parents adopt it",
+      "weight": "punchline",
+      "checkable": true
     },
     {
       "name": "Steve Jobs",
@@ -116,24 +226,11 @@
       "disambiguation": null,
       "quotes": [
         "Steve Jobs",
-        "Stay hungry, stay foolish."
+        "Stay hungry, stay foolish"
       ],
-      "role": "a revered tech visionary whose famous motto sets up a self-deprecating twist",
-      "weight": "setup",
-      "checkable": true,
-      "swappable": false
-    },
-    {
-      "name": "Jony Ive",
-      "kind": "person",
-      "disambiguation": null,
-      "quotes": [
-        "Jony Ive"
-      ],
-      "role": "a celebrated product designer standing for the gold standard of elegant design",
-      "weight": "color",
-      "checkable": true,
-      "swappable": true
+      "role": "a tech icon whose famous motto is being riffed on for self-deprecating effect",
+      "weight": "punchline",
+      "checkable": true
     }
   ]
 }

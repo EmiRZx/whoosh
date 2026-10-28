@@ -79,7 +79,10 @@ export interface AnalyzedReference {
   };
   signals?: Signals;
   gut?: GutCall;
+  // The verdict in the room's first city (or the room as a whole).
   verdict: Verdict;
+  // The verdict in each of the room's cities, when it has several.
+  cityVerdicts?: Record<string, Verdict>;
   reasons: string[];
   swaps: Swap[];
   // The swap agent's note, e.g. why it found fewer than three substitutes.

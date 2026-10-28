@@ -1,6 +1,6 @@
 import { AGE_BUCKETS, type AgeBucket } from "../qloo/api";
 import type { ExtractedReference } from "./extract";
-import type { Measured } from "./measure";
+import type { CityRank, Measured } from "./measure";
 import type { Verdict } from "./types";
 
 export const AGE_LABEL: Record<AgeBucket, string> = {
@@ -75,10 +75,38 @@ function call(t: Tier, w: number | undefined, hasData: boolean): Verdict {
   }
 }
 
-// Ranking this high among the big-city panel counts as a local favorite.
+// A city that ranks a reference this high among the big-city panel knows it
+// better than the country does: one step up. One in the panel's bottom few
+// knows it worse: one step down, unless everyone knows it anyway (Netflix
+// plays everywhere). A short ranking says too little about the bottom.
 export const LOCAL_FAVORITE_RANK = 3;
+export const COLD_SPOT_FROM_BOTTOM = 4;
+const MIN_PANEL_FOR_COLD = 12;
 
-export function judge(m: Measured, entityType: string, weight: ExtractedReference["weight"]): { verdict: Verdict; reasons: string[] } {
+const UP: Record<Verdict, Verdict> = { dead: "risky", risky: "lands", lands: "lands", unchecked: "unchecked" };
+const DOWN: Record<Verdict, Verdict> = { lands: "risky", risky: "dead", dead: "dead", unchecked: "unchecked" };
+
+export type CityStanding = "favorite" | "cold" | "typical";
+
+export function cityStanding(c: CityRank, t: Tier): CityStanding {
+  if (c.rank <= LOCAL_FAVORITE_RANK) return "favorite";
+  if (t !== "universal" && c.of >= MIN_PANEL_FOR_COLD && c.rank > c.of - COLD_SPOT_FROM_BOTTOM) return "cold";
+  return "typical";
+}
+
+export function cityVerdict(base: Verdict, standing: CityStanding): Verdict {
+  return standing === "favorite" ? UP[base] : standing === "cold" ? DOWN[base] : base;
+}
+
+export interface Judgement {
+  // The verdict in the room's first city (the room as a whole without cities).
+  verdict: Verdict;
+  // The verdict in each city, when the room has cities Qloo could rank.
+  cityVerdicts?: Record<string, Verdict>;
+  reasons: string[];
+}
+
+export function judge(m: Measured, entityType: string, weight: ExtractedReference["weight"]): Judgement {
   const pop = m.recognition;
   const w = m.roomIndex;
   const t = tier(pop);
@@ -103,13 +131,19 @@ export function judge(m: Measured, entityType: string, weight: ExtractedReferenc
     if (fans && lift > 0.05) reasons.push(`Its biggest fans are ${AGE_LABEL[fans]} (+${pct(lift)}).`);
   }
 
-  let verdict = call(t, w, pop !== undefined);
-  // A reference that tops every tour city is a local thing: the room will
-  // know it even if the national numbers are lukewarm.
-  if (verdict === "risky" && m.cities?.length && m.cities.every((c) => c.rank <= LOCAL_FAVORITE_RANK)) {
-    verdict = "lands";
-    reasons.push(`A local favorite: ${m.cities.map((c) => `#${c.rank} of ${c.of} big cities in ${c.name.split(",")[0]}`).join(", ")}.`);
+  const base = call(t, w, pop !== undefined);
+  let cityVerdicts: Record<string, Verdict> | undefined;
+  if (m.cities?.length) {
+    cityVerdicts = {};
+    for (const c of m.cities) {
+      const standing = cityStanding(c, t);
+      cityVerdicts[c.name] = cityVerdict(base, standing);
+      const where = `#${c.rank} of ${c.of} big cities in ${c.name.split(",")[0]}`;
+      if (standing === "favorite") reasons.push(`A local favorite: ${where}.`);
+      else if (standing === "cold") reasons.push(`A cold spot for it: ${where}, so fewer people there know it.`);
+    }
   }
+  const verdict = (m.cities?.length && cityVerdicts?.[m.cities[0].name]) || base;
   if (verdict === "risky" && (t === "universal" || t === "known") && w !== undefined) {
     reasons.push(`They'll know it, but it isn't this room's thing${weight === "punchline" ? ", and the joke depends on it" : ""}.`);
   }
@@ -118,5 +152,11 @@ export function judge(m: Measured, entityType: string, weight: ExtractedReferenc
   if (verdict === "lands" && w !== undefined && w <= -0.05) {
     reasons.push("Cooler than average, but well enough known that most of this room will still get it.");
   }
-  return { verdict, reasons };
+  return { verdict, cityVerdicts, reasons };
+}
+
+// The worst verdict a reference gets anywhere on the tour.
+export function weakest(r: { verdict: Verdict; cityVerdicts?: Record<string, Verdict> }): Verdict {
+  const all = [r.verdict, ...Object.values(r.cityVerdicts ?? {})];
+  return all.includes("dead") ? "dead" : all.includes("risky") ? "risky" : r.verdict;
 }

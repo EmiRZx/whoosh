@@ -1,0 +1,202 @@
+{
+  "picks": {
+    "Crumbl": {
+      "name": "Crumbl Cookies",
+      "type": "urn:entity:brand"
+    }
+  },
+  "gut": {
+    "performer": {
+      "The Original Kings of Comedy": {
+        "verdict": "lands",
+        "room_vs_average": 80,
+        "biggest_fans": "55_and_older",
+        "reason": "Cedric's signature work, foundational to this audience."
+      },
+      "Barbershop": {
+        "verdict": "lands",
+        "room_vs_average": 60,
+        "biggest_fans": "45_to_54",
+        "reason": "Black comedy classic from 2002, Cedric starred in it."
+      },
+      "Martin": {
+        "verdict": "lands",
+        "room_vs_average": 70,
+        "biggest_fans": "45_to_54",
+        "reason": "Essential nineties Black sitcom, beloved by this demographic."
+      },
+      "DoorDash": {
+        "verdict": "lands",
+        "room_vs_average": -30,
+        "biggest_fans": "24_and_younger",
+        "reason": "Universally known but used less by older majority."
+      },
+      "Waffle House": {
+        "verdict": "lands",
+        "room_vs_average": 40,
+        "biggest_fans": "45_to_54",
+        "reason": "Working-class American institution, strong generational appeal here."
+      },
+      "Kai Cenat": {
+        "verdict": "dead",
+        "room_vs_average": -70,
+        "biggest_fans": "24_and_younger",
+        "reason": "Gen Z streamer, virtually unknown to older majority."
+      },
+      "TikTok": {
+        "verdict": "lands",
+        "room_vs_average": -50,
+        "biggest_fans": "24_and_younger",
+        "reason": "They know it exists but don't use it."
+      },
+      "Stanley": {
+        "verdict": "risky",
+        "room_vs_average": -60,
+        "biggest_fans": "25_to_29",
+        "reason": "Viral tumbler trend mostly among younger women, not here."
+      },
+      "Crumbl": {
+        "verdict": "risky",
+        "room_vs_average": -55,
+        "biggest_fans": "24_and_younger",
+        "reason": "Viral Gen Z cookie trend, likely unknown to majority."
+      },
+      "Duolingo": {
+        "verdict": "lands",
+        "room_vs_average": -10,
+        "biggest_fans": "25_to_29",
+        "reason": "Widely known app, owl notification joke works across ages."
+      },
+      "Twitch": {
+        "verdict": "risky",
+        "room_vs_average": -65,
+        "biggest_fans": "24_and_younger",
+        "reason": "Gaming platform foreign to older viewers dominating this room."
+      },
+      "Family Feud": {
+        "verdict": "lands",
+        "room_vs_average": 50,
+        "biggest_fans": "55_and_older",
+        "reason": "Long-running game show beloved by older Black audiences."
+      },
+      "Steve Harvey": {
+        "verdict": "lands",
+        "room_vs_average": 70,
+        "biggest_fans": "55_and_older",
+        "reason": "Major Black entertainer from same generation as Cedric."
+      },
+      "Erewhon": {
+        "verdict": "risky",
+        "room_vs_average": -50,
+        "biggest_fans": "25_to_29",
+        "reason": "Niche LA luxury reference, only known through social media."
+      },
+      "Los Angeles": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "30_to_34",
+        "reason": "Major US city, universally known."
+      },
+      "Cracker Barrel": {
+        "verdict": "lands",
+        "room_vs_average": 35,
+        "biggest_fans": "55_and_older",
+        "reason": "Traditional family restaurant appeals to older demographic here."
+      },
+      "Love Island": {
+        "verdict": "risky",
+        "room_vs_average": -40,
+        "biggest_fans": "24_and_younger",
+        "reason": "Young-skewing reality show, not this older audience's preference."
+      },
+      "St. Louis": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "35_to_44",
+        "reason": "Major US city, universally known, hometown show tonight."
+      },
+      "Uber": {
+        "verdict": "lands",
+        "room_vs_average": -10,
+        "biggest_fans": "25_to_29",
+        "reason": "Universal service, slightly more used by younger people."
+      },
+      "Nelly": {
+        "verdict": "lands",
+        "room_vs_average": 55,
+        "biggest_fans": "45_to_54",
+        "reason": "St. Louis hip-hop icon from early 2000s, beloved locally."
+      },
+      "Cedric the Entertainer": {
+        "verdict": "lands",
+        "room_vs_average": 200,
+        "biggest_fans": "55_and_older",
+        "reason": "The headliner, this room is literally his fanbase."
+      }
+    }
+  },
+  "swaps": {
+    "DoorDash": {
+      "swaps": [
+        {
+          "name": "Grubhub",
+          "type": "urn:entity:brand",
+          "rewrite": "Can I Grubhub a snack?\" He said, \"We don't Grubhub in this family.",
+          "why": "Grubhub lands with this room — they like it 16% more than average. Its biggest fans are people 55 and over, which is 53% of this crowd. It does the same job: a modern food delivery app that shows the generational difference between ordering in versus going out to Waffle House."
+        }
+      ],
+      "note": "Only one substitute beats the original: Grubhub. Other delivery apps (Postmates, Instacart, Seamless) all skew too young or perform worse with this older audience."
+    },
+    "Stanley": {
+      "swaps": [
+        {
+          "name": "TERVIS",
+          "type": "urn:entity:brand",
+          "rewrite": "I get my emotional support from a Tervis tumbler.",
+          "why": "Tervis is another trendy insulated drinkware brand that this room likes 19% more than average—the opposite of Stanley, which they dislike. It ranks #4 in St. Louis and #5 in Atlanta, and keeps the same joke about getting emotional support from an overpriced cup."
+        }
+      ],
+      "note": "Only Tervis beats the original while doing the same job—it's another status-symbol drink container that this older crowd actually likes."
+    },
+    "Crumbl": {
+      "swaps": [
+        {
+          "name": "Auntie Anne's",
+          "type": "urn:entity:brand",
+          "rewrite": "My last girlfriend and I broke up over an Auntie Anne's pretzel, and if you've had one, you know I was right.",
+          "why": "Auntie Anne's lands well with this crowd—they like it 17% more than average, and its biggest fans are people 55 and over, who make up 53% of this room. It ranks #10 in St. Louis and #5 in Atlanta. It keeps the same job: a food item absurd enough to end a relationship over, but the punchline stays intact."
+        },
+        {
+          "name": "Dunkin' Donuts",
+          "type": "urn:entity:brand",
+          "rewrite": "My last girlfriend and I broke up over a Dunkin' donut, and if you've had one, you know I was right.",
+          "why": "Dunkin' is universally known and this room likes it only 6% less than average—much better than Crumbl's 38% deficit. While its biggest fans skew younger, it still lands here without the generational disconnect. It ranks #12 in St. Louis and #11 in Atlanta, and keeps the absurdity of breaking up over mediocre food."
+        }
+      ],
+      "note": "Found two solid swaps that land better with your older audience: Auntie Anne's is actually more popular with people 55+, and Dunkin' is universally known without the Gen Z baggage."
+    },
+    "Twitch": {
+      "swaps": [],
+      "note": "The reference should stay. The joke works because Twitch is slightly outside this room's world - the generation gap between mom and the platform is what sets up the comparison to dad watching Family Feud. A substitute this room knows better would flatten that dynamic."
+    },
+    "Family Feud": {
+      "swaps": [],
+      "note": "The only substitute that lands better than Family Feud with this room is Whose Line Is It Anyway?, but it's an improv comedy show—you don't yell at it the way you yell at game show contestants, which breaks the Twitch comparison."
+    },
+    "Erewhon": {
+      "swaps": [
+        {
+          "name": "Whole Foods Market",
+          "type": "urn:entity:brand",
+          "rewrite": "I went to Whole Foods once.",
+          "why": "This room likes it 6% less than average but that still beats Erewhon by 20 points, and 55+ fans (who make up over half this crowd) find it more familiar than the original."
+        }
+      ],
+      "note": "Only Whole Foods fits—it's known for expensive smoothies and has LA stores so the next sentence still works. Wegmans and The Fresh Market test well but aren't famous for absurd pricing."
+    },
+    "Kai Cenat": {
+      "swaps": [],
+      "note": "Keep Kai Cenat - the joke depends on the generational gap. The line works because he's a Gen Z streaming personality this older room doesn't connect with the way younger people do, which is exactly the point: \"we don't have uncles, we have internet parasocial relationships.\" Swapping to an established comedian from their own generation like Anthony Anderson or D.L. Hughley would erase the disconnect the joke needs."
+    }
+  }
+}

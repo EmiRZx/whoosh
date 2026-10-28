@@ -43,6 +43,8 @@ const subscribe = (onChange: () => void) => {
   };
 };
 
+export const hasLastRun = () => !!read();
+
 export function useLastRun(): LastRun | undefined {
   const raw = useSyncExternalStore(subscribe, read, () => null);
   return useMemo(() => {

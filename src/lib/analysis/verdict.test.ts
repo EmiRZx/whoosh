@@ -62,3 +62,44 @@ describe("judge on faded references", () => {
     expect(judge({ recognition: 0.2, roomIndex: -0.1, profile: { age, gender: {} } }, "urn:entity:tv_show", "setup").verdict).toBe("dead");
   });
 });
+
+describe("city verdicts", () => {
+  const city = (name: string, rank: number, of = 26) => ({ name, rank, of });
+
+  it("moves a regional chain up where it's a favorite and down where it's a cold spot (Whataburger, college room)", () => {
+    const r = judge(
+      { recognition: 0.94, roomIndex: 0.3, cities: [city("Ann Arbor, MI", 23), city("Austin, TX", 1)] },
+      "urn:entity:brand",
+      "punchline",
+    );
+    expect(r.cityVerdicts).toEqual({ "Ann Arbor, MI": "risky", "Austin, TX": "lands" });
+    // The first city is the room's verdict.
+    expect(r.verdict).toBe("risky");
+    expect(r.reasons.join(" ")).toMatch(/cold spot for it: #23 of 26 big cities in Ann Arbor/);
+    expect(r.reasons.join(" ")).toMatch(/local favorite: #1 of 26 big cities in Austin/);
+  });
+
+  it("lifts a faded reference one step where it's local (Skyline Chili-style)", () => {
+    const r = judge({ recognition: 0.4, roomIndex: -0.1, cities: [city("Cincinnati, OH", 1)] }, "urn:entity:brand", "setup");
+    expect(r.verdict).toBe("risky");
+  });
+
+  it("never marks down a household name for a city", () => {
+    const r = judge({ recognition: 1, roomIndex: 0.1, cities: [city("Birmingham, AL", 26)] }, "urn:entity:brand", "color");
+    expect(r.verdict).toBe("lands");
+  });
+
+  it("ignores the bottom of a short ranking", () => {
+    const r = judge({ recognition: 0.9, roomIndex: 0, cities: [city("Lagos", 6, 6)] }, "urn:entity:artist", "color");
+    expect(r.verdict).toBe("lands");
+  });
+});
+
+describe("weakest", () => {
+  it("is the worst verdict anywhere on the tour", async () => {
+    const { weakest } = await import("./verdict");
+    expect(weakest({ verdict: "lands", cityVerdicts: { A: "lands", B: "risky" } })).toBe("risky");
+    expect(weakest({ verdict: "risky", cityVerdicts: { A: "dead" } })).toBe("dead");
+    expect(weakest({ verdict: "unchecked" })).toBe("unchecked");
+  });
+});

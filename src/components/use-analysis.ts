@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import type { Analysis, AnalysisEvent, AnalyzedReference, LocalHooks } from "@/lib/analysis/types";
+import { weakest } from "@/lib/analysis/verdict";
 
 export interface AnalysisRequest {
   text: string;
@@ -114,7 +115,8 @@ export function useAnalysis() {
               const r = await fetch("/api/swap", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...request, reference, others: names(key) }),
+                // Weak in some city of the tour, if not in the first one.
+                body: JSON.stringify({ ...request, reference: reference && { ...reference, verdict: weakest(reference) }, others: names(key) }),
                 signal: ctrl.signal,
               });
               const body = await r.json();

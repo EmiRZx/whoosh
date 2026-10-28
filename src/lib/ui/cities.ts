@@ -1,6 +1,7 @@
 // The script's references against the tour's cities, shared by the city
 // table on screen and the exported notes.
-import type { AnalyzedReference } from "@/lib/analysis/types";
+import type { AnalyzedReference, Verdict } from "@/lib/analysis/types";
+import { roomScore } from "./score";
 
 const median = (xs: number[]) => {
   const s = [...xs].sort((a, b) => a - b);
@@ -38,4 +39,24 @@ export function cityTable(references: AnalyzedReference[]): CityTable | undefine
   });
   const best = cities.length > 1 ? standing.indexOf(Math.min(...standing)) : -1;
   return { cities, rows, panel, typical: standing.map((s) => Math.round(s * (panel - 1)) + 1), best, rank };
+}
+
+// A reference's verdict in one city of the tour (the room's verdict when
+// Qloo couldn't rank it there).
+export function verdictIn(ref: Pick<AnalyzedReference, "verdict" | "cityVerdicts">, city: string | undefined): Verdict {
+  return (city && ref.cityVerdicts?.[city]) || ref.verdict;
+}
+
+// The script read for one city: every reference takes its verdict there.
+export function readFor<T extends Pick<AnalyzedReference, "verdict" | "cityVerdicts">>(refs: T[], city: string | undefined): T[] {
+  if (!city) return refs;
+  return refs.map((r) => {
+    const v = verdictIn(r, city);
+    return v === r.verdict ? r : { ...r, verdict: v };
+  });
+}
+
+// The room score in each city of the tour.
+export function cityScores(refs: AnalyzedReference[], cities: string[]): (number | undefined)[] {
+  return cities.map((city) => roomScore(refs.map((r) => ({ verdict: verdictIn(r, city), weight: r.extracted.weight }))));
 }

@@ -1,0 +1,145 @@
+{
+  "picks": {},
+  "gut": {
+    "wedding": {
+      "Pokémon": {
+        "verdict": "lands",
+        "room_vs_average": 20,
+        "biggest_fans": "30_to_34",
+        "reason": "Core friend demographic was prime Pokémon age in the '90s."
+      },
+      "Sheetz": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "35_to_44",
+        "reason": "Regional Pennsylvania chain, only lands with Pittsburgh-area guests."
+      },
+      "Skyline Chili": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "35_to_44",
+        "reason": "Regional Ohio chain, polarizing even among locals."
+      },
+      "Spotify": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "25_to_29",
+        "reason": "Universal streaming platform, all ages use it."
+      },
+      "Ed Sheeran": {
+        "verdict": "lands",
+        "room_vs_average": 15,
+        "biggest_fans": "25_to_29",
+        "reason": "Massive mainstream romantic pop star for this generation."
+      },
+      "Chipotle": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "25_to_29",
+        "reason": "Ubiquitous fast-casual chain, universally recognized."
+      },
+      "Hooters": {
+        "verdict": "risky",
+        "room_vs_average": -20,
+        "biggest_fans": "35_to_44",
+        "reason": "Known but potentially awkward at family wedding."
+      },
+      "The Notebook": {
+        "verdict": "lands",
+        "room_vs_average": 25,
+        "biggest_fans": "30_to_34",
+        "reason": "Defining romantic movie for millennials and wedding crowds."
+      },
+      "Paris": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "55_and_older",
+        "reason": "Universal romantic city, transcends generations."
+      },
+      "Eiffel Tower": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "55_and_older",
+        "reason": "Iconic romantic landmark, universally recognized."
+      },
+      "Hallmark Channel": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "55_and_older",
+        "reason": "Formulaic romance channel, widely known across ages."
+      },
+      "The Office": {
+        "verdict": "lands",
+        "room_vs_average": 40,
+        "biggest_fans": "30_to_34",
+        "reason": "Millennial comfort show, massive with couple's generation."
+      },
+      "Ed Hardy": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "35_to_44",
+        "reason": "Dated 2000s brand, universally recognized as poor taste."
+      },
+      "Family Feud": {
+        "verdict": "lands",
+        "room_vs_average": 5,
+        "biggest_fans": "45_to_54",
+        "reason": "Long-running game show, broadly familiar across ages."
+      },
+      "Steve Harvey": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "35_to_44",
+        "reason": "Well-known TV host and comedian, broad recognition."
+      },
+      "Zillow": {
+        "verdict": "lands",
+        "room_vs_average": 30,
+        "biggest_fans": "30_to_34",
+        "reason": "Essential house-hunting app for this life stage."
+      },
+      "Graeter's": {
+        "verdict": "risky",
+        "room_vs_average": -35,
+        "biggest_fans": "35_to_44",
+        "reason": "Regional Cincinnati ice cream, only known locally."
+      },
+      "Eat'n Park": {
+        "verdict": "risky",
+        "room_vs_average": -30,
+        "biggest_fans": "30_to_34",
+        "reason": "Regional Pittsburgh diner, only known to local guests."
+      },
+      "Pittsburgh Steelers": {
+        "verdict": "lands",
+        "room_vs_average": 10,
+        "biggest_fans": "35_to_44",
+        "reason": "Major NFL team with Pittsburgh family present."
+      },
+      "Cleveland Browns": {
+        "verdict": "lands",
+        "room_vs_average": 0,
+        "biggest_fans": "35_to_44",
+        "reason": "Decades of losing is widely known sports culture."
+      }
+    }
+  },
+  "swaps": {
+    "Hooters": {
+      "swaps": [],
+      "note": "Keep Hooters—the joke depends on it being a breastaurant, not just a bad date location. Other chains that land better here don't carry that specific meaning."
+    },
+    "Ed Hardy": {
+      "swaps": [],
+      "note": "No substitute was confirmed for this room."
+    },
+    "Family Feud": {
+      "swaps": [],
+      "note": "None of the candidates beat the original: The Bachelor, Survivor, Love Is Blind, and The Voice all land with this room but still underperform Family Feud by a few points."
+    },
+    "Eat'n Park": {
+      "swaps": [],
+      "note": "No substitute was confirmed for this room."
+    }
+  }
+}

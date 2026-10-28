@@ -29,6 +29,14 @@ interface Props {
   canAddCity: boolean;
 }
 
+// The room made of one performer's fans, from Qloo.
+export async function loadPerformerRoom(id: string): Promise<PerformerRoomData> {
+  const res = await fetch(`/api/performers/room?id=${encodeURIComponent(id)}`);
+  const body = await res.json();
+  if (!res.ok) throw new Error(body.error ?? "Couldn't load that audience.");
+  return body as PerformerRoomData;
+}
+
 // "Fans of ..." as a room: search Qloo for a comedian, musician, show or
 // podcast, and use the age mix of the people who like them.
 export function PerformerPicker({ room, onChange, cities, onAddCity, canAddCity }: Props) {
@@ -72,10 +80,7 @@ export function PerformerPicker({ room, onChange, cities, onAddCity, canAddCity 
     setLoading(true);
     setError(undefined);
     try {
-      const res = await fetch(`/api/performers/room?id=${encodeURIComponent(entity.id)}`);
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.error ?? "Couldn't load that audience.");
-      onChange(body as PerformerRoomData);
+      onChange(await loadPerformerRoom(entity.id));
     } catch (err) {
       setError((err as Error).message);
     } finally {

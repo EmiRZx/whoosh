@@ -1,24 +1,25 @@
 "use client";
 
-import { ArrowLeft, Check, Copy, FileText, Printer, RotateCw, Shuffle, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, Check, Copy, FileText, Printer, RotateCw, Shuffle, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { SAMPLES } from "@/content/samples";
 import { presetById } from "@/lib/audience/audience";
 import type { Verdict } from "@/lib/analysis/types";
+import { cityScores, cityTable, readFor } from "@/lib/ui/cities";
 import { composeDocument, overlaps, planEdit, type Edit } from "@/lib/ui/document";
 import { setNotes } from "@/lib/ui/notes";
 import { roomScore } from "@/lib/ui/score";
-import { Composer } from "./composer";
+import { Composer, EXAMPLE_ORDER } from "./composer";
 import { GutVsData } from "./gut-vs-data";
 import { Inspector } from "./inspector";
-import { VERDICT_LABEL } from "./labels";
+import { shortCity, VERDICT_LABEL } from "./labels";
 import { LocalHooksPanel } from "./local-hooks";
 import { Report } from "./report";
 import { ScriptView } from "./script-view";
-import type { PerformerRoomData } from "./performer-picker";
+import { loadPerformerRoom, type PerformerRoomData } from "./performer-picker";
 import { AgentTrace, FixesCard, RoomCard, ScoreCard, VERDICT_ORDER, type RoomInfo } from "./summary";
 import { TourMatrix } from "./tour-matrix";
-import { saveLastRun, useLastRun, type LastRun } from "./last-run";
+import { hasLastRun, saveLastRun, useLastRun, type LastRun } from "./last-run";
 import { useAnalysis } from "./use-analysis";
 import { VerdictIcon } from "./verdict";
 
@@ -48,6 +49,13 @@ export function Studio() {
   const [showChanges, setShowChanges] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [flash, setFlash] = useState<string>();
+  const [tourCity, setTourCity] = useState<string>();
+  // A first visit (no saved check in this browser) opens on a real check of
+  // an example rather than an empty form, until the visitor moves on.
+  const fresh = useSyncExternalStore(noSubscription, () => !hasLastRun(), () => false);
+  const [dismissed, setDismissed] = useState(false);
+  const demo = fresh && !dismissed;
+  const demoStarted = useRef(false);
   const { state, run, reset, restore } = useAnalysis();
   const lastRun = useLastRun();
   const inspectorBox = useRef<HTMLDivElement>(null);
@@ -65,7 +73,11 @@ export function Studio() {
       }
     : preset && { label: preset.label, description: preset.description, ageMix: preset.ageMix, audience: `${preset.label.toLowerCase()} audiences` };
   const analysedText = state.analysis?.text ?? text.replace(/\r\n/g, "\n").trim();
-  const refs = state.references;
+  // With several cities, the script is read for one of them at a time.
+  const tourCities = useMemo(() => cityTable(state.references)?.cities ?? [], [state.references]);
+  const city = tourCities.length > 1 ? (tourCity && tourCities.includes(tourCity) ? tourCity : tourCities[0]) : undefined;
+  const refs = useMemo(() => readFor(state.references, city), [state.references, city]);
+  const tourScores = useMemo(() => cityScores(state.references, tourCities), [state.references, tourCities]);
   const byKey = useMemo(() => new Map(refs.map((r) => [r.key, r])), [refs]);
 
   const edits = useMemo(
@@ -181,11 +193,12 @@ export function Studio() {
   }, [state.phase, step]);
 
   // Keep the finished run (and the swaps taken) so a reload doesn't lose it.
+  // Examples replay in a moment, so they aren't worth keeping.
   useEffect(() => {
-    if (state.phase !== "done" || !state.analysis || state.swapsPending.length) return;
+    if (state.phase !== "done" || !state.analysis || state.swapsPending.length || sample) return;
     // The references as they are now: swaps found after the analysis included.
     saveLastRun({ savedAt: Date.now(), text, presetId, cities, performer, analysis: { ...state.analysis, references: state.references }, accepted });
-  }, [state.phase, state.analysis, state.references, state.swapsPending, accepted, text, presetId, cities, performer]);
+  }, [state.phase, state.analysis, state.references, state.swapsPending, accepted, text, presetId, cities, performer, sample]);
 
   const reopen = (last: LastRun) => {
     setText(last.text);
@@ -216,16 +229,70 @@ export function Studio() {
     run({ text, presetId, cities, performerId: performer?.performer.id });
   };
 
+  // Loads an example with its room and checks it straight away.
+  const runSample = useCallback(
+    async (id: string) => {
+      const s = SAMPLES.find((x) => x.id === id);
+      if (!s) return;
+      const fans = s.performer ? await loadPerformerRoom(s.performer.id).catch(() => undefined) : undefined;
+      setText(s.text);
+      setPresetId(s.presetId);
+      setCities(s.cities);
+      setPerformer(fans);
+      setAccepted({});
+      setSelectedKey(undefined);
+      setSheetOpen(false);
+      run({ text: s.text, presetId: s.presetId, cities: s.cities, performerId: fans?.performer.id });
+    },
+    [run],
+  );
+
+  useEffect(() => {
+    if (!fresh || demoStarted.current) return;
+    demoStarted.current = true;
+    runSample(EXAMPLE_ORDER[0]);
+  }, [fresh, runSample]);
+
+  const ownScript = () => {
+    setDismissed(true);
+    setText("");
+    setPerformer(undefined);
+    setPresetId("general");
+    setCities([]);
+    reset();
+    window.scrollTo({ top: 0 });
+  };
+
   const loadSample = (id: string) => {
     const s = SAMPLES.find((x) => x.id === id);
     if (!s) return;
     setText(s.text);
+    if (s.performer) {
+      setCities(s.cities);
+      loadPerformerRoom(s.performer.id)
+        .then(setPerformer)
+        .catch(() => setPresetId(s.presetId));
+      return;
+    }
     // Someone who set up a performer's crowd and a tour wants to try the
-    // example on it, not lose it.
-    if (performer) return;
+    // example on it, not lose it (unless the crowd came from an example).
+    if (performer && !SAMPLES.some((x) => x.performer?.id === performer.performer.id)) return;
+    setPerformer(undefined);
     setPresetId(s.presetId);
     setCities(s.cities);
   };
+
+  if (demo && (state.phase === "idle" || !room)) {
+    return (
+      <div className="flex flex-col gap-5 pt-4">
+        <DemoIntro current={EXAMPLE_ORDER[0]} onPick={runSample} onOwn={ownScript} />
+        <p className="flex items-center gap-2 text-sm text-ink-soft">
+          <span className="size-2 animate-shimmer rounded-full bg-accent-glow" aria-hidden />
+          Loading a real check…
+        </p>
+      </div>
+    );
+  }
 
   if (state.phase === "idle" || !room) {
     return (
@@ -301,12 +368,23 @@ export function Studio() {
   return (
     <>
       <div className="flex flex-col gap-5 pt-4 print:hidden">
+        {demo && (
+          <DemoIntro
+            current={sample?.id}
+            onPick={(id) => {
+              window.scrollTo({ top: 0 });
+              runSample(id);
+            }}
+            onOwn={ownScript}
+          />
+        )}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <button
               type="button"
               onClick={() => {
                 if (changed) setText(doc.revised);
+                setDismissed(true);
                 reset();
               }}
               className="mb-2 flex items-center gap-1 text-sm text-ink-soft hover:text-ink"
@@ -324,6 +402,28 @@ export function Studio() {
                 </>
               )}
             </h1>
+            {tourCities.length > 1 && (
+              <div role="radiogroup" aria-label="Read the script for" className="mt-3 flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 text-xs text-ink-faint">Read it for</span>
+                {tourCities.map((c, i) => (
+                  <button
+                    key={c}
+                    type="button"
+                    role="radio"
+                    aria-checked={c === city}
+                    onClick={() => setTourCity(c)}
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors ${
+                      c === city ? "border-ink bg-ink text-bg" : "border-line hover:border-ink-faint"
+                    }`}
+                  >
+                    {shortCity(c)}
+                    {tourScores[i] !== undefined && (
+                      <span className={`text-xs tabular-nums ${c === city ? "opacity-70" : "text-ink-faint"}`}>{Math.round(tourScores[i]! * 100)}%</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {flash && (
@@ -432,7 +532,7 @@ export function Studio() {
         </div>
 
         <GutVsData references={refs} room={room.audience} selectedKey={activeKey} onSelect={select} />
-        <TourMatrix references={refs} selectedKey={activeKey} onSelect={select} />
+        <TourMatrix references={state.references} selectedKey={activeKey} onSelect={select} city={city} onPickCity={setTourCity} />
         <LocalHooksPanel hooks={state.hooks} room={room.audience} />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:hidden">
@@ -460,3 +560,47 @@ export function Studio() {
     </>
   );
 }
+
+// Above the example a first visit opens on: what this is, and the way out to
+// your own script.
+function DemoIntro({ current, onPick, onOwn }: { current?: string; onPick: (id: string) => void; onOwn: () => void }) {
+  return (
+    <section className="flex flex-col gap-5 pb-2 pt-2 sm:pt-6 lg:flex-row lg:items-end lg:justify-between">
+      <div className="max-w-3xl">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">A reference check for anything said out loud</p>
+        <h1 className="mt-3 text-4xl font-semibold leading-[1.04] tracking-tight sm:text-6xl">
+          Will they get the <span className="text-accent">reference</span>?
+        </h1>
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft sm:text-lg">
+          Below is a real check on Qloo&apos;s taste graph. Every movie, show, song, brand and public figure in the script is measured
+          against the people in the room, and the ones that won&apos;t land come with swaps that do the same job for them.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-1.5" role="group" aria-label="Examples">
+          {EXAMPLE_ORDER.map((id) => SAMPLES.find((s) => s.id === id)!).map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => onPick(s.id)}
+              aria-pressed={s.id === current}
+              className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+                s.id === current ? "border-ink bg-ink text-bg" : "border-line text-ink-soft hover:border-ink-faint hover:text-ink"
+              }`}
+            >
+              {s.title}
+            </button>
+          ))}
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onOwn}
+        className="group flex shrink-0 items-center justify-center gap-2 self-start rounded-2xl bg-cta px-5 py-3.5 text-base font-semibold text-cta-ink shadow-[0_10px_30px_-12px_var(--accent-glow)] transition-transform hover:-translate-y-0.5 lg:self-end"
+      >
+        Check your own script
+        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+      </button>
+    </section>
+  );
+}
+
+const noSubscription = () => () => {};

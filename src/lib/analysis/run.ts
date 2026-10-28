@@ -1,17 +1,14 @@
-import { RECORDED_EXTRACTIONS } from "@/content/extractions";
-import { RECORDED_GUT } from "@/content/extractions/gut";
-import { RECORDED_PICKS } from "@/content/extractions/picks";
+import { RECORDED_EXTRACTIONS, RECORDED_GUT, RECORDED_PICKS, RECORDED_SWAPS, type RecordedSwap } from "@/content/extractions";
 import { SAMPLES } from "@/content/samples";
 import { AUDIENCE_PRESETS, presetById } from "../audience/audience";
 import { findCity } from "../geo/cities";
-import { RECORDED_SWAPS, type RecordedSwap } from "@/content/extractions/swaps";
 import { search, type EntityType, type QlooEntity } from "../qloo/api";
 import type { QlooClient } from "../qloo/client";
 import { getQlooClient } from "../qloo/server";
 import { performerLabel, performerRoom } from "../audience/performer";
 import { getAnthropic, UsageMeter, type LlmOptions } from "../llm/config";
 import { chooseCandidates } from "./choose";
-import { extractReferences, type Extraction } from "./extract";
+import { extractReferences, type Extraction, type ExtractedReference } from "./extract";
 import { gutCalls, toGutCall } from "./gut";
 import { measure } from "./measure";
 import { buildReferences, paragraphAround, passageAround } from "./references";
@@ -21,7 +18,7 @@ import { check, type SwapContext } from "./swap-tools";
 import { localHooks } from "./hooks";
 import type { AnalysisEvent, AnalyzedReference, AudienceSpec, LocalHooks } from "./types";
 import { isPolitical } from "./politics";
-import { judge } from "./verdict";
+import { judge, weakest } from "./verdict";
 
 export interface AnalysisInput {
   text: string;
@@ -56,12 +53,23 @@ const MIN_SWAP_MS = 25_000;
 // submission.
 const WRAP_UP_MS = 100_000;
 
+export interface AnalysisOptions {
+  signal?: AbortSignal;
+  meter?: UsageMeter;
+  // Leave the live swap search to separate requests (see runSwapSearch), so it
+  // gets a host time limit of its own, or to the caller.
+  deferSwaps?: boolean;
+  // A script already read: measure these references instead of extracting
+  // them again (one script against several rooms).
+  extraction?: Extraction;
+  // No blind gut calls.
+  skipGut?: boolean;
+}
+
 export async function runAnalysis(
   input: AnalysisInput,
   send: (event: AnalysisEvent) => void,
-  // deferSwaps: leave the live swap search to separate requests (see
-  // runSwapSearch), so it gets a host time limit of its own.
-  options: { signal?: AbortSignal; meter?: UsageMeter; deferSwaps?: boolean } = {},
+  options: AnalysisOptions = {},
 ) {
   const meter = options.meter ?? new UsageMeter();
   const llm: LlmOptions = { signal: options.signal, onUsage: meter.record };
@@ -73,7 +81,7 @@ export async function runAnalysis(
     send(event);
   };
   try {
-    await analyze(input, timed, llm, started + BUDGET_MS, options.deferSwaps ?? false);
+    await analyze(input, timed, llm, started + BUDGET_MS, options);
   } finally {
     console.info(`[analysis ${elapsed()}] finished`);
     if (!meter.empty) console.info("llm usage", JSON.stringify(meter.summary()));
@@ -111,7 +119,8 @@ export async function buildAudience(input: { presetId: string; cities: string[];
   return { audience, unknown };
 }
 
-async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => void, llm: LlmOptions, deadline: number, deferSwaps: boolean) {
+async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => void, llm: LlmOptions, deadline: number, options: AnalysisOptions) {
+  const deferSwaps = options.deferSwaps ?? false;
   const text = normalize(input.text);
   const { audience, unknown } = await buildAudience(input);
   if (unknown.length) {
@@ -127,6 +136,9 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     send({ type: "status", message: "Reading the script (recorded example)" });
     extraction = RECORDED_EXTRACTIONS[sample.id];
     mode = "replay";
+  } else if (options.extraction) {
+    extraction = options.extraction;
+    mode = "live";
   } else if (anthropic) {
     send({ type: "status", message: "Reading the script" });
     extraction = await extractReferences(anthropic, text, llm);
@@ -147,7 +159,7 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   // alongside the measurement so the two can be compared.
   const gutDone = (async () => {
     const targets = references.filter((r) => r.resolution.status === "pending");
-    if (!targets.length) return;
+    if (!targets.length || options.skipGut) return;
     try {
       // Examples never call the model: they show a recorded gut call when one
       // exists for this room, and none otherwise.
@@ -267,10 +279,11 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     const m = measured.get(item.key);
     if (!m) continue;
     const ref = references.find((r) => r.key === item.key)!;
-    const { verdict, reasons } = judge(m, item.entity.types[0] ?? "", ref.extracted.weight);
+    const { verdict, cityVerdicts, reasons } = judge(m, item.entity.types[0] ?? "", ref.extracted.weight);
     update(item.key, {
       signals: { recognition: m.recognition, roomIndex: m.roomIndex, age: m.profile?.age, cities: m.cities },
       verdict,
+      cityVerdicts,
       reasons,
     });
   }
@@ -290,14 +303,16 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
     : Promise.resolve();
 
   // 4. Look for substitutes for the weak references the line depends on.
+  // Weak anywhere on the tour counts: the performer plays every city.
   const weak = references
+    .map((r) => ({ ...r, verdict: weakest(r) }))
     .filter((r) => (r.verdict === "dead" || r.verdict === "risky") && r.resolution.entity && r.spans.length)
     .filter((r) => r.verdict === "dead" || r.extracted.weight !== "color")
     // A line that states a fact about this person or thing can't trade it
     // for another without saying something false.
     .filter((r) => r.extracted.swappable !== false)
     .sort((a, b) => rank(a) - rank(b))
-    .slice(0, MAX_SWAP_REFERENCES);
+    .slice(0, mode === "replay" ? MAX_REPLAY_SWAP_REFERENCES : MAX_SWAP_REFERENCES);
   if (weak.length && deferSwaps && mode === "live" && anthropic) {
     swapTargets = weak.map((r) => r.key);
   } else if (weak.length) {
@@ -338,7 +353,9 @@ async function analyze(input: AnalysisInput, send: (event: AnalysisEvent) => voi
   await finish();
 }
 
+// Live runs look for swaps for the weakest few; the examples replay more.
 const MAX_SWAP_REFERENCES = 4;
+const MAX_REPLAY_SWAP_REFERENCES = 8;
 const rank = (r: AnalyzedReference) =>
   (r.verdict === "dead" ? 0 : 3) + { punchline: 0, setup: 1, color: 2 }[r.extracted.weight];
 
@@ -434,4 +451,68 @@ async function replaySwaps(qloo: QlooClient, ctx: SwapContext, recorded: { swaps
   // Recorded for the example's own room; in another room they may not win.
   const note = swaps.length || !recorded.swaps.length ? recorded.note : "The swaps recorded for this example don't beat the original for this room.";
   return { swaps, note };
+}
+
+// One reference measured and judged for a room, without reading a script:
+// for agents that already know what they want to check. With a text and a
+// quote from it, the result can go on to a swap search.
+export async function measureReference(input: {
+  name: string;
+  kind: ExtractedReference["kind"];
+  presetId: string;
+  cities: string[];
+  performerId?: string;
+  text?: string;
+  quote?: string;
+  role?: string;
+  weight?: ExtractedReference["weight"];
+}): Promise<{ reference: AnalyzedReference; audience: AudienceSpec }> {
+  const qloo = getQlooClient();
+  if (!qloo) throw new UserFacingError("Qloo isn't connected.");
+  const { audience } = await buildAudience(input);
+  const extracted: ExtractedReference = {
+    name: input.name,
+    kind: input.kind,
+    disambiguation: null,
+    quotes: [input.quote ?? input.name],
+    role: input.role ?? "",
+    weight: input.weight ?? "punchline",
+    checkable: input.kind !== "other",
+  };
+  const [ref] = buildReferences(normalize(input.text ?? input.quote ?? input.name), { references: [extracted] });
+  if (ref.resolution.status === "not_checkable") return { reference: ref, audience };
+  const pick = pickCandidate(extracted, await findCandidates(qloo, extracted).catch(() => []));
+  if (pick.status === "not_found") {
+    return { reference: { ...ref, resolution: { status: "not_found" }, reasons: ["Qloo doesn't have this one."] }, audience };
+  }
+  if (pick.status === "ambiguous") {
+    const candidates = pick.candidates.map(toSummary);
+    return {
+      reference: { ...ref, resolution: { status: "ambiguous", candidates }, reasons: [`Qloo has several things by this name: ${candidates.map((c) => c.name).join(", ")}.`] },
+      audience,
+    };
+  }
+  if (isPolitical(pick.entity)) {
+    return {
+      reference: {
+        ...ref,
+        resolution: { status: "not_checkable", entity: toSummary(pick.entity) },
+        reasons: ["A political figure: Whoosh doesn't measure political taste."],
+      },
+      audience,
+    };
+  }
+  const m = (await measure(qloo, [{ key: ref.key, entity: pick.entity }], audience)).get(ref.key) ?? {};
+  const { verdict, cityVerdicts, reasons } = judge(m, pick.entity.types[0] ?? "", extracted.weight);
+  return {
+    reference: {
+      ...ref,
+      resolution: { status: "resolved", entity: toSummary(pick.entity) },
+      signals: { recognition: m.recognition, roomIndex: m.roomIndex, age: m.profile?.age, cities: m.cities },
+      verdict,
+      cityVerdicts,
+      reasons,
+    },
+    audience,
+  };
 }
