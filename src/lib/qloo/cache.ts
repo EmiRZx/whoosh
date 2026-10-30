@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -76,7 +77,9 @@ export class TieredCache implements ResponseCache {
 }
 
 // A shared, durable tier for hosted deployments: every server instance sees
-// the same responses, and they survive restarts and redeploys.
+// the same responses, and they survive restarts and redeploys. Responses are
+// stored gzipped (Qloo's JSON shrinks about tenfold), marked "gz:"; entries
+// written before that are still read as plain JSON.
 export class RedisCache implements ResponseCache {
   constructor(
     private store: { get(key: string): Promise<string | null>; set(key: string, value: string, ttlSeconds: number): Promise<void> },
@@ -90,7 +93,8 @@ export class RedisCache implements ResponseCache {
   async get(key: string) {
     try {
       const raw = await this.store.get(this.key(key));
-      return raw === null ? undefined : JSON.parse(raw);
+      if (raw === null) return undefined;
+      return JSON.parse(raw.startsWith("gz:") ? gunzipSync(Buffer.from(raw.slice(3), "base64")).toString("utf8") : raw);
     } catch {
       return undefined;
     }
@@ -98,7 +102,7 @@ export class RedisCache implements ResponseCache {
 
   async set(key: string, value: unknown) {
     try {
-      await this.store.set(this.key(key), JSON.stringify(value), this.ttlSeconds);
+      await this.store.set(this.key(key), `gz:${gzipSync(JSON.stringify(value)).toString("base64")}`, this.ttlSeconds);
     } catch {}
   }
 }

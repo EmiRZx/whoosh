@@ -92,7 +92,7 @@ npm run dev                  # http://localhost:3000
 | `ANTHROPIC_BASE_URL` | Optional: an Anthropic-compatible endpoint in place of the Claude API. |
 | `LLM_MODEL` | Optional: the model behind every step. Default `claude-opus-5-5`. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | Optional: an Upstash Redis store, so the Qloo cache is shared and survives deploys, and the rate limits hold across instances. |
-| `LIVE_PER_IP_PER_HOUR`, `LIVE_PER_DAY` | Optional: how many live checks to allow (default 8 an hour per visitor, 150 a day). Examples don't count. |
+| `LIVE_PER_IP_PER_HOUR`, `LIVE_PER_DAY` | Optional: how many live checks to allow (default 8 an hour per visitor, 60 a day; stand-in searches 40 an hour and 240 a day). Examples don't count. |
 
 Keys are read on the server only.
 

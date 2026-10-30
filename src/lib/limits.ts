@@ -3,17 +3,24 @@
 import { hasRedis, pipeline } from "./store/redis";
 
 const PER_IP_PER_HOUR = Number(process.env.LIVE_PER_IP_PER_HOUR) || 8;
-const PER_DAY = Number(process.env.LIVE_PER_DAY) || 150;
+const PER_DAY = Number(process.env.LIVE_PER_DAY) || 60;
 
 const memory = new Map<string, { count: number; resets: number }>();
 
+// Counts in Redis, shared by every server instance. If Redis can't take the
+// write (down, or out of space), the count falls back to this instance's
+// memory, so the limits still hold rather than switching off.
 async function bump(key: string, ttlSeconds: number): Promise<number> {
   if (hasRedis) {
-    const [count] = await pipeline<[number, number]>([
-      ["INCR", key],
-      ["EXPIRE", key, ttlSeconds],
-    ]);
-    return count;
+    try {
+      const [count] = await pipeline<[number, number]>([
+        ["INCR", key],
+        ["EXPIRE", key, ttlSeconds],
+      ]);
+      return count;
+    } catch (err) {
+      console.error("rate limit store failed; counting in memory", err);
+    }
   }
   const now = Date.now();
   const entry = memory.get(key);
@@ -46,7 +53,7 @@ export async function takeLiveSlot(ip: string): Promise<LimitResult> {
 
 // A live run asks for up to four swap searches as separate requests.
 const SWAPS_PER_IP_PER_HOUR = Number(process.env.SWAPS_PER_IP_PER_HOUR) || 40;
-const SWAPS_PER_DAY = Number(process.env.SWAPS_PER_DAY) || 600;
+const SWAPS_PER_DAY = Number(process.env.SWAPS_PER_DAY) || 240;
 
 export async function takeSwapSlot(ip: string): Promise<LimitResult> {
   const hour = Math.floor(Date.now() / 3_600_000);
